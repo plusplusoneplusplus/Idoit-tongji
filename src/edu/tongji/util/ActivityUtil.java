@@ -18,7 +18,7 @@ public class ActivityUtil {
 	 * @param delayMillis 延迟时间（毫秒）
 	 * @param finishSelf 是否结束当前activity
 	 */
-	public static void startNewActivity(final Activity from, final Class<?> to, long delayMillis, boolean finishSelf){
+	public static void startNewActivity(final Activity from, final Class<?> to, long delayMillis, final boolean finishSelf){
 		
 		Handler handler = new Handler();
 		Runnable r = new Runnable(){
@@ -27,7 +27,8 @@ public class ActivityUtil {
 			public void run() {
 				Intent intent = new Intent(from, to);
 				from.startActivity(intent);
-				from.finish();
+				if(finishSelf == true)
+					from.finish();
 			}
 			
 		};
