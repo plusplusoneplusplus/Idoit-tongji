@@ -4,7 +4,9 @@ import edu.tongji.fiveidiots.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.Chronometer;
+import android.widget.Toast;
+import android.widget.Chronometer.OnChronometerTickListener;
 
 /**
  * 番茄计时器
@@ -13,8 +15,10 @@ import android.widget.TextView;
  */
 public class PomoTimerActivity extends Activity {
 
-	private TextView timeLeftTextView = null;
-	
+	private Chronometer timer = null;
+	private long timeTotalInS = 0;
+	private long timeLeftInS = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,14 +29,38 @@ public class PomoTimerActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.timer);
 
-		timeLeftTextView = (TextView) findViewById(R.id.timeLeftTextView);
-
-
-		//TODO
+		timer = (Chronometer) findViewById(R.id.timer);
+		this.initTimer(10);
 		this.setTaskName("这里将显示任务名称");
-		this.setTimeLeft("这里将显示倒计时");
+		timer.start();
+		
+		//TODO 有bug，横屏竖屏一变换，onCreate重新调用一次，于是重新开始了，需要另外记录状态
 	}
 
+	/**
+	 * 初始化计时器，计时器是通过widget.Chronometer来实现的
+	 * @param total 一共多少秒
+	 */
+	private void initTimer(long total) {
+		this.timeTotalInS = total;
+		this.timeLeftInS = total;
+		timer.setOnChronometerTickListener(new OnChronometerTickListener() {
+			
+			@Override
+			public void onChronometerTick(Chronometer chronometer) {
+				if (timeLeftInS <= 0) {
+					Toast.makeText(PomoTimerActivity.this, "timer stoped", Toast.LENGTH_SHORT).show();
+					timer.stop();
+					return;
+				}
+
+				timeLeftInS--;
+				refreshTimeLeft();
+				refreshCakeView();
+			}
+		});
+	}
+	
 	/**
 	 * 将任务的名字显示在界面上
 	 * 初步决定放在title栏
@@ -45,11 +73,18 @@ public class PomoTimerActivity extends Activity {
 	/**
 	 * 将倒计时显示在屏幕上
 	 * 初步决定放在右下角 
-	 * TODO @param time 是放一个string还是传进来long还没有决定
 	 */
-	public void setTimeLeft(String time) {
-		if (this.timeLeftTextView != null) {
-			this.timeLeftTextView.setText(time);			
-		}
+	private void refreshTimeLeft() {
+		this.timer.setText("剩余：" + timeLeftInS);
+		//TODO 格式化字符串
 	}
+
+	
+	/**
+	 * 当倒计时更新的时候，刷新中央的大饼图
+	 */
+	private void refreshCakeView() {
+		//TODO
+	}
+
 }
