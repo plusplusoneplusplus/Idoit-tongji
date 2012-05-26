@@ -1,3 +1,8 @@
+/*
+ * ActivityUtil类提供所有与Activity相关的工具方法
+ * 方法请声明为static
+ */
+
 package edu.tongji.fiveidiots.util;
 
 import android.app.Activity;
@@ -22,9 +27,8 @@ public class ActivityUtil {
 			public void run() {
 				Intent intent = new Intent(from, to);
 				from.startActivity(intent);
-				if (finishSelf) {
+				if(finishSelf == true)
 					from.finish();
-				}
 			}
 			
 		};

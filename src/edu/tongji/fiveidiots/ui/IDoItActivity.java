@@ -1,3 +1,8 @@
+/*
+ * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
+ * 目前没起什么作用
+ */
+
 package edu.tongji.fiveidiots.ui;
 
 import android.app.Activity;
@@ -13,10 +18,6 @@ public class IDoItActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.idoit);
         
-//        ActivityUtil.startNewActivity(this, TaskOverviewActivity.class, 1000L, true);
-        /*
-         * testing, Andriy
-         */
-        ActivityUtil.startNewActivity(this, PomoTimerActivity.class, 1000L, true);
+        ActivityUtil.startNewActivity(this, TaskOverviewActivity.class, 1000L, true);
     }
 }
