@@ -1,3 +1,7 @@
+/*
+ * TaskOverviewActivity是总览任务的类
+ */
+
 package edu.tongji.fiveidiots;
 
 import greendroid.app.GDActivity;
@@ -23,10 +27,6 @@ public class TaskOverviewActivity extends GDActivity {
 	}
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		
-		
-		
-		
 		Toast.makeText(this, "ffff", Toast.LENGTH_SHORT).show();
 		return true;
 	}

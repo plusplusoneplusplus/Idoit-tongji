@@ -1,0 +1,4 @@
+GreenDroid使用方法简介
+IDoItApplication主要来重写GreenDroid库所需的方法，一般没有什么需要改动的；
+如果需要使用GreenDroid特性，请继承GDActivity，并添加setActionBarContentView方法，参数同setContentView；
+如果不使用GD特性，请尽量继承自Activity。

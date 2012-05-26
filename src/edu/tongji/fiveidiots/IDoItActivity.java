@@ -1,3 +1,8 @@
+/*
+ * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
+ * 目前没起什么作用
+ */
+
 package edu.tongji.fiveidiots;
 
 import android.app.Activity;

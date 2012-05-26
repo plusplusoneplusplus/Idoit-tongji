@@ -1,3 +1,8 @@
+/*
+ * ActivityUtil类提供所有与Activity相关的工具方法
+ * 方法请声明为static
+ */
+
 package edu.tongji.util;
 
 import android.app.Activity;
