@@ -34,11 +34,15 @@ public class PomoTimerActivity extends Activity {
 		this.setTaskName("这里将显示任务名称");
 		timer.start();
 		
-		//TODO 有bug，横屏竖屏一变换，onCreate重新调用一次，于是重新开始了，需要另外记录状态
+		/*
+		 * TODO 有bug，横屏竖屏一变换，会重新启动activity，onCreate重新调用一次，于是重新开始了，
+		 * 需要另外记录状态，也许可以在onConfigurationChanged()那里，在退出的时候写入preferences，
+		 * 在创建的时候从那里读看下有没有上次的数据。
+		 */
 	}
 
 	/**
-	 * 初始化计时器，计时器是通过widget.Chronometer来实现的
+	 * 初始化计时器，计时器是通过widget.Chronometer来实现的（相当于1秒钟刷新一下）
 	 * @param total 一共多少秒
 	 */
 	private void initTimer(long total) {
