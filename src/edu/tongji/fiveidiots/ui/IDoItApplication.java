@@ -1,4 +1,4 @@
-package edu.tongji.fiveidiots;
+package edu.tongji.fiveidiots.ui;
 
 import greendroid.app.GDApplication;
 
