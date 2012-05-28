@@ -1,23 +1,42 @@
 package edu.tongji.fiveidiots.ui;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import edu.tongji.fiveidiots.R;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.Chronometer;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Chronometer.OnChronometerTickListener;
 
 /**
  * 番茄计时器
- * 
  * @author Andriy
  */
 public class PomoTimerActivity extends Activity {
 
-	private Chronometer timer = null;
-	private long timeTotalInS = 0;
-	private long timeLeftInS = 0;
+	private TextView timeLeftTextView;
+	private Button testButton;
+	
+	private long totalTime = 0;
+	private long leftTime = 0;
+
+	private Handler timerHandler;
+	private static final int MSG_TIMES_UP = 100;
+	private static final int MSG_TIME_LEFT_CHANGED = 101;
+
+	private TimerTask countingTimerTask;
+	private TimerState countingState = TimerState.IDLE;
+	private enum TimerState {
+		IDLE, READY, COUNTING
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +48,23 @@ public class PomoTimerActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.timer);
 
-		timer = (Chronometer) findViewById(R.id.timer);
-		this.initTimer(10);
+		this.timerHandler = new Handler(new PomotimerCallback());
+
+		this.timeLeftTextView = (TextView) findViewById(R.id.timeLeftTextView);
+		this.testButton = (Button) findViewById(R.id.testButton);
+		this.testButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (countingState != TimerState.READY) {
+					resetTimer(10);
+				}
+				startTimer();
+			}
+		});
+		
 		this.setTaskName("这里将显示任务名称");
-		timer.start();
+		this.resetTimer(10);
 		
 		/*
 		 * TODO 有bug，横屏竖屏一变换，会重新启动activity，onCreate重新调用一次，于是重新开始了，
@@ -42,28 +74,49 @@ public class PomoTimerActivity extends Activity {
 	}
 
 	/**
-	 * 初始化计时器，计时器是通过widget.Chronometer来实现的（相当于1秒钟刷新一下）
+	 * 初始化计时器
 	 * @param total 一共多少秒
 	 */
-	private void initTimer(long total) {
-		this.timeTotalInS = total;
-		this.timeLeftInS = total;
-		timer.setOnChronometerTickListener(new OnChronometerTickListener() {
+	private void resetTimer(long total) {
+		this.releaseTimer();
+		this.leftTime = this.totalTime = total;
+		countingTimerTask = new TimerTask() {
 			
 			@Override
-			public void onChronometerTick(Chronometer chronometer) {
-				if (timeLeftInS <= 0) {
-					Toast.makeText(PomoTimerActivity.this, "timer stoped", Toast.LENGTH_SHORT).show();
-					timer.stop();
+			public void run() {
+				if (leftTime <= 0) {
+					Message msg = Message.obtain(timerHandler, MSG_TIMES_UP);
+					msg.sendToTarget();
 					return;
 				}
 
-				timeLeftInS--;
-				refreshTimeLeft();
-				refreshCakeView();
+				leftTime--;
+				Message msg = Message.obtain(timerHandler, MSG_TIME_LEFT_CHANGED);
+				msg.sendToTarget();
 			}
-		});
+		};
+		this.countingState = TimerState.READY;
 	}
+	
+	/**
+	 * 释放计时器及其相应的timertask
+	 */
+	private void releaseTimer() {
+		if (countingTimerTask != null) {
+			countingTimerTask.cancel();
+			countingTimerTask = null;
+		}
+		this.countingState = TimerState.IDLE;
+	}
+	
+	/**
+	 * 开始计时器
+	 */
+	private void startTimer() {
+		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
+		this.countingState = TimerState.COUNTING;
+	}
+	
 	
 	/**
 	 * 将任务的名字显示在界面上
@@ -78,8 +131,8 @@ public class PomoTimerActivity extends Activity {
 	 * 将倒计时显示在屏幕上
 	 * 初步决定放在右下角 
 	 */
-	private void refreshTimeLeft() {
-		this.timer.setText("剩余：" + timeLeftInS);
+	private void refreshTimeLeftText() {
+		this.timeLeftTextView.setText("剩余：" + this.leftTime);
 		//TODO 格式化字符串
 	}
 
@@ -89,6 +142,33 @@ public class PomoTimerActivity extends Activity {
 	 */
 	private void refreshCakeView() {
 		//TODO
+	}
+
+	/**
+	 * 处理计时器内的消息的callback
+	 * 处理了番茄周期结束、剩余时间改变
+	 * @author Andriy
+	 */
+	private class PomotimerCallback implements Callback {
+
+		@Override
+		public boolean handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_TIMES_UP:
+				releaseTimer();
+				Toast.makeText(PomoTimerActivity.this, "timer stoped", Toast.LENGTH_SHORT).show();
+				return true;
+
+			case MSG_TIME_LEFT_CHANGED:
+				refreshTimeLeftText();
+				refreshCakeView();
+				return true;
+
+			default:
+				break;
+			}
+			return false;
+		}		
 	}
 
 }
