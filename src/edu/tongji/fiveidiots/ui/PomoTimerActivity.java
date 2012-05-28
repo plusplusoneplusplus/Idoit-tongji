@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -22,65 +23,104 @@ import android.widget.Toast;
  */
 public class PomoTimerActivity extends Activity {
 
+	//=====界面相关=====
 	private TextView timeLeftTextView;
 	private Button testButton;
 	
+	//=====计时时间参数相关=====
+	private static final String TOTAL_TIME_STR = "total_time";
+	private static final String LEFT_TIME_STR = "left_time";
 	private long totalTime = 0;
 	private long leftTime = 0;
 
+	//=====消息机制相关=====
 	private Handler timerHandler;
 	private static final int MSG_TIMES_UP = 100;
 	private static final int MSG_TIME_LEFT_CHANGED = 101;
 
+	//=====计时的状态和timertask相关=====
 	private TimerTask countingTimerTask;
-	private TimerState countingState = TimerState.IDLE;
-	private enum TimerState {
-		IDLE, READY, COUNTING
-	}
+	private int countingState = STATE_IDLE;
+	private static final String STATE_STR = "timer_state";
+	private static final int STATE_IDLE = 1;
+	private static final int STATE_READY = 2;
+	private static final int STATE_COUNTING = 3;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//设置全屏，但是有标题
+		//=====设置全屏，但是有标题=====
 //		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.timer);
 
 		this.timerHandler = new Handler(new PomotimerCallback());
+		if (savedInstanceState != null) {
+			//=====如果横竖屏切换或者其他什么的，可以读取之前的状态=====
+			countingState = savedInstanceState.getInt(STATE_STR, STATE_IDLE);
+			totalTime = savedInstanceState.getLong(TOTAL_TIME_STR, 0);
+			leftTime = savedInstanceState.getLong(LEFT_TIME_STR, 0);
+		}
 
 		this.timeLeftTextView = (TextView) findViewById(R.id.timeLeftTextView);
+
+		//=====测试中=====
 		this.testButton = (Button) findViewById(R.id.testButton);
 		this.testButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				if (countingState != TimerState.READY) {
-					resetTimer(10);
+				if (countingState != STATE_READY) {
+					resetTimer(10, 10);
 				}
 				startTimer();
 			}
 		});
+		//=====测试代码完毕=====
 		
 		this.setTaskName("这里将显示任务名称");
-		this.resetTimer(10);
-		
-		/*
-		 * TODO 有bug，横屏竖屏一变换，会重新启动activity，onCreate重新调用一次，于是重新开始了，
-		 * 需要另外记录状态，也许可以在onConfigurationChanged()那里，在退出的时候写入preferences，
-		 * 在创建的时候从那里读看下有没有上次的数据。
-		 */
+
+		//=====计时器的初始化or重建
+		switch (countingState) {
+		case STATE_IDLE:
+		case STATE_READY:
+			break;
+		case STATE_COUNTING:
+			//=====resume上一次计时=====
+			this.resetTimer(totalTime, leftTime);
+			this.startTimer();
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 如果横竖屏什么的，可以存储当前的状态，供之后读取
+	 * @param outState
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putInt(STATE_STR, countingState);
+		outState.putLong(TOTAL_TIME_STR, totalTime);
+		outState.putLong(LEFT_TIME_STR, leftTime);
+		this.releaseTimer();
 	}
 
 	/**
 	 * 初始化计时器
 	 * @param total 一共多少秒
 	 */
-	private void resetTimer(long total) {
+	private void resetTimer(long total, long left) {
 		this.releaseTimer();
-		this.leftTime = this.totalTime = total;
-		countingTimerTask = new TimerTask() {
+		this.totalTime = total;
+		this.leftTime = left;
+		this.countingTimerTask = new TimerTask() {
 			
 			@Override
 			public void run() {
@@ -95,7 +135,7 @@ public class PomoTimerActivity extends Activity {
 				msg.sendToTarget();
 			}
 		};
-		this.countingState = TimerState.READY;
+		this.countingState = STATE_READY;
 	}
 	
 	/**
@@ -106,7 +146,7 @@ public class PomoTimerActivity extends Activity {
 			countingTimerTask.cancel();
 			countingTimerTask = null;
 		}
-		this.countingState = TimerState.IDLE;
+		this.countingState = STATE_IDLE;
 	}
 	
 	/**
@@ -114,7 +154,7 @@ public class PomoTimerActivity extends Activity {
 	 */
 	private void startTimer() {
 		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
-		this.countingState = TimerState.COUNTING;
+		this.countingState = STATE_COUNTING;
 	}
 	
 	
@@ -142,6 +182,7 @@ public class PomoTimerActivity extends Activity {
 	 */
 	private void refreshCakeView() {
 		//TODO
+		//Canvas
 	}
 
 	/**
