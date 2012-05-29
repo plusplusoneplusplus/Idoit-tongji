@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 番茄计时器
@@ -31,7 +32,6 @@ public class PomotimerActivity extends Activity {
 
 	//=====界面相关=====
 	private TextView timeLeftTextView;
-	private Button testButton;
 	private PomotimerCakeView cakeView;
 	
 	//=====计时时间参数相关=====
@@ -78,21 +78,17 @@ public class PomotimerActivity extends Activity {
 		RelativeLayout cakeViewLayout = (RelativeLayout) findViewById(R.id.cakeViewLayout);
 		this.cakeView = new PomotimerCakeView(this);
 		cakeViewLayout.addView(this.cakeView);
-
-		//=====测试中=====
-		this.testButton = (Button) findViewById(R.id.testButton);
-		this.testButton.setOnClickListener(new OnClickListener() {
+		this.cakeView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				if (countingState != STATE_READY) {
-					resetTimer(100, 50);
+					resetTimer(20, 20);					
 				}
 				startTimer();
+				Toast.makeText(PomotimerActivity.this, "Ready? Go!", Toast.LENGTH_SHORT).show();
 			}
 		});
-		//=====测试代码完毕=====
-
 
 		//=====计时器的初始化or重建
 		switch (countingState) {
