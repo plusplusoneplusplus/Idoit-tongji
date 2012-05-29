@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.PomoTimerActivity"></activity>
+        <activity android:name=".ui.PomotimerActivity"></activity>
     </application>
 
 </manifest>

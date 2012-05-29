@@ -32,7 +32,7 @@ public class TaskOverviewActivity extends GDActivity {
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
 		if (position == 0) {
 			//第一个添加的东西，目前是add，当做进入计时器
-			ActivityUtil.startNewActivity(this, PomoTimerActivity.class, 0, false);
+			ActivityUtil.startNewActivity(this, PomotimerActivity.class, 0, false);
 		}
 		else {
 			Toast.makeText(this, "bar_item at pos: " + position, Toast.LENGTH_SHORT).show();

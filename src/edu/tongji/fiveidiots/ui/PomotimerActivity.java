@@ -5,15 +5,22 @@ import java.util.TimerTask;
 
 import edu.tongji.fiveidiots.R;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +28,12 @@ import android.widget.Toast;
  * 番茄计时器
  * @author Andriy
  */
-public class PomoTimerActivity extends Activity {
+public class PomotimerActivity extends Activity {
 
 	//=====界面相关=====
 	private TextView timeLeftTextView;
 	private Button testButton;
+	private PomotimerCakeView cakeView;
 	
 	//=====计时时间参数相关=====
 	private static final String TOTAL_TIME_STR = "total_time";
@@ -66,6 +74,15 @@ public class PomoTimerActivity extends Activity {
 		}
 
 		this.timeLeftTextView = (TextView) findViewById(R.id.timeLeftTextView);
+		RelativeLayout cakeViewLayout = (RelativeLayout) findViewById(R.id.cakeViewLayout);
+		this.cakeView = new PomotimerCakeView(this);
+		cakeViewLayout.addView(this.cakeView);
+		try {
+			cakeViewLayout.bringToFront();			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 
 		//=====测试中=====
 		this.testButton = (Button) findViewById(R.id.testButton);
@@ -183,6 +200,7 @@ public class PomoTimerActivity extends Activity {
 	private void refreshCakeView() {
 		//TODO
 		//Canvas
+		this.cakeView.invalidate();
 	}
 
 	/**
@@ -197,7 +215,7 @@ public class PomoTimerActivity extends Activity {
 			switch (msg.what) {
 			case MSG_TIMES_UP:
 				releaseTimer();
-				Toast.makeText(PomoTimerActivity.this, "timer stoped", Toast.LENGTH_SHORT).show();
+				Toast.makeText(PomotimerActivity.this, "timer stoped", Toast.LENGTH_SHORT).show();
 				return true;
 
 			case MSG_TIME_LEFT_CHANGED:
@@ -212,4 +230,73 @@ public class PomoTimerActivity extends Activity {
 		}		
 	}
 
+	/**
+	 * 中间的大饼图
+	 * @author Andriy
+	 */
+	private class PomotimerCakeView extends View {
+
+		public PomotimerCakeView(Context context) {
+			super(context);
+		}
+		
+		private final int IDLE_COLOR = Color.rgb(100, 100, 100);
+
+		@Override
+		protected void onDraw(Canvas canvas) {
+			super.onDraw(canvas);
+
+			//=====获取屏幕信息=====
+			DisplayMetrics metrics = new DisplayMetrics();
+			PomotimerActivity.this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+			//=====根据当前计时器状态不同重绘=====
+			switch (countingState) {
+			case STATE_IDLE:
+				this.onDrawIdle(canvas, metrics);
+				break;
+			case STATE_READY:
+				this.onDrawReady(canvas, metrics);
+				break;
+			case STATE_COUNTING:
+				this.onDrawCounting(canvas, metrics);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		/**
+		 * 当IDLE状态时onDraw
+		 * @param canvas
+		 * @param metrics
+		 */
+		private void onDrawIdle(Canvas canvas, DisplayMetrics metrics) {
+			Paint paint = new Paint();
+			paint.setColor(IDLE_COLOR);
+			canvas.drawCircle(metrics.widthPixels * 0.75f, metrics.heightPixels * 0.75f, 100, paint);				
+		}
+		
+		/**
+		 * 当READY状态时onDraw
+		 * @param canvas
+		 * @param metrics
+		 */
+		private void onDrawReady(Canvas canvas, DisplayMetrics metrics) {
+			//TODO
+		}
+		
+		/**
+		 * 当COUNTING状态时onDraw
+		 * @param canvas
+		 * @param metrics
+		 */
+		private void onDrawCounting(Canvas canvas, DisplayMetrics metrics) {
+			//TODO
+			Paint paint = new Paint();
+			paint.setColor(Color.rgb(255, 0, 100));
+			canvas.drawCircle(metrics.widthPixels>>1, metrics.heightPixels>>1, 100, paint);
+		}
+	}
 }
