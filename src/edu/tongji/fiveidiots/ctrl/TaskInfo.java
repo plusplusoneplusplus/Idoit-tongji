@@ -15,6 +15,11 @@ public class TaskInfo {
 	private ArrayList<String> tag;
 	private Boolean expire,finish;
 	
+	/**
+	 * 空的构造函数，测试方便
+	 */
+	public TaskInfo() {}
+	
 	TaskInfo(int id,String name, String addr, String hint, int pri, int pre_id, int next_id, int cycle, int way, Date deadline){
 		this.id = id;
 		this.name = name;
