@@ -77,19 +77,8 @@ public class PomotimerActivity extends Activity {
 		RelativeLayout cakeViewLayout = (RelativeLayout) findViewById(R.id.cakeViewLayout);
 		this.cakeView = new PomotimerCakeView(this);
 		cakeViewLayout.addView(this.cakeView);
-		this.cakeView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if (countingState != STATE_READY) {
-					resetTimer(20, 20);					
-				}
-				startTimer();
-				Toast.makeText(PomotimerActivity.this, "Ready? Go!", Toast.LENGTH_SHORT).show();
-			}
-		});
 
-		//=====计时器的初始化or重建
+		//=====计时器的初始化or重建=====
 		switch (countingState) {
 		case STATE_IDLE:
 		case STATE_READY:
@@ -103,10 +92,26 @@ public class PomotimerActivity extends Activity {
 			break;
 		}
 		
-		//=====刷新UI=====
-		//TODO 放到onResume??
-		this.refreshTimeLeftText();
 		this.setTaskName("这里将显示任务名称");
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		//=====UI的显示初始化=====
+		this.refreshTimeLeftText();
+		this.cakeView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (countingState != STATE_READY) {
+					resetTimer(20, 20);					
+				}
+				startTimer();
+				Toast.makeText(PomotimerActivity.this, "Ready? Go!", Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 
 	/**
@@ -201,7 +206,6 @@ public class PomotimerActivity extends Activity {
 		}
 	}
 
-	
 	/**
 	 * 当倒计时更新的时候，刷新中央的大饼图
 	 */
@@ -243,15 +247,26 @@ public class PomotimerActivity extends Activity {
 	 */
 	private class PomotimerCakeView extends View {
 
-		private DisplayMetrics metrics =new DisplayMetrics();
 		public PomotimerCakeView(Context context) {
 			super(context);
 			
-			//=====获取屏幕信息=====
+			//=====获取屏幕信息、决定大饼图的大小=====
+			DisplayMetrics metrics = new DisplayMetrics();
 			PomotimerActivity.this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int length = metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels;
+			int radius = (int) (0.5 * 0.7 * length);	//对于短边组成的正方形，圆的半径取其一半的7/10
+			int midWidth = metrics.widthPixels >> 1;
+			int midHeight = metrics.heightPixels >> 1;
+			boundRect = new RectF(midWidth - radius, midHeight -radius, midWidth + radius, midHeight + radius);
 		}
 		
-		private final int IDLE_COLOR = Color.rgb(100, 100, 100);
+		/**
+		 * 用于在后来画扇形的时候传入框定圆大小
+		 */
+		private final RectF boundRect;
+
+		private final int AVAILABLE_COLOR = Color.rgb(0, 200, 100);
+		private final int CONSUMED_COLOR = Color.rgb(100, 100, 100);
 
 		@Override
 		protected void onDraw(Canvas canvas) {
@@ -281,12 +296,8 @@ public class PomotimerActivity extends Activity {
 		 */
 		private void onDrawIdle(Canvas canvas) {
 			Paint paint = new Paint();
-			paint.setColor(IDLE_COLOR);
-			paint.setColor(Color.rgb(255, 0, 100));
-
-			int midWidth = metrics.widthPixels >> 1;
-			int midHeight = metrics.heightPixels >> 1;
-			RectF boundRect = new RectF(midWidth - 100, midHeight -100, midWidth + 100, midHeight + 100);
+			paint.setDither(true);
+			paint.setColor(AVAILABLE_COLOR);
 			canvas.drawArc(boundRect, -90, 360, true, paint);
 		}
 		
@@ -296,7 +307,7 @@ public class PomotimerActivity extends Activity {
 		 * @param metrics
 		 */
 		private void onDrawReady(Canvas canvas) {
-			//TODO
+			this.onDrawIdle(canvas);
 		}
 		
 		/**
@@ -305,17 +316,18 @@ public class PomotimerActivity extends Activity {
 		 * @param metrics
 		 */
 		private void onDrawCounting(Canvas canvas) {
-			int midWidth = metrics.widthPixels / 2;
-			int midHeight = metrics.heightPixels / 2;
-			RectF boundRect = new RectF(midWidth - 100, midHeight - 100, midWidth + 100, midHeight + 100);
-
 			Paint paint = new Paint();
 			paint.setDither(true);
-			paint.setColor(Color.rgb(255, 0, 100));
 
-			float startAngle = 360 * (totalTime - leftTime) / totalTime - 90;
-			float sweepAngle = 360 * leftTime / totalTime;
-			canvas.drawArc(boundRect, startAngle, sweepAngle, true, paint);				
+			paint.setColor(CONSUMED_COLOR);
+			float startAngle = -90;
+			float sweepAngle = 360 * (totalTime - leftTime) / totalTime;
+			canvas.drawArc(boundRect, startAngle, sweepAngle, true, paint);
+
+			paint.setColor(AVAILABLE_COLOR);
+			startAngle = 360 * (totalTime - leftTime) / totalTime - 90;
+			sweepAngle = 360 * leftTime / totalTime;
+			canvas.drawArc(boundRect, startAngle, sweepAngle, true, paint);
 		}
 	}
 }
