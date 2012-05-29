@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, IDoItActivity!</string>
     <string name="app_name">IDoIt</string>
+    <string name="exit">fuckU</string>
 </resources>
