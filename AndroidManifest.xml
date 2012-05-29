@@ -7,19 +7,23 @@
     <uses-sdk android:minSdkVersion="10" />
 
     <application
-        android:name=".ui.IDoItApplication"
+        android:name= ".ui.IDoItApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/Theme.GreenDroid" >
         <activity
-            android:name=".ui.TaskOverviewActivity"
+            android:name=".ui.IDoItActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.PomotimerActivity"></activity>
+        <activity android:name=".ui.PomotimerActivity" >
+        </activity>
+        <activity android:name=".ui.TaskOverviewActivity" >
+        </activity>
     </application>
 
 </manifest>

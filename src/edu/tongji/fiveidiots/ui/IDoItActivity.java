@@ -1,8 +1,3 @@
-/*
- * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
- * 目前没起什么作用
- */
-
 package edu.tongji.fiveidiots.ui;
 
 import android.app.Activity;
@@ -10,13 +5,17 @@ import android.os.Bundle;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.ActivityUtil;
 
-
+/**
+ * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
+ * 目前没起什么作用
+ */
 public class IDoItActivity extends Activity {
-    /** Called when the activity is first created. */
+
+	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.idoit);
+        setContentView(R.layout.main);
         
         ActivityUtil.startNewActivity(this, TaskOverviewActivity.class, 1000L, true);
     }

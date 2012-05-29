@@ -1,7 +1,3 @@
-/*
- * TaskOverviewActivity是总览任务的类
- */
-
 package edu.tongji.fiveidiots.ui;
 
 import edu.tongji.fiveidiots.R;
@@ -11,9 +7,13 @@ import greendroid.widget.ActionBar;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.ActionBarItem.Type;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 
+/**
+ * TaskOverviewActivity是总览任务的类
+ */
 public class TaskOverviewActivity extends GDActivity {
 
 	public TaskOverviewActivity(){
@@ -26,6 +26,8 @@ public class TaskOverviewActivity extends GDActivity {
         setActionBarContentView(R.layout.idoit);
         addActionBarItem(Type.Add);
         addActionBarItem(Type.Edit);
+        
+        Log.i("__ANDRIY__", "TaskOverview.onCreate()");
 	}
 
 	@Override
