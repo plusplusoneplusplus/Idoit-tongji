@@ -1,5 +1,6 @@
 package edu.tongji.fiveidiots.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -11,7 +12,9 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -32,6 +35,8 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 
 	private ListView taskListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
+	private List<TaskInfo> tasks = new ArrayList<TaskInfo>();
+	private TaskListAdapter adapter = new TaskListAdapter();
 	
 	private static enum TaskSheetType {
 		TODAY,		//今日
@@ -70,11 +75,10 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 	 * 刷新任务list的listview
 	 */
 	private void resetTaskList() {
-		List<TaskInfo> tasks;
 		switch (currentTaskSheetType) {
 		case POOL:
 			//TODO 得到所有收集池里的任务
-			tasks = null;
+			tasks = new ArrayList<TaskInfo>();
 			break;
 
 		case TODAY:
@@ -84,25 +88,26 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 
 		case FUTURE:
 			//TODO 得到所有未来任务
-			tasks = null;
+			tasks = new ArrayList<TaskInfo>();
 			break;
 
 		case PERIODIC:
 			//TODO 得到所有周期性任务
-			tasks = null;
+			tasks = new ArrayList<TaskInfo>();
 			break;
 
 		case ALL:
 			//TODO 得到所有所有任务
-			tasks = null;
+			tasks = new ArrayList<TaskInfo>();
 			break;
 
 		default:
-			tasks = null;
+			tasks = new ArrayList<TaskInfo>();
 			break;
 		}
 
-		this.taskListView.setAdapter(new TaskListAdapter(tasks));
+		this.taskListView.setAdapter(this.adapter);
+		this.taskListView.setOnItemClickListener(this.adapter);
 		this.registerForContextMenu(this.taskListView);
 	}
 	
@@ -143,79 +148,175 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 	 * 用来显示task listview的adapter
 	 * @author Andriy
 	 */
-	private class TaskListAdapter extends BaseAdapter {
+	private class TaskListAdapter extends BaseAdapter implements OnItemClickListener{
 
-		private final List<TaskInfo> tasks;
-		public TaskListAdapter(List<TaskInfo> aTaskInfos) {
-			this.tasks = aTaskInfos;
-		}
+		// ===为什么选-2呢，因为后头有一个用（selectedPos+1）来比较，如果是-1，则[0]会中枪===
+		private final int NOT_SELECTED = -2;
+		/**
+		 * 当前选中的item的position，如果==NOT_SELECTED，表示没有选中
+		 */
+		private int selectedPos = NOT_SELECTED;
 		
 		@Override
 		public int getCount() {
-			return this.tasks.size() * 2;
+			if (selectedPos == NOT_SELECTED) {
+				return tasks.size();
+			}
+			else {
+				return tasks.size() + 1;
+			}
 		}
 
 		@Override
 		public Object getItem(int position) {
-			int index = position >> 1;
-			return this.tasks.get(index);
+			//=====根据listview中的位置获得data list中的位置=====
+			if (selectedPos == NOT_SELECTED) {
+				return tasks.get(position);
+			}
+			else {
+				if (position <= selectedPos) {
+					return tasks.get(position);
+				}
+				else if (position == selectedPos+1) {
+					return tasks.get(selectedPos);
+				}
+				else {
+					return tasks.get(position-1);
+				}
+			}
 		}
 
 		@Override
 		public long getItemId(int position) {
-			return position * 2;
+			//=====根据数据list中的位置获得listview中的位置=====
+			if (selectedPos == NOT_SELECTED) {
+				return position;
+			}
+			else {
+				if (position <= selectedPos) {
+					return position;
+				}
+				else {
+					return position+1;
+				}
+			}
+		}
+
+		/**
+		 * 刷一个brief information的界面
+		 * @param task 用此task的信息
+		 * @return
+		 */
+		private View getBriefView(TaskInfo task) {
+			View view = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_brief, null);
+			view.setBackgroundColor(OverviewTaskListActivity.this.getResources().getColor(R.color.low_priority));
+
+			TextView taskNameTextView = (TextView) view.findViewById(R.id.TL_taskNameTextView);
+			TextView startTimeTextView = (TextView) view.findViewById(R.id.TL_startTimeTextView);
+			TextView leftTimeTextView = (TextView) view.findViewById(R.id.TL_leftTimeTextView);
+
+			taskNameTextView.setText(task.getName());
+			startTimeTextView.setText(task.getStarttime() + "");
+			leftTimeTextView.setText(task.getDeadline() + "");				
+
+			return view;
+		}
+		
+		/**
+		 *  刷一个extended information的界面
+		 * @param task 用此task的信息
+		 * @return
+		 */
+		private View getExtendedView(final TaskInfo task) {
+			View view = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_extended, null);
+
+			TextView memoTextView = (TextView) view.findViewById(R.id.TL_memoTextView);
+			TextView progressTextView = (TextView) view.findViewById(R.id.TL_progressTextView);
+			Button startButton = (Button) view.findViewById(R.id.TL_startButton);
+			CheckBox finishBox = (CheckBox) view.findViewById(R.id.TL_finishCheckBox);
+			
+			memoTextView.setText(task.getHint());
+			progressTextView.setText("past" + " / " + "total");
+			startButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
+									+ " is about to start", Toast.LENGTH_SHORT).show();
+				}
+			});
+			finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
+							+ " finished? " + isChecked, Toast.LENGTH_SHORT).show();
+				}
+			});
+			
+			return view;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			final TaskInfo task = (TaskInfo) this.getItem(position);
 			if (convertView != null) {
 				//据说这里要判断、要优化，不知道怎么确认老的view和新的view是同一种类型并且不需要重绘
 			}
-
-			if (position % 2 == 0) {
-				//=====偶数，说明是brief information=====
-				convertView = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_brief, null);
-				convertView.setBackgroundColor(OverviewTaskListActivity.this.getResources().getColor(R.color.low_priority));
-
-				TextView taskNameTextView = (TextView) convertView.findViewById(R.id.TL_taskNameTextView);
-				TextView startTimeTextView = (TextView) convertView.findViewById(R.id.TL_startTimeTextView);
-				TextView leftTimeTextView = (TextView) convertView.findViewById(R.id.TL_leftTimeTextView);
-
-				taskNameTextView.setText(task.getName());
-				startTimeTextView.setText(task.getStarttime() + "");
-				leftTimeTextView.setText(task.getDeadline() + "");
+			
+			if (selectedPos == NOT_SELECTED) {
+				//=====说明没有选中，每一个都是brief information=====
+				TaskInfo task = tasks.get(position);
+				convertView = this.getBriefView(task);
 			}
 			else {
-				//=====奇数，说明是extended information=====
-				convertView = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_extended, null);
-//				convertView.setVisibility(View.GONE);
-
-				TextView memoTextView = (TextView) convertView.findViewById(R.id.TL_memoTextView);
-				TextView progressTextView = (TextView) convertView.findViewById(R.id.TL_progressTextView);
-				Button startButton = (Button) convertView.findViewById(R.id.TL_startButton);
-				CheckBox finishBox = (CheckBox) convertView.findViewById(R.id.TL_finishCheckBox);
-				
-				memoTextView.setText(task.getHint());
-				progressTextView.setText("past" + " / " + "total");
-				startButton.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-										+ " is about to start", Toast.LENGTH_SHORT).show();
-					}
-				});
-				finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-								+ " finished? " + isChecked, Toast.LENGTH_SHORT).show();
-					}
-				});
+				if (position <= selectedPos) {
+					//=====要展示的是selected的之前的部分，直接展示brief即可=====
+					TaskInfo task = tasks.get(position);
+					convertView = this.getBriefView(task);
+				}
+				else if (position == selectedPos+1) {
+					//=====就是你了！是extended information=====
+					TaskInfo task = tasks.get(selectedPos);
+					convertView = this.getExtendedView(task);
+				}
+				else {
+					//=====详细的部分已经过了，直接取x-1的那个task展示brief即可=====
+					TaskInfo task = tasks.get(position-1);
+					convertView = this.getBriefView(task);
+				}
 			}
 			return convertView;
+		}
+
+		/**
+		 * 此TaskListAdapter不仅仅管理data source，还处理item click！碉堡了！
+		 */
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			if (selectedPos == NOT_SELECTED) {
+				selectedPos = position;
+			}
+			else {
+				if (position < selectedPos) {
+					selectedPos = position;
+				}
+				else if (position == selectedPos) {
+					//=====之前选中，现在就不选中=====
+					selectedPos = NOT_SELECTED;
+				}
+				else if (position == selectedPos+1) {
+					//=====其实不用处理extended情况，因为它根本就不会被click到，不知道为什么=_======
+					return;
+				}
+				else {	//position > selectedPos+1
+					//=====需要减1的！=====
+					selectedPos = position - 1;
+				}
+			}
+			
+			//=====通知数据更新了，该刷新界面了=====
+			this.notifyDataSetChanged();
 		}
 	}
 
