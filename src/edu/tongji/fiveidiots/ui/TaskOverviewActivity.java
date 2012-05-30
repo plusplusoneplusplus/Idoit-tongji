@@ -28,7 +28,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -217,17 +221,53 @@ public class TaskOverviewActivity extends GDActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			final TaskInfo task = (TaskInfo) this.getItem(position);
 			if (convertView != null) {
 				//据说这里要判断、要优化，不知道怎么确认老的view和新的view是同一种类型并且不需要重绘
 			}
-			
+
 			if (position % 2 == 0) {
 				//=====偶数，说明是brief information=====
 				convertView = LayoutInflater.from(TaskOverviewActivity.this).inflate(R.layout.tasklist_item_brief, null);
+				convertView.setBackgroundColor(TaskOverviewActivity.this.getResources().getColor(R.color.low_priority));
+
+				TextView taskNameTextView = (TextView) convertView.findViewById(R.id.TL_taskNameTextView);
+				TextView startTimeTextView = (TextView) convertView.findViewById(R.id.TL_startTimeTextView);
+				TextView leftTimeTextView = (TextView) convertView.findViewById(R.id.TL_leftTimeTextView);
+
+//				taskNameTextView.setTextColor();
+				taskNameTextView.setText(task.getName());
+				startTimeTextView.setText(task.getStarttime() + "");
+				leftTimeTextView.setText(task.getDeadline() + "");
 			}
 			else {
 				//=====奇数，说明是extended information=====
 				convertView = LayoutInflater.from(TaskOverviewActivity.this).inflate(R.layout.tasklist_item_extended, null);
+//				convertView.setVisibility(View.INVISIBLE);
+				
+				TextView memoTextView = (TextView) convertView.findViewById(R.id.TL_memoTextView);
+				TextView progressTextView = (TextView) convertView.findViewById(R.id.TL_progressTextView);
+				Button startButton = (Button) convertView.findViewById(R.id.TL_startButton);
+				CheckBox finishBox = (CheckBox) convertView.findViewById(R.id.TL_finishCheckBox);
+				
+				memoTextView.setText(task.getHint());
+				progressTextView.setText("past" + " / " + "total");
+				startButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(TaskOverviewActivity.this, "task: " + task.getName()
+										+ " is about to start", Toast.LENGTH_SHORT).show();
+					}
+				});
+				finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						Toast.makeText(TaskOverviewActivity.this, "task: " + task.getName()
+								+ " finished? " + isChecked, Toast.LENGTH_SHORT).show();
+					}
+				});
 			}
 			return convertView;
 		}
