@@ -8,6 +8,7 @@ import greendroid.app.GDApplication;
  * 每个App只需一个这样的类
  * 主要功能是保存Home键的目标Activity，添加App Logo的目标网址
  * 由于Home键被自定义，因此该类目前没有任何作用
+ * @author IRainbow5
  */
 public class IDoItApplication extends GDApplication {
     @Override

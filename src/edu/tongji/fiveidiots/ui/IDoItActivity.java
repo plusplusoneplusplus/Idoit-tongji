@@ -8,6 +8,7 @@ import edu.tongji.fiveidiots.util.ActivityUtil;
 /**
  * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
  * 目前没起什么作用
+ * @author IRainbow5
  */
 public class IDoItActivity extends Activity {
 
@@ -17,6 +18,6 @@ public class IDoItActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        ActivityUtil.startNewActivity(this, TaskOverviewActivity.class, 1000L, true);
+        ActivityUtil.startNewActivity(this, OverviewTaskListActivity.class, 1000L, true);
     }
 }

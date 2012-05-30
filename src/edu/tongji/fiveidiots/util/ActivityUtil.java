@@ -17,12 +17,12 @@ public class ActivityUtil {
 	 * @param to 目标activity class对象
 	 * @param delayMillis 延迟时间（毫秒）
 	 * @param finishSelf 是否结束当前activity
+	 * @author IRainbow5
 	 */
 	public static void startNewActivity(final Activity from, final Class<?> to, long delayMillis, final boolean finishSelf){
 		
 		Handler handler = new Handler();
 		Runnable r = new Runnable(){
-
 			@Override
 			public void run() {
 				Intent intent = new Intent(from, to);
@@ -30,9 +30,7 @@ public class ActivityUtil {
 				if(finishSelf == true)
 					from.finish();
 			}
-			
 		};
-		
 		handler.postDelayed(r, delayMillis);
 	}
 }
