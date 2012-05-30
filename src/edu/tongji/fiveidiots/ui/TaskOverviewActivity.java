@@ -62,13 +62,13 @@ public class TaskOverviewActivity extends GDActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setActionBarContentView(R.layout.idoit);
-        
+        //setActionBarContentView(R.layout.idoit);
+
+        setActionBarContentView(R.layout.taskoverview);
         prepareActionBar();
         prepareQuickActionGrid();
-        setActionBarContentView(R.layout.taskoverview);
-        addActionBarItem(Type.Add);
-        addActionBarItem(Type.Edit);
+        //addActionBarItem(Type.Add);
+        //addActionBarItem(Type.Edit);
 
         taskListView = (ListView) findViewById(R.id.taskListView);
         
