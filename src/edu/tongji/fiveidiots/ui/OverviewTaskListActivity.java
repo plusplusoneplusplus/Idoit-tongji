@@ -3,10 +3,15 @@ package edu.tongji.fiveidiots.ui;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -98,8 +103,42 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 		}
 
 		this.taskListView.setAdapter(new TaskListAdapter(tasks));
+		this.registerForContextMenu(this.taskListView);
 	}
 	
+	/**
+	 * 用于listview的创建context menu
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.task_list_long_click_menus, menu);
+	}
+
+	/**
+	 * 用于处理listview中的相应，可以得到长按住的那个position
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.TL_longclicked_edit:
+			//TODO
+			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.TL_longclicked_delete:
+			//TODO
+			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
+			return true;
+
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
 	/**
 	 * 用来显示task listview的adapter
 	 * @author Andriy
@@ -178,6 +217,6 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 			}
 			return convertView;
 		}
-		
 	}
+
 }
