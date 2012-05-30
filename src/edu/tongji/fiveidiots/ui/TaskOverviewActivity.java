@@ -243,8 +243,7 @@ public class TaskOverviewActivity extends GDActivity {
 			else {
 				//=====奇数，说明是extended information=====
 				convertView = LayoutInflater.from(TaskOverviewActivity.this).inflate(R.layout.tasklist_item_extended, null);
-//				convertView.setVisibility(View.INVISIBLE);
-				
+//				convertView.setVisibility(View.INVISIBLE);				
 				TextView memoTextView = (TextView) convertView.findViewById(R.id.TL_memoTextView);
 				TextView progressTextView = (TextView) convertView.findViewById(R.id.TL_progressTextView);
 				Button startButton = (Button) convertView.findViewById(R.id.TL_startButton);
