@@ -28,6 +28,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -218,7 +221,7 @@ public class TaskOverviewActivity extends GDActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TaskInfo task = (TaskInfo) this.getItem(position);
+			final TaskInfo task = (TaskInfo) this.getItem(position);
 			if (convertView != null) {
 				//据说这里要判断、要优化，不知道怎么确认老的view和新的view是同一种类型并且不需要重绘
 			}
@@ -242,6 +245,29 @@ public class TaskOverviewActivity extends GDActivity {
 				convertView = LayoutInflater.from(TaskOverviewActivity.this).inflate(R.layout.tasklist_item_extended, null);
 //				convertView.setVisibility(View.INVISIBLE);
 				
+				TextView memoTextView = (TextView) convertView.findViewById(R.id.TL_memoTextView);
+				TextView progressTextView = (TextView) convertView.findViewById(R.id.TL_progressTextView);
+				Button startButton = (Button) convertView.findViewById(R.id.TL_startButton);
+				CheckBox finishBox = (CheckBox) convertView.findViewById(R.id.TL_finishCheckBox);
+				
+				memoTextView.setText(task.getHint());
+				progressTextView.setText("past" + " / " + "total");
+				startButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						Toast.makeText(TaskOverviewActivity.this, "task: " + task.getName()
+										+ " is about to start", Toast.LENGTH_SHORT).show();
+					}
+				});
+				finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						Toast.makeText(TaskOverviewActivity.this, "task: " + task.getName()
+								+ " finished? " + isChecked, Toast.LENGTH_SHORT).show();
+					}
+				});
 			}
 			return convertView;
 		}
