@@ -14,6 +14,9 @@ public class TestingHelper {
 
 	private static int randomID = 1;
 	
+	/**
+	 * 测试用， @return 一个随机生成的TaskInfo
+	 */
 	public static TaskInfo getRandomTask() {
 		TaskInfo info = new TaskInfo();
 		info.setId(randomID);
@@ -28,6 +31,9 @@ public class TestingHelper {
 		return info;
 	}
 	
+	/**
+	 * 测试用， @return 一串随机生成的TaskInfo们
+	 */
 	public static List<TaskInfo> getRandomTaskList() {
 		ArrayList<TaskInfo> list = new ArrayList<TaskInfo>();
 		int length = new Random().nextInt(5) + 5;
@@ -37,6 +43,10 @@ public class TestingHelper {
 		return list;
 	}
 	
+	/**
+	 * @return 返回一串随机字符串
+	 * @param length 要求的长度
+	 */
 	private static String getRandomString(int length) {
 		String source = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		StringBuilder builder = new StringBuilder();
