@@ -182,7 +182,6 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 				TextView startTimeTextView = (TextView) convertView.findViewById(R.id.TL_startTimeTextView);
 				TextView leftTimeTextView = (TextView) convertView.findViewById(R.id.TL_leftTimeTextView);
 
-//				taskNameTextView.setTextColor();
 				taskNameTextView.setText(task.getName());
 				startTimeTextView.setText(task.getStarttime() + "");
 				leftTimeTextView.setText(task.getDeadline() + "");
@@ -190,7 +189,8 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 			else {
 				//=====奇数，说明是extended information=====
 				convertView = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_extended, null);
-//				convertView.setVisibility(View.INVISIBLE);				
+//				convertView.setVisibility(View.GONE);
+
 				TextView memoTextView = (TextView) convertView.findViewById(R.id.TL_memoTextView);
 				TextView progressTextView = (TextView) convertView.findViewById(R.id.TL_progressTextView);
 				Button startButton = (Button) convertView.findViewById(R.id.TL_startButton);
