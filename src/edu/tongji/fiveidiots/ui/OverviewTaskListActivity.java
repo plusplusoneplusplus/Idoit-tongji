@@ -7,14 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.TestingHelper;
@@ -26,6 +27,7 @@ import edu.tongji.fiveidiots.util.TestingHelper;
 public class OverviewTaskListActivity extends OverviewActionBarActivity{
 
 	private ListView taskListView;
+	private ListView tagListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	
 	private static enum TaskSheetType {
@@ -51,6 +53,22 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 				resetTaskList();
 			}
 		});
+        
+        initTagList();
+	}
+	
+	private void initTagList()
+	{
+		tagListView = (ListView) findViewById(R.id.tagListView);
+		
+        String[] data ={
+        		"1",
+        		"2",
+        		"3"
+        		};
+
+
+        tagListView.setAdapter(new ArrayAdapter(this,android.R.layout.simple_list_item_1,data));
 	}
 
 	/**
