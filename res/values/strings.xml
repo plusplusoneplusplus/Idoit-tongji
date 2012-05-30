@@ -11,4 +11,6 @@
     <string name="all">全部</string>
     <string name="pool">收集池</string>
     <string name="periodic">周期任务</string>
+    <string name="TL_longclicked_edit">编辑</string>
+    <string name="TL_longclicked_delete">删除</string>
 </resources>

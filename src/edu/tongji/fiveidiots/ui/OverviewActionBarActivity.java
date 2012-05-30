@@ -164,7 +164,8 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		switch(item.getItemId())
 		{
 		case R.id.action_bar_add:
-			
+			//=====跳转到测试后台数据用的界面=====
+			ActivityUtil.startNewActivity(this, TestingActivity.class, 0, false);
 			break;
 		case R.id.action_bar_timer:
 			ActivityUtil.startNewActivity(this, PomotimerActivity.class, 0, false);
