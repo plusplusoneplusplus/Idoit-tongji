@@ -226,10 +226,13 @@ public class TaskOverviewActivity extends GDActivity {
 			if (position % 2 == 0) {
 				//=====偶数，说明是brief information=====
 				convertView = LayoutInflater.from(TaskOverviewActivity.this).inflate(R.layout.tasklist_item_brief, null);
+				convertView.setBackgroundColor(TaskOverviewActivity.this.getResources().getColor(R.color.low_priority));
+
 				TextView taskNameTextView = (TextView) convertView.findViewById(R.id.TL_taskNameTextView);
 				TextView startTimeTextView = (TextView) convertView.findViewById(R.id.TL_startTimeTextView);
 				TextView leftTimeTextView = (TextView) convertView.findViewById(R.id.TL_leftTimeTextView);
-				
+
+//				taskNameTextView.setTextColor();
 				taskNameTextView.setText(task.getName());
 				startTimeTextView.setText(task.getStarttime() + "");
 				leftTimeTextView.setText(task.getDeadline() + "");

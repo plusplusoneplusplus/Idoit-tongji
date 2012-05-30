@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:layout_margin="10dp"
-    android:padding="5dp">
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="15dp"
+    android:padding="5dp" >
 
     <TextView
         android:id="@+id/TL_taskNameTextView"
@@ -11,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
         android:text="TASK_NAME"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -21,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/TL_taskNameTextView"
         android:layout_below="@+id/TL_taskNameTextView"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="3dp"
         android:text="START_TIME"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -32,7 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
         android:text="LEFT_TIME"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
