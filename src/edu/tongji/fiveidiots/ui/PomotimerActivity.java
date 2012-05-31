@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -281,6 +282,7 @@ public class PomotimerActivity extends Activity {
 				releaseTimer();
 				refreshCakeView();
 				refreshTimeLeftText();
+				Log.d("__ANDRIY__", "timer finished, total: " + totalTime);
 				return true;
 
 			case MSG_TIME_LEFT_CHANGED:
