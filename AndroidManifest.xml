@@ -10,7 +10,7 @@
         android:name=".ui.IDoItApplication"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/Theme.IDoIt" >
+        android:theme="@style/Theme.GreenDroid" >
         <activity
             android:name=".ui.IDoItActivity"
             android:label="@string/app_name" >
