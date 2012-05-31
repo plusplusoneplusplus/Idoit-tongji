@@ -147,20 +147,24 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 	 */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		boolean isSelected;
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//TODO
 			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			return true;
+			isSelected = true;
+			break;
 		case R.id.TL_longclicked_delete:
 			//TODO
 			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			return true;
-
+			isSelected = true;
+			break;
 		default:
-			return super.onContextItemSelected(item);
+			isSelected = super.onContextItemSelected(item);
 		}
+		
+		return isSelected;
 	}
 
 	/**

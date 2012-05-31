@@ -15,15 +15,17 @@ public class TaskController {
 	
 	private ArrayList<TaskInfo> taskContainer;
 	private TaskInfo tempTask;
-	static int oneclock = 25;
+	public static int oneclock = 25;
 	
-	TaskController(){
+	public TaskController(){
 		taskContainer = new ArrayList<TaskInfo>();
-		taskContainer.clear();
+		tempTask = null;
 	}
+	
 	public void AddTask(TaskInfo aTask){
 		taskContainer.add(aTask);
 	}
+	
 	public void RemoveTask(int id){
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
@@ -34,24 +36,30 @@ public class TaskController {
 		}	
 	}
 	public TaskInfo ShowTaskInfo(int id){
+		TaskInfo task = null;
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			if (tempTask.getId() == id){
-				return tempTask;
+				task = tempTask;
+				break;
 			}
 		}
-		return null;
+		return task;
 	}
-	public Boolean ModifyTaskInfo(int id,TaskInfo aTask){
+	
+	public boolean ModifyTaskInfo(int id,TaskInfo aTask){
+		boolean success = false;
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			if (tempTask.getId() == id){
 				tempTask.copy(aTask);
-				return true;
+				success = true;
+				break;
 			}
 		}
-		return false;
+		return success;
 	}
+	
 	public ArrayList<TaskInfo> ShowTaskList(){
 		return taskContainer;
 	}
@@ -72,6 +80,7 @@ public class TaskController {
 		int month [] = {31,28,31,30,31,30,31,31,30,31,30,31};
 		return 200;
 	}
+	
 	public TaskInfo Suggest(Date cur){
 		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
 		tempContainer.clear();
@@ -99,7 +108,10 @@ public class TaskController {
 		if (minpri < 10000){
 			return ansPri;
 		}
-		else return ansFac;
+		else 
+		{
+			return ansFac;
+		}
 	}
 	
 	public void FinishCycle(int id,int interrupt,double percent,Date cur){

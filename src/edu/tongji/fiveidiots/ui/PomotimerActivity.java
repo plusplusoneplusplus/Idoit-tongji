@@ -277,18 +277,21 @@ public class PomotimerActivity extends Activity {
 
 		@Override
 		public boolean handleMessage(Message msg) {
+			boolean shouldHandle;
 			switch (msg.what) {
 			case MSG_TIMES_UP:
 				releaseTimer();
 				refreshCakeView();
 				refreshTimeLeftText();
 				Log.d("__ANDRIY__", "timer finished, total: " + totalTime);
-				return true;
+				shouldHandle = true;
+				break;
 
 			case MSG_TIME_LEFT_CHANGED:
 				refreshTimeLeftText();
 				refreshCakeView();
-				return true;
+				shouldHandle = true;
+				break;
 				
 			case MSG_WANT_TO_QUIT:
 				if (countingState == STATE_COUNTING) {
@@ -298,11 +301,13 @@ public class PomotimerActivity extends Activity {
 					// TODO 告诉XXX这个任务中断了！
 				}
 				onBackPressed();
-				return true;
+				shouldHandle = true;
+				break;
 
 			default:
-				return false;
+				shouldHandle = false;
 			}
+			return shouldHandle;
 		}		
 	}
 

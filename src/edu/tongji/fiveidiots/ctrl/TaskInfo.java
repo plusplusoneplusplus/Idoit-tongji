@@ -8,19 +8,21 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TaskInfo {
-	private int pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id;
+	private int pri, pre_id, next_id, pcycle, ncycle, way, interrupt, id;
 	private double percent;
-	private String name,addr,hint;
-	private Date starttime,deadline;
+	private String name, addr, hint;
+	private Date starttime, deadline;
 	private ArrayList<String> tag;
-	private Boolean expire,finish;
-	
+	private boolean expire, finish;
+
 	/**
 	 * 空的构造函数，测试方便
 	 */
-	public TaskInfo() {}
-	
-	TaskInfo(int id,String name, String addr, String hint, int pri, int pre_id, int next_id, int cycle, int way, Date deadline){
+	public TaskInfo() {
+	}
+
+	public TaskInfo(int id, String name, String addr, String hint, int pri,
+			int pre_id, int next_id, int cycle, int way, Date deadline) {
 		this.id = id;
 		this.name = name;
 		this.addr = addr;
@@ -36,10 +38,9 @@ public class TaskInfo {
 		finish = false;
 		percent = 0.0;
 		tag = new ArrayList<String>();
-		tag.clear();
 	}
-	
-	public void copy(TaskInfo aTask){
+
+	public void copy(TaskInfo aTask) {
 		this.id = aTask.getId();
 		this.name = aTask.getName();
 		this.addr = aTask.getAddr();
@@ -52,12 +53,20 @@ public class TaskInfo {
 		this.way = aTask.getWay();
 		this.deadline = aTask.getDeadline();
 		this.percent = aTask.getPercent();
-		if (aTask.IsExpire()) this.expire = true;
-		else this.expire = false;
-		if (aTask.IsFinish()) this.finish = true;
-		else this.finish = false;
+
+		if (aTask.IsExpire()) {
+			this.expire = true;
+		} else {
+			this.expire = false;
+		}
+
+		if (aTask.IsFinish()) {
+			this.finish = true;
+		} else {
+			this.finish = false;
+		}
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -65,133 +74,166 @@ public class TaskInfo {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public int getPcycle() {
 		return pcycle;
 	}
+
 	public void setPcycle(int pcycle) {
 		this.pcycle = pcycle;
 	}
+
 	public int getNcycle() {
 		return ncycle;
 	}
+
 	public void setNcycle(int ncycle) {
 		this.ncycle = ncycle;
 	}
+
 	public int getPri() {
 		return pri;
 	}
+
 	public void setPri(int pri) {
 		this.pri = pri;
 	}
+
 	public int getPre_id() {
 		return pre_id;
 	}
+
 	public void setPre_id(int pre_id) {
 		this.pre_id = pre_id;
 	}
+
 	public int getNext_id() {
 		return next_id;
 	}
+
 	public void setNext_id(int next_id) {
 		this.next_id = next_id;
 	}
-	
+
 	public int getWay() {
 		return way;
 	}
+
 	public void setWay(int way) {
 		this.way = way;
 	}
+
 	public int getInterrupt() {
 		return interrupt;
 	}
+
 	public void setInterrupt(int interrupt) {
 		this.interrupt = interrupt;
 	}
+
 	public double getPercent() {
 		return percent;
 	}
+
 	public void setPercent(double percent) {
 		this.percent = percent;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getAddr() {
 		return addr;
 	}
+
 	public void setAddr(String addr) {
 		this.addr = addr;
 	}
+
 	public String getHint() {
 		return hint;
 	}
+
 	public void setHint(String hint) {
 		this.hint = hint;
 	}
-	
+
 	public Date getStarttime() {
 		return starttime;
 	}
+
 	public void setStarttime(Date starttime) {
 		this.starttime = starttime;
 	}
+
 	public Date getDeadline() {
 		return deadline;
 	}
+
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
-	
-	
-	public void ImportTag(ArrayList<String> tag){
+
+	public void ImportTag(ArrayList<String> tag) {
 		this.tag.clear();
 		this.tag.addAll(tag);
-	}	
-	public ArrayList<String> ExportTag(){
+	}
+
+	public ArrayList<String> ExportTag() {
 		return this.tag;
 	}
-	
-	public void addTag(String atag){
+
+	public void addTag(String atag) {
 		tag.add(atag);
 	}
-	public void deleteTag(int id){
+
+	public void deleteTag(int id) {
 		tag.remove(id);
 	}
-	public Boolean searchTag(String str){
-		for ( int i = 0; i < tag.size(); ++ i){
-			if (str.equals(tag.get(i))){
-				return true;
+
+	public boolean searchTag(String str) {
+		boolean find = false;
+		for (int i = 0; i < tag.size(); ++i) {
+			if (str.equals(tag.get(i))) {
+				find = true;
+				break;
 			}
 		}
-		return false;
+		return find;
 	}
-	
-	public Boolean IsExpire(){
+
+	public boolean IsExpire() {
 		return expire;
 	}
-	public void SetExpire(){
+
+	public void SetExpire() {
 		expire = true;
 	}
-	
-	public Boolean IsFinish(){
+
+	public boolean IsFinish() {
 		return finish;
 	}
-	public void SetFinish(){
+
+	public void SetFinish() {
 		finish = true;
 	}
-	
-	public void FinishCycle(int interrupt,double percent,Date cur){
+
+	public void FinishCycle(int interrupt, double percent, Date cur) {
 		this.interrupt += interrupt;
 		this.percent += percent;
-		if (this.percent >= 100) finish = true;
-		if (this.deadline.before(cur)) expire = true;
-		pcycle ++;
-		ncycle = (int)Math.ceil((100.0 - percent) / (percent / pcycle));
+		if (this.percent >= 100) {
+			finish = true;
+		}
+		if (this.deadline.before(cur)) {
+			expire = true;
+		}
+		pcycle++;
+		ncycle = (int) Math.ceil((100.0 - percent) / (percent / pcycle));
 	}
-	
-	
+
 }
