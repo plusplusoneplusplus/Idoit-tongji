@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import edu.tongji.fiveidiots.R;
@@ -27,12 +28,20 @@ import edu.tongji.fiveidiots.util.TestingHelper;
 public abstract class OverviewTagListActivity extends OverviewActionBarActivity {
 
 	private ListView tagListView;
+	private ClickForbiddenSD sd;
 	private List<String> tags = new ArrayList<String>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
+		sd = (ClickForbiddenSD) findViewById(R.id.sliding_drawer);
+		sd.setHandleId(R.id.tag_handle);
+		
+		//test begin
+
+		//test end
+		
 		tags = TestingHelper.getRandomTagList();
 		tagListView = (ListView) findViewById(R.id.tagListView);
 		tagListView.setAdapter(new TagListAdapter());
