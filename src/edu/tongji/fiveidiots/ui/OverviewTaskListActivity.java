@@ -32,10 +32,9 @@ import edu.tongji.fiveidiots.util.TestingHelper;
  * 主要负责管理tasks的显示和业务逻辑控制
  * @author Andriy @author IRainbow5
  */
-public class OverviewTaskListActivity extends OverviewActionBarActivity{
+public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 	private ListView taskListView;
-	private ListView tagListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	private List<TaskInfo> tasks = new ArrayList<TaskInfo>();
 	private TaskListAdapter adapter = new TaskListAdapter();
@@ -63,23 +62,10 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 				resetTaskList();
 			}
 		});
-        
-        initTagList();
+
 	}
 	
-	private void initTagList()
-	{
-		tagListView = (ListView) findViewById(R.id.tagListView);
-		
-        String[] data ={
-        		"1",
-        		"2",
-        		"3"
-        		};
 
-
-        tagListView.setAdapter(new ArrayAdapter(this,android.R.layout.simple_list_item_1,data));
-	}
 
 	/**
 	 * 因为此activity终将继承于GDActivity，告诉其加载哪个layout
