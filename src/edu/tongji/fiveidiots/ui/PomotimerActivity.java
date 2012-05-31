@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -73,7 +74,6 @@ public class PomotimerActivity extends Activity {
 		}
 
 		//=====设置全屏，但是有标题=====
-//		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setContentView(R.layout.timer);
@@ -88,6 +88,8 @@ public class PomotimerActivity extends Activity {
 		//=====计时器的初始化or重建=====
 		switch (countingState) {
 		case STATE_IDLE:
+			this.resetTimer(20, 20);
+			break;
 		case STATE_READY:
 			break;
 		case STATE_COUNTING:
@@ -112,11 +114,21 @@ public class PomotimerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				if (countingState != STATE_READY) {
-					resetTimer(20, 20);					
+				switch (countingState) {
+				case STATE_IDLE:
+					resetTimer(20, 20);
+					//=====有意不break，继续执行吧少年=====
+				case STATE_READY:
+					startTimer();
+					Toast.makeText(PomotimerActivity.this, "计时开始！", Toast.LENGTH_SHORT).show();
+					break;
+				case STATE_COUNTING:
+					//=====计时中，又按了一下，就不鸟它了吧=====
+					break;
+
+				default:
+					break;
 				}
-				startTimer();
-				Toast.makeText(PomotimerActivity.this, "Ready? Go!", Toast.LENGTH_SHORT).show();
 			}
 		});
 		this.addIdeaImageView.setOnClickListener(new OnClickListener() {
@@ -270,6 +282,7 @@ public class PomotimerActivity extends Activity {
 				releaseTimer();
 				refreshCakeView();
 				refreshTimeLeftText();
+				Log.d("__ANDRIY__", "timer finished, total: " + totalTime);
 				return true;
 
 			case MSG_TIME_LEFT_CHANGED:
