@@ -139,6 +139,7 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.task_list_long_click_menus, menu);
+		menu.setHeaderTitle(R.string.TL_longclicked_operations);
 	}
 
 	/**

@@ -13,4 +13,9 @@
     <string name="periodic">周期任务</string>
     <string name="TL_longclicked_edit">编辑</string>
     <string name="TL_longclicked_delete">删除</string>
+    <string name="TL_longclicked_operations">操作</string>
+    <string name="PT_quit_confirm">是，我要中断</string>
+    <string name="PT_quit_cancel">不，继续努力</string>
+    <string name="PT_quit_title">警告</string>
+    <string name="PT_quit_message">真的要退出吗，亲？退出将中断此次番茄时间！</string>
 </resources>
