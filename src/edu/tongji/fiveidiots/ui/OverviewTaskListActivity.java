@@ -227,7 +227,19 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 		 */
 		private View getBriefView(TaskInfo task) {
 			View view = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_brief, null);
-			view.setBackgroundColor(OverviewTaskListActivity.this.getResources().getColor(R.color.low_priority));
+			switch (task.getPri()) {
+			case 0:
+				view.setBackgroundResource(R.drawable.high_priority_bg);
+				break;
+			case 1:
+				view.setBackgroundResource(R.drawable.mid_priority_bg);
+				break;
+			case 2:
+				view.setBackgroundResource(R.drawable.low_priority_bg);
+				break;
+			default:
+				break;
+			}
 
 			TextView taskNameTextView = (TextView) view.findViewById(R.id.TL_taskNameTextView);
 			TextView startTimeTextView = (TextView) view.findViewById(R.id.TL_startTimeTextView);
