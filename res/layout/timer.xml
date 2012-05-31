@@ -21,4 +21,12 @@
         android:layout_centerVertical="true" >
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/addIdeaImageView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/plus" />
+
 </RelativeLayout>
