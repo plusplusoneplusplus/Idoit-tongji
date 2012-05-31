@@ -14,6 +14,8 @@ public class TestingHelper {
 
 	private static int randomID = 1;
 	
+	private static final Random random = new Random();
+	
 	/**
 	 * 测试用， @return 一个随机生成的TaskInfo
 	 */
@@ -26,6 +28,7 @@ public class TestingHelper {
 		info.setHint("hint: " + getRandomString(5));
 		info.setInterrupt(0);
 		info.setName("name: " + getRandomString(5));
+		info.setPri(random.nextInt(3));
 
 		randomID++;
 		return info;
@@ -36,7 +39,7 @@ public class TestingHelper {
 	 */
 	public static List<TaskInfo> getRandomTaskList() {
 		ArrayList<TaskInfo> list = new ArrayList<TaskInfo>();
-		int length = new Random().nextInt(5) + 5;
+		int length = random.nextInt(5) + 5;
 		for (int i = 0; i < length; i++) {
 			list.add(getRandomTask());
 		}
@@ -50,7 +53,6 @@ public class TestingHelper {
 	private static String getRandomString(int length) {
 		String source = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		StringBuilder builder = new StringBuilder();
-		Random random = new Random();
 		for (int i = 0; i < length; i++) {
 			builder.append(source.charAt(random.nextInt(source.length())));
 		}
