@@ -13,4 +13,5 @@
     <string name="periodic">周期任务</string>
     <string name="TL_longclicked_edit">编辑</string>
     <string name="TL_longclicked_delete">删除</string>
+    <string name="TL_longclicked_operations">操作</string>
 </resources>
