@@ -19,6 +19,7 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -33,6 +34,8 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	private QuickActionGrid mGridMore;
 	private QuickActionGrid mGridTimeLine;
 	
+	private View mHomeButton;
+	
 	/**
 	 * 存储grid上 postion-resID键值对 数组
 	 */
@@ -46,6 +49,8 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		mySetActionBarContentView();
 		prepareActionBar();
 		prepareQuickActionGrid();
+		
+		mHomeButton = getActionBar().getHomeButton();
 	}
 	
 	//继承重写，设置view
@@ -157,7 +162,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		//if press HOME actionbar item, the 'item' value is null, so catch it here
 		if(position == OnActionBarListener.HOME_ITEM)
 		{
-			mGridTimeLine.show(((getActionBar()).getHomeButton()));
+			mGridTimeLine.show(mHomeButton);
 			return true;
 		}
 
