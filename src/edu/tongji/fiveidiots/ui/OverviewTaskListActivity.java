@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
+import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TestingHelper;
 
 /**
@@ -258,8 +258,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-									+ " is about to start", Toast.LENGTH_SHORT).show();
+					//=====进入番茄钟界面，传入TASK_ID和TASK_NAME=====
+					Bundle bundle = new Bundle();
+					bundle.putLong("TASK_ID", task.getId());
+					bundle.putString("TASK_NAME", task.getName());
+					ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
 				}
 			});
 			finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {

@@ -60,10 +60,20 @@ public class PomotimerActivity extends Activity {
 	private static final int STATE_READY = 2;
 	private static final int STATE_COUNTING = 3;
 
+	//=====相关task的信息=====
+	private long taskID = -1;
+	private String taskName = "这里将显示任务名称";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//=====得到传入的task的id和name=====
+		Bundle bundle = this.getIntent().getExtras();
+		if (bundle != null) {
+			this.taskID = bundle.getLong("TASK_ID", -1);
+			this.taskName = bundle.getString("TASK_NAME");
+		}
 
 		//====初始化handler，恢复状态=====
 		this.timerHandler = new Handler(new PomotimerCallback());
@@ -87,7 +97,6 @@ public class PomotimerActivity extends Activity {
 		cakeViewLayout.addView(this.cakeView);
 
 		//=====计时器的初始化or重建=====
-		new Settings(this).setPomotimerDuration(3);
 		int duration = new Settings(this).getPomotimerDuration();
 		switch (countingState) {
 		case STATE_IDLE:
@@ -111,7 +120,7 @@ public class PomotimerActivity extends Activity {
 		super.onResume();
 		
 		//=====UI的显示初始化=====
-		this.setTaskName("这里将显示任务名称");
+		this.setTaskName(this.taskName);
 		this.refreshTimeLeftText();
 		this.cakeView.setOnClickListener(new OnClickListener() {
 			
@@ -298,7 +307,7 @@ public class PomotimerActivity extends Activity {
 					releaseTimer();
 					refreshCakeView();
 					refreshTimeLeftText();
-					// TODO 告诉XXX这个任务中断了！
+					// TODO 告诉XXX这个taskID的任务中断了！
 				}
 				onBackPressed();
 				return true;

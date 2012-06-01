@@ -5,12 +5,12 @@ import java.util.Date;
 
 /**
  * 处理时间相关的操作，如生成描述字符串等
- * @author Andriy
  */
 public class TimeUtil {
 
 	/**
 	 * 比如说在番茄钟内，根据 @param seconds 显示剩余多少时间
+	 * @author Andriy
 	 */
 	public static String parseRemainingTime(long seconds) {
 		if (seconds >= 60) {
@@ -31,6 +31,7 @@ public class TimeUtil {
 	/**
 	 * @return 得到一个date的yyyy-MM-dd HH:mm的格式字符串
 	 * @param d : date
+	 * @author Andriy
 	 */
 	public static String parseDateTime(Date d) {
 		if (d == null) {
