@@ -103,6 +103,8 @@ public class PomotimerActivity extends Activity {
 			this.resetTimer(duration*60, duration*60);
 			break;
 		case STATE_READY:
+			//=====需要重置一下timertask=====
+			this.resetTimer(totalTime, remainTime);
 			break;
 		case STATE_COUNTING:
 			//=====resume上一次计时=====
@@ -237,8 +239,12 @@ public class PomotimerActivity extends Activity {
 	 * 开始计时器
 	 */
 	private void startTimer() {
-		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
-		this.countingState = STATE_COUNTING;
+		try {
+			new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
+			this.countingState = STATE_COUNTING;			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
