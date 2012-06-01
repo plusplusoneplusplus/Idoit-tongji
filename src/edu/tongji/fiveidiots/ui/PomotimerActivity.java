@@ -9,9 +9,13 @@ import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TimeUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -64,6 +68,9 @@ public class PomotimerActivity extends Activity {
 	private long taskID = -1;
 	private String taskName = "这里将显示任务名称";
 	
+	//=====与notification相关=====
+	private static final int POMO_NOTIFICATION_ID = 1;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,8 +92,9 @@ public class PomotimerActivity extends Activity {
 		}
 
 		//=====设置全屏，但是有标题=====
-		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//TODO 为了测试，先不全屏
+//		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setContentView(R.layout.timer);
 		this.remainTimeTextView = (TextView) findViewById(R.id.remainTimeTextView);
 		this.addIdeaImageView = (ImageView) findViewById(R.id.addIdeaImageView);
@@ -98,6 +106,7 @@ public class PomotimerActivity extends Activity {
 
 		//=====计时器的初始化or重建=====
 		int duration = new Settings(this).getPomotimerDuration();
+		duration = 1;
 		switch (countingState) {
 		case STATE_IDLE:
 			this.resetTimer(duration*60, duration*60);
@@ -114,7 +123,6 @@ public class PomotimerActivity extends Activity {
 		default:
 			break;
 		}
-		
 	}
 
 	@Override
@@ -239,12 +247,8 @@ public class PomotimerActivity extends Activity {
 	 * 开始计时器
 	 */
 	private void startTimer() {
-		try {
-			new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
-			this.countingState = STATE_COUNTING;			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
+		this.countingState = STATE_COUNTING;
 	}
 	
 	
@@ -286,6 +290,44 @@ public class PomotimerActivity extends Activity {
 	private void refreshCakeView() {
 		this.cakeView.invalidate();
 	}
+	
+	/**
+	 * 在通知栏上显示一个notification
+	 * @param message 要显示的内容
+	 * @param sound 是否有声音
+	 * @param vibrate 是否震动
+	 * @param ongoing 是否正在进行中
+	 */
+	private void showNotification(String message, boolean sound, boolean vibrate, boolean ongoing) {
+		//TODO
+		Notification notification = new Notification(R.drawable.icon, "", System.currentTimeMillis());
+		if (sound) {
+			notification.defaults |= Notification.DEFAULT_SOUND;
+		}
+		if (vibrate) {
+			notification.defaults |= Notification.DEFAULT_VIBRATE;
+		}
+		if (ongoing) {
+			notification.flags |= Notification.FLAG_ONGOING_EVENT;
+			notification.flags |= Notification.FLAG_NO_CLEAR;
+		}
+		
+		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, 	notificationIntent, 0);
+		notification.setLatestEventInfo(this, "IDoit", message,	contentIntent);
+
+		NotificationManager nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.notify(POMO_NOTIFICATION_ID, notification);
+	}
+	
+	/**
+	 * 清楚在通知栏上的notification
+	 */
+	private void cancelNotification() {
+		//TODO
+		NotificationManager nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancel(POMO_NOTIFICATION_ID);
+	}
 
 	/**
 	 * 处理计时器内的消息的callback
@@ -296,18 +338,20 @@ public class PomotimerActivity extends Activity {
 
 		@Override
 		public boolean handleMessage(Message msg) {
-			boolean msgHandled;
+			boolean msgHandled = false;
 			switch (msg.what) {
 			case MSG_TIMES_UP:
 				releaseTimer();
 				refreshCakeView();
 				refreshTimeLeftText();
+				showNotification("此次番茄周期结束！", true, true, false);
 				msgHandled = true;
 				break;
 
 			case MSG_TIME_LEFT_CHANGED:
 				refreshTimeLeftText();
 				refreshCakeView();
+				showNotification("剩余："+TimeUtil.parseRemainingTime(remainTime), false, false, true);
 				msgHandled = true;
 				break;
 				
@@ -316,6 +360,7 @@ public class PomotimerActivity extends Activity {
 					releaseTimer();
 					refreshCakeView();
 					refreshTimeLeftText();
+					cancelNotification();
 					// TODO 告诉XXX这个taskID的任务中断了！
 				}
 				onBackPressed();
