@@ -12,9 +12,12 @@ public class Settings {
 	private static final String IDOIT_SETTINGS_STR = "idoit-tongji_settings";
 	
 	private final SharedPreferences preferences;
+	
 	public Settings(Context context) {
 		this.preferences = context.getSharedPreferences(IDOIT_SETTINGS_STR, Context.MODE_PRIVATE);
 	}
+	
+	
 
 	//这么用！
 //	private static final String POWER_ON = "setting_power_on";
