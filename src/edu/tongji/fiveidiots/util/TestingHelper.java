@@ -58,4 +58,17 @@ public class TestingHelper {
 		}
 		return builder.toString();
 	}
+
+	/**
+	 * 获取随即tag列表
+	 * @return
+	 */
+	public static List<String> getRandomTagList(){
+		ArrayList<String> list = new ArrayList<String>();
+		int length = random.nextInt(4) + 2;
+		for(int i = 0; i < length; i++){
+			list.add(getRandomString(4));
+		}
+		return list;
+	}
 }

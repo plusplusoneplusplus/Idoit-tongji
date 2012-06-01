@@ -7,6 +7,7 @@ package edu.tongji.fiveidiots.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 
 public class ActivityUtil {
@@ -32,5 +33,30 @@ public class ActivityUtil {
 			}
 		};
 		handler.postDelayed(r, delayMillis);
+	}
+	
+	/**
+	 * 开始另一个activity，并且在它们之间传递一个bundle，（带有数据）
+	 * @param from 从哪个activity
+	 * @param to 到那个activity
+	 * @param delayMillis 延迟多久
+	 * @param finishSelf 原activity是否finish()
+	 * @param bundle 带有数据的bundle
+	 * @author Andriy
+	 */
+	public static void startActivityWithBundle(final Activity from, final Class<?> to, 
+			long delayMillis, final boolean finishSelf, final Bundle bundle) {
+		new Handler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				Intent intent = new Intent(from, to);
+				intent.putExtras(bundle);
+				from.startActivity(intent);
+				if(finishSelf == true) {
+					from.finish();
+				}
+			}
+		}, delayMillis);
 	}
 }

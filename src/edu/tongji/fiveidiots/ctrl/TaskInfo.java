@@ -8,10 +8,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TaskInfo {
-	private int pri, pre_id, next_id, pcycle, ncycle, way, interrupt, id;
+	
+	/** ID用int应该是不够的，还是用long吧 */
+	private long id;
+	
+	private int pri,pre_id,next_id,pcycle,ncycle,way,interrupt;
 	private double percent;
-	private String name, addr, hint;
-	private Date starttime, deadline;
+	/** 任务的名称 */
+	private String name;
+	private String addr,hint;
+	private Date starttime,deadline;
 	private ArrayList<String> tag;
 	private boolean expire, finish;
 
@@ -66,12 +72,18 @@ public class TaskInfo {
 			this.finish = false;
 		}
 	}
-
-	public int getId() {
+	
+	/**
+	 * @return 此task的ID
+	 */
+	public long getId() {
 		return id;
 	}
-
-	public void setId(int id) {
+	/**
+	 * 设置此task的ID
+	 * @param id
+	 */
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -139,10 +151,16 @@ public class TaskInfo {
 		this.percent = percent;
 	}
 
+	/**
+	 * @return 此task的名称
+	 */
 	public String getName() {
 		return name;
 	}
-
+	/**
+	 * 设置此task的名称
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}

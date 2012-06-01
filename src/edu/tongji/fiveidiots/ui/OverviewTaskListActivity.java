@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,16 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
+import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TestingHelper;
 
 /**
  * 主要负责管理tasks的显示和业务逻辑控制
  * @author Andriy @author IRainbow5
  */
-public class OverviewTaskListActivity extends OverviewActionBarActivity{
+public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 	private ListView taskListView;
-	private ListView tagListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	private List<TaskInfo> tasks = new ArrayList<TaskInfo>();
 	private TaskListAdapter adapter = new TaskListAdapter();
@@ -63,23 +62,10 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 				resetTaskList();
 			}
 		});
-        
-        initTagList();
+
 	}
 	
-	private void initTagList()
-	{
-		tagListView = (ListView) findViewById(R.id.tagListView);
-		
-        String[] data ={
-        		"1",
-        		"2",
-        		"3"
-        		};
 
-
-        tagListView.setAdapter(new ArrayAdapter(this,android.R.layout.simple_list_item_1,data));
-	}
 
 	/**
 	 * 因为此activity终将继承于GDActivity，告诉其加载哪个layout
@@ -276,8 +262,11 @@ public class OverviewTaskListActivity extends OverviewActionBarActivity{
 				
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-									+ " is about to start", Toast.LENGTH_SHORT).show();
+					//=====进入番茄钟界面，传入TASK_ID和TASK_NAME=====
+					Bundle bundle = new Bundle();
+					bundle.putLong("TASK_ID", task.getId());
+					bundle.putString("TASK_NAME", task.getName());
+					ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
 				}
 			});
 			finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {

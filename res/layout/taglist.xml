@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <edu.tongji.fiveidiots.ui.ClickForbiddenSD
+	    android:id="@+id/sliding_drawer"
+	    android:layout_width="200dip"
+	    android:layout_height="fill_parent"
+	    android:content="@+id/tagListView"
+	    android:handle="@+id/tag_handle"
+	    android:orientation="horizontal"
+	    android:layout_alignParentRight="true"
+	    >
+	<LinearLayout
+	    android:id="@id/tag_handle"
+	    android:layout_width="80dip"
+	    android:layout_height="fill_parent"
+	    android:background="#00000000" 
+	    >
+	</LinearLayout>
+	<ListView
+	    android:id="@id/tagListView"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="@color/orange"
+	    />
+	</edu.tongji.fiveidiots.ui.ClickForbiddenSD>
+
+</merge>

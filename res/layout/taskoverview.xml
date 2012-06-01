@@ -17,28 +17,7 @@
         android:layout_below="@id/testButton" >
     </ListView>
     
-    
-	<SlidingDrawer
-	    android:id="@+id/sliding_drawer"
-	    android:layout_width="300dip"
-	    android:layout_height="fill_parent"
-	    android:content="@+id/tagListView"
-	    android:handle="@+id/tag_handle"
-	    android:orientation="horizontal"
-	    android:layout_alignParentRight="true"
-	    >
-	<LinearLayout
-	    android:id="@id/tag_handle"
-	    android:layout_width="80px"
-	    android:layout_height="fill_parent"
-	    android:background="#00000000" 
-	    >
-	</LinearLayout>
-	<ListView
-	    android:id="@id/tagListView"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:background="@color/text_color"
-	    />
-	</SlidingDrawer>
+    <include android:id="@+id/tag_slidingdrawer"
+        		layout="@layout/taglist"/>
+
 </RelativeLayout>
