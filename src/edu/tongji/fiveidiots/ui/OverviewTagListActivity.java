@@ -44,6 +44,10 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		mTagListView = (ListView) findViewById(R.id.tagListView);
 		mTagListView.setAdapter(mTagListAdapter);
 		mTagListView.setOnItemClickListener(mTagListAdapter);
+		
+        //设置MyRelativeLayout所需的slidingdrawer id
+        MyRelativeLayout layout = (MyRelativeLayout) findViewById(R.id.task_overview);
+        layout.setSlidingDrawer(R.id.sliding_drawer);
 	}
 	
 	private class TagListAdapter extends BaseAdapter implements OnItemClickListener{

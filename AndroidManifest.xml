@@ -26,7 +26,13 @@
             android:name=".ui.OverviewTaskListActivity"
             android:theme="@style/Theme.IDoIt" >
         </activity>
-        <activity android:name=".ui.TestingActivity" >
+        	<activity android:name=".ui.TestingActivity" >
+        </activity>
+        
+        
+        <activity 
+            android:name=".ui.TaskDetailsActivity"
+        	android:theme="@style/Theme.IDoIt" >
         </activity>
 
         <service

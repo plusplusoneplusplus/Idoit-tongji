@@ -29,12 +29,12 @@ public class MyRelativeLayout extends RelativeLayout{
 	}
 
 	/**
-	 * 设置抽屉对象、记录他所在的矩形框坐标
+	 * 设置抽屉对象
 	 * @param resId
 	 */
 	public void setSlidingDrawer(int resId){
 		mSlidingDrawer = (SlidingDrawer) findViewById(resId);
-		mSDRect = new Rect(mSlidingDrawer.getLeft(), mSlidingDrawer.getTop(), mSlidingDrawer.getRight(), mSlidingDrawer.getBottom());
+		mSDRect = new Rect();
 	}
 	
 	
@@ -45,6 +45,7 @@ public class MyRelativeLayout extends RelativeLayout{
 			return super.dispatchTouchEvent(ev);
 		}
 		
+		//记录当前slidingdrawer位置
 		mSDRect.set(mSlidingDrawer.getLeft(), mSlidingDrawer.getTop(), mSlidingDrawer.getRight(), mSlidingDrawer.getBottom());
 		//判断触碰点是否在slidingdrawer矩形框内，如果不是并且slidingdrawer打开，则把它关闭
 		if(!mSDRect.contains((int)ev.getX(), (int)ev.getY()) && mSlidingDrawer.isOpened()){

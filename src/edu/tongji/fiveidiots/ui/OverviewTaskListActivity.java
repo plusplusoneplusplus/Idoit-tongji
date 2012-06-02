@@ -70,9 +70,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		});
 
         
-        //设置MyRelativeLayout所需的slidingdrawer id
-        MyRelativeLayout layout = (MyRelativeLayout) findViewById(R.id.task_overview);
-        layout.setSlidingDrawer(R.id.sliding_drawer);
+
 	}
 
 	@Override
@@ -154,7 +152,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//TODO
-			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
+			ActivityUtil.startNewActivity(this, TaskDetailsActivity.class, 0L, false);
 			isSelected = true;
 			break;
 		case R.id.TL_longclicked_delete:
