@@ -6,6 +6,8 @@
 
     <uses-sdk android:minSdkVersion="10" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".ui.IDoItApplication"
         android:icon="@drawable/icon"
@@ -33,7 +35,9 @@
             android:name=".ui.PomotimerService"
             android:exported="false" >
         </service>
-        <activity android:name=".ui.TaskDetailActivity"></activity>
+
+        <activity android:name=".ui.TaskDetailActivity" >
+        </activity>
     </application>
 
 </manifest>
