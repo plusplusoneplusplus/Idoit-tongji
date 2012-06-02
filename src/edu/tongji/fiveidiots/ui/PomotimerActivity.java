@@ -51,8 +51,6 @@ public class PomotimerActivity extends Activity {
 	 * 当前对应的task_id，如果没有对应task，就是-1
 	 */
 	private long currentTaskID = -1;
-	public static final String TASK_ID_STR = "task_id";
-	public static final String TASK_NAME_STR = "task_name";
 	
 	/**
 	 * service是否bind了
@@ -93,8 +91,8 @@ public class PomotimerActivity extends Activity {
 		//=====恢复状态、初始化Handler=====
 		Bundle bundle = this.getIntent().getExtras();
 		if (bundle != null) {
-			this.currentTaskID = bundle.getLong(TASK_ID_STR, -1); 
-			this.setTaskName(bundle.getString(TASK_NAME_STR));
+			this.currentTaskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1); 
+			this.setTaskName(bundle.getString(OverviewTaskListActivity.TASK_NAME_STR));
 		}
 		else {
 			this.setTaskName("这里将显示TASK_NAME");

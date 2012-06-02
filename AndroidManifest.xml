@@ -33,6 +33,7 @@
             android:name=".ui.PomotimerService"
             android:exported="false" >
         </service>
+        <activity android:name=".ui.TaskDetailActivity"></activity>
     </application>
 
 </manifest>
