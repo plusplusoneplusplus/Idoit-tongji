@@ -132,7 +132,7 @@ public class PomotimerService extends Service {
 		this.remainTime = remain;
 
 		//=====TODO 仅为测试用
-		this.remainTime = 10;
+		//this.remainTime = 10;
 		//=====END
 		
 		this.countingTimerTask = new TimerTask() {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+        	xmlns:android="http://schemas.android.com/apk/res/android">
+        
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/lightblue" >
+	    
+	   <TextView android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_timer"
+	       android:textColor="@color/white"
+	       android:background="@drawable/settings_title_bg"
+	       android:textAppearance="?android:attr/textAppearanceLarge" />
+	   
+	   <TextView android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text
+	       />
+	       
+	</RelativeLayout>
+
+</ScrollView>
