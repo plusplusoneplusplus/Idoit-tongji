@@ -2,8 +2,8 @@
  * Author: Qrc
  * Date:2012-05-28
  */
-package edu.tongji.fiveidiots.ctrl;
 
+package edu.tongji.fiveidiots.ctrl;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,8 +24,8 @@ import java.util.Date;
  * boolean IsDetermine()
  * void SetDetermine()
  * void FinishCycle(int interrupt,double percent,Date cur) 该任务完成一个蕃茄钟，调用一次该函数
- * 
  */
+
 public class TaskInfo {
 	// 优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，完成任务的方式，中断个数，任务ID
 	private int priority, preTaskId, nextTaskId, finishedCycle, unfinishedCycle, way, interrupt, id; 
@@ -34,7 +34,6 @@ public class TaskInfo {
 	private Date starttime, deadline; // 任务开始时间，截止时间
 	private ArrayList<String> tag; // 任务标签们
 	private boolean expire, finish, determine; // 任务是否过期，是否完成
-	
 	public TaskInfo(){
 		
 	}
@@ -62,8 +61,28 @@ public class TaskInfo {
 		this.tag = new ArrayList<String>(tag);
 		this.determine = determine;
 	}
-
-	public void copy(TaskInfo aTask) {
+	
+	public TaskInfo(int pri,int id,String name,ArrayList<String> tag){
+		this.id = id;
+		this.name = name;
+		this.addr = new String();
+		this.hint = new String();
+		this.priority = pri;
+		this.preTaskId = 0;
+		this.nextTaskId = 0;
+		this.finishedCycle = 0;
+		this.unfinishedCycle = 0;
+		this.way = 0;
+		this.deadline = new Date(0,0,1,0,0);
+		this.starttime = new Date(0,0,1,0,0);
+		this.expire = false;
+		this.finish = false;
+		this.percent = 0.0;
+		this.tag = new ArrayList<String>(tag);
+		this.determine = false;
+	}
+	
+	public void copy(TaskInfo aTask){
 		this.id = aTask.getId();
 		this.name = aTask.getName();
 		this.addr = aTask.getAddr();
@@ -124,35 +143,31 @@ public class TaskInfo {
 	public int getUnfinishedCycle() {
 		return unfinishedCycle;
 	}
+	
 
 	public void setUnfinishedCycle(int unfinishedCycle) {
 		this.unfinishedCycle = unfinishedCycle;
 	}
-
+	
 	public int getWay() {
 		return way;
 	}
-
 	public void setWay(int way) {
 		this.way = way;
 	}
-
 	public int getInterrupt() {
 		return interrupt;
 	}
-
 	public void setInterrupt(int interrupt) {
 		this.interrupt = interrupt;
 	}
-
 	public double getPercent() {
 		return percent;
 	}
-
 	public void setPercent(double percent) {
 		this.percent = percent;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -160,90 +175,79 @@ public class TaskInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getAddr() {
 		return addr;
 	}
-
 	public void setAddr(String addr) {
 		this.addr = addr;
 	}
-
 	public String getHint() {
 		return hint;
 	}
-
 	public void setHint(String hint) {
 		this.hint = hint;
 	}
-
+	
 	public Date getStarttime() {
 		return starttime;
 	}
-
 	public void setStarttime(Date starttime) {
 		this.starttime = starttime;
 	}
-
 	public Date getDeadline() {
 		return deadline;
 	}
-
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
-
-	public void importTags(ArrayList<String> tag) {
+	
+	public void ImportTag(ArrayList<String> tag){
 		this.tag.clear();
 		this.tag.addAll(tag);
 	}
 
-	public ArrayList<String> exportTag() {
+	public ArrayList<String> ExportTag(){
 		return this.tag;
 	}
-
-	public void addTag(String atag) {
+	
+	public void addTag(String atag){
 		tag.add(atag);
 	}
-
-	public void deleteTag(int id) {
+	public void deleteTag(int id){
 		tag.remove(id);
 	}
 
-	public boolean searchTag(String str) {
-		for (int i = 0; i < tag.size(); ++i) {
-			if (str.equals(tag.get(i))) {
+	public boolean containsTag(String str){
+		for ( int i = 0; i < tag.size(); ++ i){
+			if (str.equals(tag.get(i))){
 				return true;
 			}
 		}
 		return false;
 	}
-
-	public boolean IsExpire() {
+	
+	public boolean IsExpire(){
 		return expire;
 	}
-
-	public void SetExpire() {
+	public void SetExpire(){
 		expire = true;
 	}
-
-	public boolean IsFinish() {
+	
+	public boolean IsFinish(){
 		return finish;
 	}
-
-	public void SetFinish() {
+	public void SetFinish(){
 		finish = true;
 	}
-
-	public boolean IsDetermine() {
+	
+	public boolean IsDetermine(){
 		return determine;
 	}
-
-	public void SetDetermine() {
+	public void SetDetermine(){
 		determine = true;
 	}
-
-	public void FinishCycle(int interrupt, double percent, Date cur) {
+	
+	public void FinishCycle(int interrupt,double percent,Date cur){
 		this.interrupt += interrupt;
 		this.percent += percent;
 		if (this.percent >= 100)
@@ -252,6 +256,10 @@ public class TaskInfo {
 			expire = true;
 		finishedCycle++;
 		unfinishedCycle = (int) Math.ceil((100.0 - percent) / (percent / finishedCycle));
+		if (this.percent >= 100) finish = true;
+		if (this.deadline.before(cur)) expire = true;
+		finishedCycle ++;
+		unfinishedCycle = (int)Math.ceil((100.0 - percent) / (percent / finishedCycle));
 	}
-
+	
 }

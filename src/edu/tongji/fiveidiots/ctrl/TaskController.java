@@ -2,8 +2,8 @@
  * Author: Qrc
  * Date:2012-05-28
  */
-package edu.tongji.fiveidiots.ctrl;
 
+package edu.tongji.fiveidiots.ctrl;
 import java.io.FileReader;
 
 import java.io.FileWriter;
@@ -22,6 +22,10 @@ import java.util.Scanner;
  * TaskInfo ShowTaskInfo(int id) 根据任务id号显示相应任务
  * Boolean ModifyTaskInfo(int id,TaskInfo aTask) 根据任务id号修改相应任务
  * ArrayList<TaskInfo> ShowTaskList() 返回所有任务
+ * ArrayList<TaskInfo> GetTodayTask(Date cur) 传入今天的日期，返回今天任务列表
+ * ArrayList<TaskInfo> GetFutureTask(Date cur) 传入今天的日期，返回今天任务列表
+ * ArrayList<TaskInfo> GetPeriodicTask() 返回周期性任务列表
+ * ArrayList<TaskInfo> GetFinishedTask() 返回已经完成的任务列表
  * ArrayList<TaskInfo> SearchTag(String str) 根据某个标签，返回拥有该标签的任务
  * TaskInfo Suggest(Date cur) 根据现在的时间给出下一个任务的建议
  * void FinishCycle(int id,int interrupt,double percent,Date cur) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期所完成任务百分比，当前的时间
@@ -32,64 +36,103 @@ import java.util.Scanner;
 public class TaskController {
 	static int month [] = {31,28,31,30,31,30,31,31,30,31,30,31,100};
 	private ArrayList<TaskInfo> taskContainer;
-	// used as a temp variable
 	private TaskInfo tempTask;
-	public static int oneclock = 25;
+	static int oneclock = 25;
 	
 	public TaskController(){
 		taskContainer = new ArrayList<TaskInfo>();
-		tempTask = null;
+		taskContainer.clear();
 	}
 	
-	public void AddTask(TaskInfo aTask){
+	public void addTask(TaskInfo aTask){
 		taskContainer.add(aTask);
 	}
 	
-	public void RemoveTask(int id){	
-		tempTask = GetTaskInfo(id);
-		taskContainer.remove(tempTask);
+	public void removeTask(int id){
+		taskContainer.remove(getTaskInfo(id));
 	}
 	
-	public TaskInfo GetTaskInfo(int id){
-		TaskInfo task = null;
+	public TaskInfo getTaskInfo(int id){
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			if (tempTask.getId() == id){
-				task = tempTask;
-				break;
+				return tempTask;
 			}
 		}
-		return task;
+		return null;
 	}
 	
-	public boolean ReplaceTaskInfo(int id, TaskInfo after){
-		boolean isModified = false;
-		tempTask = this.GetTaskInfo(id);
+	public boolean modifyTaskInfo(int id,TaskInfo aTask){
+		tempTask = getTaskInfo(id);
 		if(tempTask != null){
-			tempTask.copy(after);
-			isModified = true;
+			tempTask.copy(aTask);
+			return true;
 		}
-		return isModified;
+		return false;
 	}
 	
-	public ArrayList<TaskInfo> GetTaskList(){
+	public ArrayList<TaskInfo> getTaskList(){
 		return taskContainer;
 	}
 	
-	/*
-	public ArrayList<TaskInfo> GetTodayTask(Date cur){
+	public ArrayList<TaskInfo> getTodayTaskList(Date cur){
+		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		Date tempDate;
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
-			if (tempTask.)
+			tempDate = tempTask.getStarttime();
+			if (tempDate.getYear() == cur.getYear() && tempDate.getMonth() == cur.getMonth() 
+					&& tempDate.getDate() == cur.getDate() && !tempTask.IsFinish() && !tempTask.IsExpire()){
+				tempContainer.add(tempTask);
+			}
 		}
+		return tempContainer;
 	}
-	*/
-	public ArrayList<TaskInfo> SearchTag(String str){
+	
+	public ArrayList<TaskInfo> getFutureTask(Date cur){
 		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		Date tempDate;
 		tempContainer.clear();
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
-			if (tempTask.searchTag(str)){
+			tempDate = tempTask.getStarttime();
+			if (tempDate.after(cur) && !tempTask.IsFinish() && !tempTask.IsExpire()){
+				tempContainer.add(tempTask);
+			}
+		}
+		return tempContainer;
+	}
+	
+	public ArrayList<TaskInfo> getPeriodicTask(){
+		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		for ( int i = 0; i < taskContainer.size(); ++ i){
+			tempTask = taskContainer.get(i);
+			int tt = tempTask.getWay() >> 21;
+			if (tt > 0 && !tempTask.IsFinish() && !tempTask.IsExpire()) 
+			{
+				tempContainer.add(tempTask);
+			}
+		}
+		return tempContainer;
+	}
+	
+	public ArrayList<TaskInfo> getFinishedTask(){
+		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		for ( int i = 0; i < taskContainer.size(); ++ i){
+			tempTask = taskContainer.get(i);
+			if (tempTask.IsFinish())
+			{
+				tempContainer.add(tempTask);
+			}
+		}
+		return tempContainer;
+	}
+	
+	public ArrayList<TaskInfo> getTaskListWithTag(String str){
+		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		for ( int i = 0; i < taskContainer.size(); ++ i){
+			tempTask = taskContainer.get(i);
+			if (tempTask.containsTag(str)){
 				tempContainer.add(tempTask);
 			}
 		}
@@ -128,35 +171,39 @@ public class TaskController {
 		if (minpri < 10000){
 			return ansPri;
 		}
-		else 
+		else
 		{
 			return ansFac;
 		}
 	}
 	
-	public void FinishCycle(int id,int interrupt,double percent,Date cur){
-		tempTask = GetTaskInfo(id);
-		tempTask.FinishCycle(interrupt, percent, cur);
+	public void finishCycle(int id,int interrupt,double percent,Date cur){
+		tempTask = getTaskInfo(id);
+		if(tempTask != null)
+		{
+			tempTask.FinishCycle(interrupt, percent, cur);
+		}
 	}
 	
-	public void Save(){
+	public void save(){
 		try{
 			FileWriter fout = new FileWriter("User.txt");
-			fout.write(taskContainer.size() + "\n");
+			fout.write(taskContainer.size() + "\r\n");
 			for (int i = 0; i < taskContainer.size(); ++ i){
 				tempTask = taskContainer.get(i);
-				fout.write(tempTask.getPriority() + " " + tempTask.getPreTaskId() + " " + tempTask.getNextTaskId() + " " + tempTask.getFinishedCycle() + " " + tempTask.getUnfinishedCycle() + " " + tempTask.getWay() + " " + tempTask.getInterrupt() + " " + tempTask.getId() + " " + tempTask.getPercent() + "\n");
-				fout.write(tempTask.getName() + "\n");
-				fout.write(tempTask.getAddr() + "\n");
-				fout.write(tempTask.getHint() + "\n");
+				fout.write(tempTask.getPriority() + " " + tempTask.getPreTaskId() + " " + tempTask.getNextTaskId() + " " + tempTask.getFinishedCycle() + " " + tempTask.getUnfinishedCycle() + " " + tempTask.getWay() + " " + tempTask.getInterrupt() + " " + tempTask.getId() + " " + tempTask.getPercent() + "\r\n");
+				fout.write(tempTask.getName() + "\r\n");
+				fout.write(tempTask.getAddr() + "\r\n");
+				fout.write(tempTask.getHint() + "\r\n");
 				Date tempDate = tempTask.getStarttime();
-				fout.write(tempDate.getYear() + " " + tempDate.getMonth() + " " + tempDate.getDate() + " " + tempDate.getHours() + " " + tempDate.getMinutes() + "\n");
+				fout.write(tempDate.getYear() + " " + tempDate.getMonth() + " " + tempDate.getDate() + " " + tempDate.getHours() + " " + tempDate.getMinutes() + "\r\n");
 				tempDate = tempTask.getDeadline();
-				fout.write(tempDate.getYear() + " " + tempDate.getMonth() + " " + tempDate.getDate() + " " + tempDate.getHours() + " " + tempDate.getMinutes() + "\n");
-				ArrayList<String> tempTag = tempTask.exportTag();
-				fout.write(tempTag.size());
+				fout.write(tempDate.getYear() + " " + tempDate.getMonth() + " " + tempDate.getDate() + " " + tempDate.getHours() + " " + tempDate.getMinutes() + "\r\n");
+				ArrayList<String> tempTag = tempTask.ExportTag();
+				int number = tempTag.size();
+				fout.write(number + "\r\n");
 				for ( int j = 0; j < tempTag.size(); ++ j){
-					fout.write(tempTag.get(j) + "\n");
+					fout.write(tempTag.get(j) + "\r\n");
 				}
 				if (tempTask.IsExpire()) fout.write("1");
 				else fout.write("0");
@@ -166,7 +213,7 @@ public class TaskController {
 				fout.write(" ");
 				if (tempTask.IsDetermine()) fout.write("1");
 				else fout.write("0");
-				fout.write("\n");
+				fout.write("\r\n");
 				
 			}
 			fout.close();
@@ -177,7 +224,7 @@ public class TaskController {
 		
 	}
 	
-	public void Read(){
+	public void read(){
 		try{
 			FileReader fin = new FileReader("User.txt");
 			Scanner scanner = new Scanner(fin);
@@ -189,9 +236,11 @@ public class TaskController {
 			ArrayList<String> tag = new ArrayList<String>();
 			Boolean expire,finish,determine;
 			int num;
+			
 			num = scanner.nextInt();
 			for ( int i = 0; i < num; ++ i){
 				pri = scanner.nextInt();
+				
 				pre_id = scanner.nextInt();
 				next_id = scanner.nextInt();
 				pcycle = scanner.nextInt();
@@ -199,16 +248,20 @@ public class TaskController {
 				way = scanner.nextInt();
 				interrupt = scanner.nextInt();
 				id = scanner.nextInt();
-				percent = scanner.nextInt();
-				name = scanner.next();
-				addr = scanner.next();
-				hint = scanner.next();
+				percent = scanner.nextDouble();
+				
+				name = scanner.nextLine();
+				name = scanner.nextLine();
+				addr = scanner.nextLine();
+				hint = scanner.nextLine();
+				
 				starttime = new Date(scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt());
 				deadline = new Date(scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt());
 				int number = scanner.nextInt();
+				scanner.nextLine();
 				tag.clear();
 				for ( int j = 0; j < number; ++ j){
-					tag.add(scanner.next());
+					tag.add(scanner.nextLine());
 				}
 				int a = scanner.nextInt();
 				if (a == 1) expire = true;
@@ -221,13 +274,13 @@ public class TaskController {
 				else determine = false;
 				TaskInfo tt = new TaskInfo(pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id,percent,name,addr,hint,starttime,deadline,tag,expire,finish,determine);
 				taskContainer.add(tt);
+				
 			}
+			fin.close();
 		}
 		catch (Exception e){
 			System.out.println(e);
 		}
 	}
-	
 
-	
 }
