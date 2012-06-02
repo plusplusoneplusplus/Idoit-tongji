@@ -16,6 +16,8 @@ public class Settings {
 	public static class DefaultSettings {
 		/** 默认一个番茄钟时间周期是25min */
 		public static final int POMOTIMER_DURATION = 25;
+		/** 默认一个番茄钟2个时间周期之间的间隔为5min */
+		public static final int POMOTIMER_INTERVAL = 5;
 
 		/** 默认番茄计时器的状态 */
 		public static final int TIMER_STATE = PomotimerService.STATE_IDLE;
@@ -39,6 +41,8 @@ public class Settings {
 	 */
 	public void reset() {
 		this.setPomotimerDuration(DefaultSettings.POMOTIMER_DURATION);
+		this.setPomotimerInterval(DefaultSettings.POMOTIMER_INTERVAL);
+
 		new TimerTempSettings().reset();
 	}
 	
@@ -48,14 +52,30 @@ public class Settings {
 	 * @return 一个番茄钟周期的时间，单位分钟
 	 */
 	public int getPomotimerDuration() {
-		return preferences.getInt(POMOTIMER_DURATION_STR, DefaultSettings.POMOTIMER_DURATION);
+		return this.preferences.getInt(POMOTIMER_DURATION_STR, DefaultSettings.POMOTIMER_DURATION);
 	}
 	/**
 	 * 设置一个番茄钟周期的时间
 	 * @param minute 单位：分钟
 	 */
 	public void setPomotimerDuration(int minute) {
-		preferences.edit().putInt(POMOTIMER_DURATION_STR, minute).commit();
+		this.preferences.edit().putInt(POMOTIMER_DURATION_STR, minute).commit();
+	}
+	
+	//==========
+	private static final String POMOTIMER_INTERVAL_STR = "pomo_timer_interval";
+	/**
+	 * @return 两个番茄时钟周期之间的休息间隔，单位：分钟
+	 */
+	public int getPomotimerInterval() {
+		return this.preferences.getInt(POMOTIMER_INTERVAL_STR, DefaultSettings.POMOTIMER_INTERVAL);
+	}
+	/**
+	 * 设置两个番茄时钟周期之间的休息间隔
+	 * @param interval 单位：分钟
+	 */
+	public void setPomotimerInterval(int interval) {
+		this.preferences.edit().putInt(POMOTIMER_INTERVAL_STR, interval).commit();
 	}
 
 	/**
