@@ -48,6 +48,8 @@ public class ClickForbiddenSD extends SlidingDrawer {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 
+		//此处逻辑很烦，最好别看
+		
 		int action = event.getAction();
 		
 		if(mActionInHandle == false){
