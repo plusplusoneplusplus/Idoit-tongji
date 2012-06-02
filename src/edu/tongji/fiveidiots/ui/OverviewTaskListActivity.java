@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -37,7 +36,6 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 	private ListView taskListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
-	private List<TaskInfo> tasks = new ArrayList<TaskInfo>();
 	private TaskListAdapter adapter = new TaskListAdapter();
 	
 	private static enum TaskSheetType {
@@ -47,6 +45,16 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		POOL,			//收集池
 		ALL				//全部
 	}
+	
+	/**
+	 * 用于存取task_id的string
+	 */
+	public static final String TASK_ID_STR = "task_id";
+	/**
+	 * 用于存取task_name的string
+	 */
+	public static final String TASK_NAME_STR = "task_name";
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,31 +104,31 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		switch (currentTaskSheetType) {
 		case POOL:
 			//TODO 得到所有收集池里的任务
-			tasks = new ArrayList<TaskInfo>();
+			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		case TODAY:
 			//TODO 得到所有今日任务
-			tasks = TestingHelper.getRandomTaskList();
+			this.adapter.fillData(TestingHelper.getRandomTaskList());
 			break;
 
 		case FUTURE:
 			//TODO 得到所有未来任务
-			tasks = new ArrayList<TaskInfo>();
+			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		case PERIODIC:
 			//TODO 得到所有周期性任务
-			tasks = new ArrayList<TaskInfo>();
+			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		case ALL:
 			//TODO 得到所有所有任务
-			tasks = new ArrayList<TaskInfo>();
+			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		default:
-			tasks = new ArrayList<TaskInfo>();
+			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 		}
 
@@ -147,25 +155,29 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		boolean isSelected;
+		boolean handleFinished;
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
-			//TODO
-			//Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			ActivityUtil.startNewActivity(this, TaskDetailsActivity.class, 0L, false);
-			isSelected = true;
+			//=====进入TaskDetailActivity，带着task_id=====
+			Bundle bundle = new Bundle();
+			bundle.putLong(TASK_ID_STR, adapter.getItem(info.position).getId());
+			ActivityUtil.startActivityWithBundle(this, TaskDetailsActivity.class, 0, false, bundle);
+			handleFinished = true;
 			break;
+
 		case R.id.TL_longclicked_delete:
 			//TODO
-			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			isSelected = true;
+			TaskInfo task = adapter.getItem(info.position);
+			Toast.makeText(this, "you wanna delete " + task.getName() + "?", Toast.LENGTH_SHORT).show();
+			handleFinished = true;
 			break;
+		
 		default:
-			isSelected = super.onContextItemSelected(item);
+			handleFinished = super.onContextItemSelected(item);
 		}
 		
-		return isSelected;
+		return handleFinished;
 	}
 
 	/**
@@ -174,6 +186,20 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	private class TaskListAdapter extends BaseAdapter implements OnItemClickListener{
 
+		/**
+		 * 当前的表单里的内容就存放在这里的，外头不存引用了，全部通过adapter来获取
+		 */
+		private final List<TaskInfo> tasks = new ArrayList<TaskInfo>();
+		
+		/**
+		 * 将一群tasks放入adapter中，原有的会被清空
+		 * @param taskInfos
+		 */
+		public void fillData(List<TaskInfo> taskInfos) {
+			this.tasks.clear();
+			this.tasks.addAll(taskInfos);
+		}
+		
 		// ===为什么选-2呢，因为后头有一个用（selectedPos+1）来比较，如果是-1，则[0]会中枪===
 		private final int NOT_SELECTED = -2;
 		/**
@@ -192,7 +218,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		}
 
 		@Override
-		public Object getItem(int position) {
+		public TaskInfo getItem(int position) {
 			//=====根据listview中的位置获得data list中的位置=====
 			if (selectedPos == NOT_SELECTED) {
 				return tasks.get(position);
@@ -279,8 +305,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				public void onClick(View v) {
 					//=====进入番茄钟界面，传入TASK_ID和TASK_NAME=====
 					Bundle bundle = new Bundle();
-					bundle.putLong(PomotimerActivity.TASK_ID_STR, task.getId());
-					bundle.putString(PomotimerActivity.TASK_NAME_STR, task.getName());
+					bundle.putLong(TASK_ID_STR, task.getId());
+					bundle.putString(TASK_NAME_STR, task.getName());
 					ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
 				}
 			});

@@ -5,10 +5,8 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
-import edu.tongji.fiveidiots.R;
 
 /**
  * 自己的relativelayout，实现全局触摸监听

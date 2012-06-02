@@ -1,6 +1,8 @@
 package edu.tongji.fiveidiots.ui;
 
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ctrl.TaskInfo;
+import edu.tongji.fiveidiots.util.TestingHelper;
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBar.Type;
 import greendroid.widget.PageIndicator;
@@ -11,7 +13,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 /**
@@ -20,20 +21,42 @@ import android.widget.TextView;
  * 在res/layout中添加对应界面布局文件
  * 其它不用修改
  * @author Andriy  @author IRainbow5
- *
  */
 
 public class TaskDetailsActivity extends GDActivity {
 	
+	/**
+	 * 一共要有几页，一般2页就够了吧，必要+简要；复杂+
+	 */
 	private static final int PAGE_COUNT = 2;
-	private static final int PAGE_MAX_INDEX = PAGE_COUNT - 1;
+	/**
+	 * 去掉自己之后有多少，在next和previous的indicator中有用
+	 */
+	private static final int PAGE_EXCLUSIVE_COUNT= PAGE_COUNT - 1;
 	
-	//小点点
-	private PageIndicator mPageIndicatorNext;
-	private PageIndicator mPageIndicatorPrev;
-	private PageIndicator mPageIndicatorOther;
+	//=====UI=====
+	/**
+	 * 右下角的page indicator，代表next
+	 */
+	private PageIndicator pageIndicatorNext;
+	/**
+	 * 左下角的page indicator，代表previous
+	 */
+	private PageIndicator pageIndicatorPrevious;
+	/**
+	 * 顶部的page indicator，代表本页在总的之中的index
+	 */
+	private PageIndicator pageIndicatorTop;
+	private PagedView pagedView;
 	
-	//actionbar为空
+	/**
+	 * 要展示details的对应task
+	 */
+	private TaskInfo task;
+	
+	/**
+	 * actionbar为空
+	 */
 	public TaskDetailsActivity() {
 		super(Type.Empty);
 	}
@@ -41,44 +64,82 @@ public class TaskDetailsActivity extends GDActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setActionBarContentView(R.layout.taskdetails_paged_view);
 
-        setActionBarContentView(R.layout.taskdetails_paged_view);
+        //=====从传入的Intent中拿到TaskID=====
+		Bundle bundle = this.getIntent().getExtras();
+		if (bundle == null) {
+			throw new IllegalStateException("没有传递一个带有TASK_ID的bundle怎么可以到TaskDetailActivity来！");
+		}
+		if (bundle != null) {
+			long taskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1);
+			//TODO 测试时，直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
+			task = TestingHelper.getRandomTask();
+			task.setId(taskID);
+		}
 
-        this.setTitle("任务详细信息");
-        
-        final PagedView pagedView = (PagedView) findViewById(R.id.paged_view);
-        pagedView.setOnPageChangeListener(mOnPagedViewChangedListener);
+        //=====找到pagedView=====
+        pagedView = (PagedView) findViewById(R.id.paged_view);
         pagedView.setAdapter(new PhotoSwipeAdapter());
+        pagedView.setOnPageChangeListener(pagedViewChangedListener);
 
-        mPageIndicatorNext = (PageIndicator) findViewById(R.id.page_indicator_next);
-        mPageIndicatorNext.setDotCount(PAGE_MAX_INDEX);
-        mPageIndicatorNext.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                pagedView.smoothScrollToNext();
-            }
+        //=====找到，init page indicators=====
+        pageIndicatorNext = (PageIndicator) findViewById(R.id.page_indicator_next);
+        pageIndicatorPrevious = (PageIndicator) findViewById(R.id.page_indicator_prev);
+        pageIndicatorTop = (PageIndicator) findViewById(R.id.page_indicator_top);
+        this.initPageIndicators();
+    }
+    
+    /**
+     * init 3个page indicators: prev, next, top
+     */
+    private void initPageIndicators() {
+    	//=====NEXT=====
+        pageIndicatorNext.setDotCount(PAGE_EXCLUSIVE_COUNT);
+        pageIndicatorNext.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+	            pagedView.smoothScrollToNext();
+			}
         });
 
-        mPageIndicatorPrev = (PageIndicator) findViewById(R.id.page_indicator_prev);
-        mPageIndicatorPrev.setDotCount(PAGE_MAX_INDEX);
-        mPageIndicatorPrev.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        //=====PREVIOUS=====
+        pageIndicatorPrevious.setDotCount(PAGE_EXCLUSIVE_COUNT);
+        pageIndicatorPrevious.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
                 pagedView.smoothScrollToPrevious();
-            }
+			}
         });
-        
-        mPageIndicatorOther = (PageIndicator) findViewById(R.id.page_indicator_other);
-        mPageIndicatorOther.setDotCount(PAGE_COUNT);
-        
-        setActivePage(pagedView.getCurrentPage());
+
+        //=====TOP(GENERAL)=====
+        pageIndicatorTop.setDotCount(PAGE_COUNT);
     }
     
-    private void setActivePage(int page) {
-        mPageIndicatorOther.setActiveDot(page);
-        mPageIndicatorNext.setActiveDot(PAGE_MAX_INDEX - page);
-        mPageIndicatorPrev.setActiveDot(page);
+    @Override
+	protected void onResume() {
+		super.onResume();
+
+		this.setTitle("任务详细信息");
+        this.setActivePage(pagedView.getCurrentPage());
+	}
+
+    /**
+     * 设置
+     * @param page
+     */
+	private void setActivePage(int page) {
+        pageIndicatorTop.setActiveDot(page);
+        pageIndicatorNext.setActiveDot(PAGE_EXCLUSIVE_COUNT- page);
+        pageIndicatorPrevious.setActiveDot(page);
     }
     
-    private OnPagedViewChangeListener mOnPagedViewChangedListener = new OnPagedViewChangeListener() {
+    /**
+     * PagedView如果左右滑动了，当前页面变化了，看这里
+     */
+	private OnPagedViewChangeListener pagedViewChangedListener = new OnPagedViewChangeListener() {
 
         @Override
         public void onStopTracking(PagedView pagedView) {
@@ -94,6 +155,10 @@ public class TaskDetailsActivity extends GDActivity {
         }
     };
     
+    /**
+     * 用于page平滑左右滑动的adapter
+     * @author Andriy @author IRainbow5
+     */
     private class PhotoSwipeAdapter extends PagedAdapter {
         
         @Override
@@ -111,23 +176,21 @@ public class TaskDetailsActivity extends GDActivity {
             return 0;
         }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-        	/**
-        	 * 在此设置每一个设置界面的id
-        	 */
-            switch(position)
-            {
-            case 0:
-            	convertView = getLayoutInflater().inflate(R.layout.taskdetails_paged_view_item1, parent, false);
-            	break;
-            case 1:
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			switch (position) {
+			case 0:
+				convertView = getLayoutInflater().inflate(R.layout.taskdetails_paged_view_item1, parent, false);
+				break;
+			case 1:
             	convertView = getLayoutInflater().inflate(R.layout.taskdetails_paged_view_item2, parent, false);
-            	break;
-            default:
-            	break;
-            }
-            return convertView;
-        }
+				break;
 
+			default:
+				break;
+			}
+			return convertView;
+		}
     }
+
 }

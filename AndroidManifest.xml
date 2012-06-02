@@ -6,6 +6,8 @@
 
     <uses-sdk android:minSdkVersion="10" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".ui.IDoItApplication"
         android:icon="@drawable/icon"
@@ -26,13 +28,11 @@
             android:name=".ui.OverviewTaskListActivity"
             android:theme="@style/Theme.IDoIt" >
         </activity>
-        	<activity android:name=".ui.TestingActivity" >
+        <activity android:name=".ui.TestingActivity" >
         </activity>
-        
-        
-        <activity 
+        <activity
             android:name=".ui.TaskDetailsActivity"
-        	android:theme="@style/Theme.IDoIt" >
+            android:theme="@style/Theme.IDoIt" >
         </activity>
         
         <activity 
