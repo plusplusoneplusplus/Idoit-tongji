@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 /**
  * 任务详细信息界面
- * 添加任务时修改PAGE_COUNT PAGE_MAX_INDEX 以及 getView方法
+ * 添加多个详细信息界面时修改PAGE_COUNT PAGE_MAX_INDEX 以及 getView方法
  * 在res/layout中添加对应界面布局文件
  * 其它不用修改
  * @author Andriy  @author IRainbow5
