@@ -19,7 +19,7 @@ public class IDoItActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        //ActivityUtil.startNewActivity(this, OverviewTaskListActivity.class, 1000L, true);
-        ActivityUtil.startNewActivity(this, SettingsActivity.class, 1000L, true);
+        ActivityUtil.startNewActivity(this, OverviewTaskListActivity.class, 1000L, true);
+        //ActivityUtil.startNewActivity(this, SettingsActivity.class, 1000L, true);
     }
 }
