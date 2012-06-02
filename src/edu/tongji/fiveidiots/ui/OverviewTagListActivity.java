@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,16 +37,16 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		super.onCreate(savedInstanceState);
 
 		mSD = (SlidingDrawer) findViewById(R.id.sliding_drawer);
-		//sd.setHandleId(R.id.tag_handle);
-		
-		//test begin
 
-		//test end
 		mTagListAdapter = new TagListAdapter();
 		mTags = TestingHelper.getRandomTagList();
 		mTagListView = (ListView) findViewById(R.id.tagListView);
 		mTagListView.setAdapter(mTagListAdapter);
 		mTagListView.setOnItemClickListener(mTagListAdapter);
+		
+        //设置MyRelativeLayout所需的slidingdrawer id
+        MyRelativeLayout layout = (MyRelativeLayout) findViewById(R.id.task_overview);
+        layout.setSlidingDrawer(R.id.sliding_drawer);
 	}
 	
 	private class TagListAdapter extends BaseAdapter implements OnItemClickListener{
@@ -84,10 +83,12 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 			return convertView;
 		}
 
+		/**
+		 * 选中一个标签后把taglist关闭
+		 */
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			Log.i("__Rainbow__", "WTHF");
 			mSD.animateClose();
 		}
 		

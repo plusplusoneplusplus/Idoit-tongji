@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -77,6 +76,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				resetTaskList();
 			}
 		});
+
+        
 
 	}
 
@@ -161,7 +162,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			//=====进入TaskDetailActivity，带着task_id=====
 			Bundle bundle = new Bundle();
 			bundle.putLong(TASK_ID_STR, adapter.getItem(info.position).getId());
-			ActivityUtil.startActivityWithBundle(this, TaskDetailActivity.class, 0, false, bundle);
+			ActivityUtil.startActivityWithBundle(this, TaskDetailsActivity.class, 0, false, bundle);
 			handleFinished = true;
 			break;
 

@@ -15,14 +15,20 @@ import android.widget.SlidingDrawer;
 
 public class ClickForbiddenSD extends SlidingDrawer {
 
+	//上一个触摸动作
 	private int mPerAction = MotionEvent.ACTION_UP;
+	//动作是否在handle上
 	private boolean mActionInHandle = false;
+	//上一个motionevent
 	private MotionEvent mPreEvent;
 	
 	public ClickForbiddenSD(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
+	/**
+	 * 首先触发，判断触点是否在handle上，设置mActionInHandle
+	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
 		View view = this.getHandle();
@@ -31,6 +37,11 @@ public class ClickForbiddenSD extends SlidingDrawer {
 		return super.onInterceptTouchEvent(event);
 	}
 
+	/**
+	 * 获取该view在屏幕上的坐标
+	 * @param view
+	 * @return
+	 */
     private Rect getRectOnScreen(View view){
         Rect rect = new Rect();
         int[] location = new int[2];
@@ -45,10 +56,14 @@ public class ClickForbiddenSD extends SlidingDrawer {
         return rect;
     }
     
+    /**
+     * 判断是否是点击
+     * 如果是，屏蔽
+     * 如果是拖拽，则显示
+     * 逻辑很烦，有待优化，甚至放弃slidingdrawer用别的
+     */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-
-		//此处逻辑很烦，最好别看
 		
 		int action = event.getAction();
 		
