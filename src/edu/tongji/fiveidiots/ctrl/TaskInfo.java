@@ -7,15 +7,36 @@ package edu.tongji.fiveidiots.ctrl;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.R.integer;
+
+/*
+ * TaskInfo记录每个任务详细信息
+ * 成员：见下面注释
+ * 方法：该类中方法不对外部开放，仅供TaskController类调用
+ * void copy(TaskInfo aTask) 复制aTask的任务信息
+ * void ImportTag(ArrayList<String> tag) 将tag数组中内容复制给任务中的标签
+ * ArrayList<String> ExportTag() 导出任务中标签的内容
+ * void addTag(String atag) 新增一个tag
+ * void deleteTag(int id) 删除一个tag
+ * Boolean searchTag(String str) 搜索一个tag如果存在，返回true
+ * Boolean IsExpire() 返回该任务是否过期
+ * void SetExpire() 设置该任务过期
+ * Boolean IsFinish() 返回该任务是否完成
+ * void SetFinish() 设置该任务状态为完成
+ * Boolean IsDetermine()
+ * void SetDetermine()
+ * void FinishCycle(int interrupt,double percent,Date cur) 该任务完成一个蕃茄钟，调用一次该函数
+ * 
+ */
 public class TaskInfo {
-	private int pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id;
-	private double percent;
-	private String name,addr,hint;
-	private Date starttime,deadline;
-	private ArrayList<String> tag;
-	private Boolean expire,finish;
+	private int pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id; //优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，完成任务的方式，中断个数，任务ID
+	private double percent;  //完成任务的百分比
+	private String name,addr,hint; //任务名称，地址，注释
+	private Date starttime,deadline;  //任务开始时间，截止时间
+	private ArrayList<String> tag;  //任务标签们
+	private Boolean expire,finish,determine;  //任务是否过期，是否完成
 	
-	TaskInfo(int id,String name, String addr, String hint, int pri, int pre_id, int next_id, int cycle, int way, Date deadline){
+	public TaskInfo(int pri, int pre_id, int next_id, int pcycle, int ncycle,int way,int interrupt, int id, double percent, String name, String addr, String hint, Date starttime, Date deadline, ArrayList<String> tag, Boolean expire, Boolean finish, Boolean determine){
 		this.id = id;
 		this.name = name;
 		this.addr = addr;
@@ -23,15 +44,16 @@ public class TaskInfo {
 		this.pri = pri;
 		this.pre_id = pre_id;
 		this.next_id = next_id;
-		this.pcycle = 0;
-		this.ncycle = cycle;
+		this.pcycle = pcycle;
+		this.ncycle = ncycle;
 		this.way = way;
-		this.deadline = deadline;
-		expire = false;
-		finish = false;
-		percent = 0.0;
-		tag = new ArrayList<String>();
-		tag.clear();
+		this.deadline = new Date(deadline.getYear(),deadline.getMonth(),deadline.getDate(),deadline.getHours(),deadline.getMinutes());
+		this.starttime = new Date(starttime.getYear(),starttime.getMonth(),starttime.getDate(),starttime.getHours(),starttime.getMinutes());
+		this.expire = expire;
+		this.finish = finish;
+		this.percent = percent;
+		this.tag = new ArrayList<String>(tag);
+		this.determine = determine;
 	}
 	
 	public void copy(TaskInfo aTask){
@@ -51,6 +73,8 @@ public class TaskInfo {
 		else this.expire = false;
 		if (aTask.IsFinish()) this.finish = true;
 		else this.finish = false;
+		if (aTask.IsDetermine()) this.determine = true;
+		else this.determine = false;
 	}
 	
 	public int getId() {
@@ -177,6 +201,13 @@ public class TaskInfo {
 	}
 	public void SetFinish(){
 		finish = true;
+	}
+	
+	public Boolean IsDetermine(){
+		return determine;
+	}
+	public void SetDetermine(){
+		determine = true;
 	}
 	
 	public void FinishCycle(int interrupt,double percent,Date cur){
