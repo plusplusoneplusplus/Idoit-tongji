@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TimeUtil;
+import edu.tongji.fiveidiots.util.Settings.TimerTempSettings;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -43,7 +44,9 @@ public class PomotimerService extends Service {
 
 	//=====消息机制相关=====
 	private Handler handler;
+	/** 时间到了，此次番茄时钟周期finish */
 	public static final int MSG_TIMES_UP = 100;
+	/** 此次番茄时钟周期剩余时间变化了 */
 	public static final int MSG_REMAIN_TIME_CHANGED = 101;
 
 	//=====与notification相关=====
@@ -51,6 +54,15 @@ public class PomotimerService extends Service {
 	
 	//=====task相关的信息=====
 	private long taskID = -1;
+
+	@Override
+	public void onCreate() {
+		Log.d("__ANDRIY__", "service onCreate()");
+		super.onCreate();
+
+		this.readFromSettings();
+		Log.i("__ANDRIY__", "from settings: [state]" + countingState + " [total]" + totalTime + " [remain]" + remainTime + " [id]" + taskID);
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -61,16 +73,26 @@ public class PomotimerService extends Service {
 	@Override
 	public void onDestroy() {
 		Log.d("__ANDRIY__", "service onDestroy()");
+
+		this.saveIntoSettings();
+
+		Log.i("__ANDRIY__", "into settings: [state]" + countingState + " [total]" + totalTime + " [remain]" + remainTime + " [id]" + taskID);
+
 		this.releaseTimer();
 		this.cancelNotification();
 		this.handler = null;
+
 		super.onDestroy();
 	}
-	
+
 	/**
 	 * 初始化计时器的状态及相关变量
 	 */
 	private void initState() {
+		//=====TODO 仅为测试用
+		new Settings(this).setPomotimerDuration(1);
+		//=====END
+		
 		int duration = new Settings(PomotimerService.this).getPomotimerDuration();
 		switch (countingState) {
 		case STATE_IDLE:
@@ -90,6 +112,28 @@ public class PomotimerService extends Service {
 			break;
 		}
 	}
+	
+	/**
+	 * 将当前的参数存到Settings中
+	 */
+	private void saveIntoSettings() {
+		TimerTempSettings settings = new Settings(this).getTimerSettings();
+		settings.setTimerState(this.countingState);
+		settings.setTotalTime(this.totalTime);
+		settings.setRemainTime(this.remainTime);
+		settings.setCurrentTaskID(this.taskID);
+	}
+	
+	/**
+	 * 从Settings中读出之前存好的参数
+	 */
+	private void readFromSettings() {
+		TimerTempSettings settings = new Settings(this).getTimerSettings();
+		this.countingState = settings.getTimerState();
+		this.totalTime = settings.getTotalTime();
+		this.remainTime = settings.getRemainTime();
+		this.taskID = settings.getCurrentTaskID();
+	}
 
 	/**
 	 * 初始化计时器
@@ -100,27 +144,25 @@ public class PomotimerService extends Service {
 		this.totalTime = total;
 		this.remainTime = remain;
 
-		//TODO testing
-		this.totalTime = 20;
-		this.remainTime = 20;
-
 		this.countingTimerTask = new TimerTask() {
 			
 			@Override
 			public void run() {
 				if (remainTime <= 0) {
-					Log.d("__ANDRIY__", "timertask: stopped");
 					releaseTimer();
 					showNotification("此次番茄周期结束！", true, true, false);
-					Message msg = Message.obtain(handler, MSG_TIMES_UP);
-					msg.sendToTarget();
+					if (handler != null) {
+						Message msg = Message.obtain(handler, MSG_TIMES_UP);
+						msg.sendToTarget();
+					}
 				}
 				else {
 					remainTime--;
-					Log.d("__ANDRIY__", "timertask: decreased to " + remainTime);
 					showNotification("剩余："+TimeUtil.parseRemainingTime(remainTime), false, false, true);
-					Message msg = Message.obtain(handler, MSG_REMAIN_TIME_CHANGED);
-					msg.sendToTarget();
+					if (handler != null) {
+						Message msg = Message.obtain(handler, MSG_REMAIN_TIME_CHANGED);
+						msg.sendToTarget();
+					}
 				}
 			}
 
@@ -147,7 +189,7 @@ public class PomotimerService extends Service {
 		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
 		this.countingState = STATE_COUNTING;
 		
-		Notification notification = new Notification(R.drawable.icon, "", System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
 		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,	notificationIntent, 0);
 		notification.setLatestEventInfo(this, "IDoit", 	"番茄周期开始！", pendingIntent);
@@ -162,7 +204,7 @@ public class PomotimerService extends Service {
 	 * @param ongoing 是否正在进行中
 	 */
 	private void showNotification(String message, boolean sound, boolean vibrate, boolean ongoing) {
-		Notification notification = new Notification(R.drawable.icon, "", System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
 		if (sound) {
 			notification.defaults |= Notification.DEFAULT_SOUND;
 		}
@@ -196,17 +238,9 @@ public class PomotimerService extends Service {
 	 * @author Andriy
 	 */
 	public class PomotimerBinder extends Binder {
-
-		/**
-		 * 设置当前的计时器状态
-		 * @param state （STATE_IDLE, STATE_READY, STATE_COUNTING）
-		 */
-		public void setCountingState(int state) {
-			countingState = state;
-		}
 		
 		/**
-		 * @return 当前的计时器状态
+		 * @return 当前的计时器状态 （STATE_IDLE, STATE_READY, STATE_COUNTING）
 		 */
 		public int getCountingState() {
 			return countingState;
@@ -220,26 +254,10 @@ public class PomotimerService extends Service {
 		}
 		
 		/**
-		 * 设置此次番茄时钟周期的总时间
-		 * @param seconds
-		 */
-		public void setTotalTime(long seconds) {
-			totalTime = seconds;
-		}
-		
-		/**
 		 * @return 此次番茄时钟周期的总时间
 		 */
 		public long getTotalTime() {
 			return totalTime;
-		}
-		
-		/**
-		 * 设置此次番茄时钟周期的剩余时间
-		 * @param seconds
-		 */
-		public void setRemainTime(long seconds) {
-			remainTime = seconds;
 		}
 		
 		/**

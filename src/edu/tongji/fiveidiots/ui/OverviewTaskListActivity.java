@@ -50,7 +50,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//TODO
+//		Intent serviceIntent = new Intent(this, PomotimerService.class);
+//		this.startService(serviceIntent);
 		
+		//=====在父类中已经调用过mySetActionBarContentView了=====
         taskListView = (ListView) findViewById(R.id.taskListView);
         
         Button testButton = (Button) findViewById(R.id.testButton);
@@ -64,8 +69,14 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		});
 
 	}
-	
 
+	@Override
+	protected void onDestroy() {
+		//TODO
+//		Intent serviceIntent = new Intent(this, PomotimerService.class);
+//		this.stopService(serviceIntent);
+		super.onDestroy();
+	}
 
 	/**
 	 * 因为此activity终将继承于GDActivity，告诉其加载哪个layout
@@ -264,8 +275,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				public void onClick(View v) {
 					//=====进入番茄钟界面，传入TASK_ID和TASK_NAME=====
 					Bundle bundle = new Bundle();
-					bundle.putLong("TASK_ID", task.getId());
-					bundle.putString("TASK_NAME", task.getName());
+					bundle.putLong(PomotimerActivity.TASK_ID_STR, task.getId());
+					bundle.putString(PomotimerActivity.TASK_NAME_STR, task.getName());
 					ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
 				}
 			});
