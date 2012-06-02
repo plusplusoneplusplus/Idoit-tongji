@@ -157,19 +157,17 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
-			//TODO
-			TaskInfo task = adapter.getItem(info.position);
-			Toast.makeText(this, task.getName(), Toast.LENGTH_SHORT).show();
-			
-//			Bundle bundle = new Bundle();
-//			bundle.putLong(, value)
-//			ActivityUtil.startActivityWithBundle(this, TaskDetailActivity.class, 0, false, bundle);
+			//=====进入TaskDetailActivity，带着task_id=====
+			Bundle bundle = new Bundle();
+			bundle.putLong(TASK_ID_STR, adapter.getItem(info.position).getId());
+			ActivityUtil.startActivityWithBundle(this, TaskDetailActivity.class, 0, false, bundle);
 			handleFinished = true;
 			break;
 
 		case R.id.TL_longclicked_delete:
 			//TODO
-			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
+			TaskInfo task = adapter.getItem(info.position);
+			Toast.makeText(this, "you wanna delete " + task.getName() + "?", Toast.LENGTH_SHORT).show();
 			handleFinished = true;
 			break;
 		
