@@ -28,7 +28,7 @@ public class TestingHelper {
 		info.setHint("hint: " + getRandomString(5));
 		info.setInterrupt(0);
 		info.setName("name: " + getRandomString(5));
-		info.setPri(random.nextInt(3));
+		info.setPriority(random.nextInt(3));
 
 		randomID++;
 		return info;

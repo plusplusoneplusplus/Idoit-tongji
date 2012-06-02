@@ -95,133 +95,9 @@ public class TaskController {
 		}
 		return tempContainer;
 	}
-
-	/*
-	public void maintain(int aa,int ab,int ac,int ad,int ae){
-		if (ae >= 59){
-			ae = 0;
-			++ ad;
-		}
-		if (ae < 0){
-			ae = 59;
-			-- ad;
-		}
-		if (ad >= 24){
-			ad = 0;
-			++ ac;
-		}
-		if (ad < 0){
-			ad = 23;
-			-- ac;
-		}
-		if (aa % 4 == 0 && aa % 100 != 0){
-			month[1] = 29;
-		}
-		else{
-			month[1] = 28;
-		}
-		
-		if (ac > month[ab]){
-			ac = 1;
-			++ ab;
-		}
-		if (ac <= 0){
-			ac = month[ab];
-			-- ab;
-		}
-		if (ab >= 12){
-			ab -= 12;
-			++ aa;
-		}
-		if (ab < 0){
-			ab = 0;
-			-- aa;
-		}		
-	}
-	
-	public int CalculateTime(Date cur,Date des){
-		int month [] = {31,28,31,30,31,30,31,31,30,31,30,31};
-		return 200;
-	}
-	
-	public int compareDate(int aa,int ab,int ac,int ad,int ae,int ba,int bb,int bc,int bd,int be){
-		if (aa != ba) return aa-ba;
-		else {
-			if (ab != bb) return ab-bb;
-			else {
-				if (ac != bc) return ac-bc;
-				else {
-					if (ad != bd) return ad-bd;
-					else {
-						return ae-be;
-					}
-				}
-			}
-		}
-	}
-	*/
 	
 	public long calculateTime(Date cur,Date des){
-		
-		long ans = 0;
-		/*
-		int tmp;
-		int aa,ab,ac,ad,ae,ba,bb,bc,bd,be;
-		aa = cur.getYear()+1900;
-		ab = cur.getMonth();
-		ac = cur.getDate();
-		ad = cur.getHours();
-		ae = cur.getMinutes();
-		ba = des.getYear();
-		bb = des.getMonth();
-		bc = des.getDate();
-		bd = des.getHours();
-		be = des.getMinutes();
-		
-		tmp = month[ab];
-		++ ab;
-		
-		maintain(aa,ab,ac,ad,ae);
-		while (compareDate(aa,ab,ac,ad,ae,ba,bb,bc,bd,be) <= 0){
-			ans += tmp * 24 * 60;
-			tmp = month[ab];
-			++ ab;
-			maintain(aa, ab, ac, ad, ae);
-		}
-		-- ab;
-		maintain(aa, ab, ac, ad, ae);
-		
-		++ ac;
-		maintain(aa,ab,ac,ad,ae);
-		while (compareDate(aa,ab,ac,ad,ae,ba,bb,bc,bd,be) <= 0){
-			ans += 24 * 60;
-			++ ac;
-			maintain(aa, ab, ac, ad, ae);
-		}
-		-- ac;
-		maintain(aa, ab, ac, ad, ae);
-		
-		++ ad;
-		maintain(aa,ab,ac,ad,ae);
-		while (compareDate(aa,ab,ac,ad,ae,ba,bb,bc,bd,be) <= 0){
-			ans += 60;
-			++ ad;
-			maintain(aa, ab, ac, ad, ae);
-		}
-		-- ad;
-		maintain(aa, ab, ac, ad, ae);
-		
-		++ ae;
-		maintain(aa,ab,ac,ad,ae);
-		while (compareDate(aa,ab,ac,ad,ae,ba,bb,bc,bd,be) <= 0){
-			++ ans;
-			++ ae;
-			maintain(aa, ab, ac, ad, ae);
-		}
-		-- ae;
-		maintain(aa, ab, ac, ad, ae);
-		*/
-		ans = (des.getTime() - cur.getTime()) / 60000;
+		long ans = (des.getTime() - cur.getTime()) / 60000;
 		return ans;
 	}
 	
@@ -236,16 +112,16 @@ public class TaskController {
 			tempTask = taskContainer.get(i);
 			if (!tempTask.IsExpire() && !tempTask.IsFinish()){
 				long num = calculateTime(cur,tempTask.getDeadline());
-				long cycleleft = num / oneclock - tempTask.getNcycle();
+				long cycleleft = num / oneclock - tempTask.getUnfinishedCycle();
 				if (cycleleft <= 0){
-					if (tempTask.getPri() < minpri){
+					if (tempTask.getPriority() < minpri){
 						ansPri = tempTask;
-						minpri = tempTask.getPri();
+						minpri = tempTask.getPriority();
 					}
 				}
-				else if (tempTask.getPri() * 0.75 + cycleleft * 0.25 < minfac){
+				else if (tempTask.getPriority() * 0.75 + cycleleft * 0.25 < minfac){
 					ansFac = tempTask;
-					minfac = tempTask.getPri() * 0.75 + cycleleft * 0.25;
+					minfac = tempTask.getPriority() * 0.75 + cycleleft * 0.25;
 				}
 			}
 		}
@@ -269,7 +145,7 @@ public class TaskController {
 			fout.write(taskContainer.size() + "\n");
 			for (int i = 0; i < taskContainer.size(); ++ i){
 				tempTask = taskContainer.get(i);
-				fout.write(tempTask.getPri() + " " + tempTask.getPre_id() + " " + tempTask.getNext_id() + " " + tempTask.getPcycle() + " " + tempTask.getNcycle() + " " + tempTask.getWay() + " " + tempTask.getInterrupt() + " " + tempTask.getId() + " " + tempTask.getPercent() + "\n");
+				fout.write(tempTask.getPriority() + " " + tempTask.getPreTaskId() + " " + tempTask.getNextTaskId() + " " + tempTask.getFinishedCycle() + " " + tempTask.getUnfinishedCycle() + " " + tempTask.getWay() + " " + tempTask.getInterrupt() + " " + tempTask.getId() + " " + tempTask.getPercent() + "\n");
 				fout.write(tempTask.getName() + "\n");
 				fout.write(tempTask.getAddr() + "\n");
 				fout.write(tempTask.getHint() + "\n");

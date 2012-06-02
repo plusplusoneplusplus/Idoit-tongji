@@ -28,7 +28,7 @@ import java.util.Date;
  */
 public class TaskInfo {
 	// 优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，完成任务的方式，中断个数，任务ID
-	private int pri, pre_id, next_id, pcycle, ncycle, way, interrupt, id; 
+	private int priority, preTaskId, nextTaskId, finishedCycle, unfinishedCycle, way, interrupt, id; 
 	private double percent; // 完成任务的百分比
 	private String name, addr, hint; // 任务名称，地址，注释
 	private Date starttime, deadline; // 任务开始时间，截止时间
@@ -48,11 +48,11 @@ public class TaskInfo {
 		this.name = name;
 		this.addr = addr;
 		this.hint = hint;
-		this.pri = pri;
-		this.pre_id = pre_id;
-		this.next_id = next_id;
-		this.pcycle = pcycle;
-		this.ncycle = ncycle;
+		this.priority = pri;
+		this.preTaskId = pre_id;
+		this.nextTaskId = next_id;
+		this.finishedCycle = pcycle;
+		this.unfinishedCycle = ncycle;
 		this.way = way;
 		this.deadline = deadline;
 		this.starttime = starttime;
@@ -68,11 +68,11 @@ public class TaskInfo {
 		this.name = aTask.getName();
 		this.addr = aTask.getAddr();
 		this.hint = aTask.getHint();
-		this.pri = aTask.getPri();
-		this.pre_id = aTask.getPre_id();
-		this.next_id = aTask.getNext_id();
-		this.pcycle = aTask.getPcycle();
-		this.ncycle = aTask.getNcycle();
+		this.priority = aTask.getPriority();
+		this.preTaskId = aTask.getPreTaskId();
+		this.nextTaskId = aTask.getNextTaskId();
+		this.finishedCycle = aTask.getFinishedCycle();
+		this.unfinishedCycle = aTask.getUnfinishedCycle();
 		this.way = aTask.getWay();
 		this.deadline = aTask.getDeadline();
 		this.percent = aTask.getPercent();
@@ -81,6 +81,30 @@ public class TaskInfo {
 		this.determine = aTask.IsDetermine();
 	}
 
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public int getPreTaskId() {
+		return preTaskId;
+	}
+
+	public void setPreTaskId(int preTaskId) {
+		this.preTaskId = preTaskId;
+	}
+
+	public int getNextTaskId() {
+		return nextTaskId;
+	}
+
+	public void setNextTaskId(int nextTaskId) {
+		this.nextTaskId = nextTaskId;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -89,44 +113,20 @@ public class TaskInfo {
 		this.id = id;
 	}
 
-	public int getPcycle() {
-		return pcycle;
+	public int getFinishedCycle() {
+		return finishedCycle;
 	}
 
-	public void setPcycle(int pcycle) {
-		this.pcycle = pcycle;
+	public void setFinishedCycle(int finishedCycle) {
+		this.finishedCycle = finishedCycle;
 	}
 
-	public int getNcycle() {
-		return ncycle;
+	public int getUnfinishedCycle() {
+		return unfinishedCycle;
 	}
 
-	public void setNcycle(int ncycle) {
-		this.ncycle = ncycle;
-	}
-
-	public int getPri() {
-		return pri;
-	}
-
-	public void setPri(int pri) {
-		this.pri = pri;
-	}
-
-	public int getPre_id() {
-		return pre_id;
-	}
-
-	public void setPre_id(int pre_id) {
-		this.pre_id = pre_id;
-	}
-
-	public int getNext_id() {
-		return next_id;
-	}
-
-	public void setNext_id(int next_id) {
-		this.next_id = next_id;
+	public void setUnfinishedCycle(int unfinishedCycle) {
+		this.unfinishedCycle = unfinishedCycle;
 	}
 
 	public int getWay() {
@@ -250,8 +250,8 @@ public class TaskInfo {
 			finish = true;
 		if (this.deadline.before(cur))
 			expire = true;
-		pcycle++;
-		ncycle = (int) Math.ceil((100.0 - percent) / (percent / pcycle));
+		finishedCycle++;
+		unfinishedCycle = (int) Math.ceil((100.0 - percent) / (percent / finishedCycle));
 	}
 
 }
