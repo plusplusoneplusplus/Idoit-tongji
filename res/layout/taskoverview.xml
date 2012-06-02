@@ -3,21 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+	<RelativeLayout android:id="@+id/task_list"
+	    		android:layout_width="match_parent"
+	    		android:layout_height="match_parent" >
+	    
+		<Button
+    	    android:id="@+id/testButton"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="Button" />
 
-    <Button
-        android:id="@+id/testButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <ListView
-        android:id="@+id/taskListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/testButton" >
-    </ListView>
+    	<ListView
+       		android:id="@+id/taskListView"
+       		android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	android:layout_below="@id/testButton" >
+    	</ListView>
+	
+	</RelativeLayout>
     
-    <include android:id="@+id/tag_slidingdrawer"
-        		layout="@layout/taglist"/>
+    
+    <include layout="@layout/taglist"/>
 
 </RelativeLayout>

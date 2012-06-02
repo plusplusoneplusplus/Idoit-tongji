@@ -35,8 +35,8 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
-		sd = (ClickForbiddenSD) findViewById(R.id.sliding_drawer);
-		sd.setHandleId(R.id.tag_handle);
+		//sd = (ClickForbiddenSD) findViewById(R.id.sliding_drawer);
+		//sd.setHandleId(R.id.tag_handle);
 		
 		//test begin
 
