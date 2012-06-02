@@ -38,11 +38,7 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		super.onCreate(savedInstanceState);
 
 		mSD = (SlidingDrawer) findViewById(R.id.sliding_drawer);
-		//sd.setHandleId(R.id.tag_handle);
-		
-		//test begin
 
-		//test end
 		mTagListAdapter = new TagListAdapter();
 		mTags = TestingHelper.getRandomTagList();
 		mTagListView = (ListView) findViewById(R.id.tagListView);
@@ -84,10 +80,12 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 			return convertView;
 		}
 
+		/**
+		 * 选中一个标签后把taglist关闭
+		 */
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			Log.i("__Rainbow__", "WTHF");
 			mSD.animateClose();
 		}
 		

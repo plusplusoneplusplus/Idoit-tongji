@@ -12,7 +12,7 @@
 	    >
 	<ImageView
 	    android:id="@id/tag_handle"
-	    android:layout_width="15dip"
+	    android:layout_width="20dip"
 	    android:layout_height="fill_parent"
 	    android:background="#00000000" 
 	    />

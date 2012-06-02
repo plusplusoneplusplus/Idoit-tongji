@@ -69,6 +69,10 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			}
 		});
 
+        
+        //设置MyRelativeLayout所需的slidingdrawer id
+        MyRelativeLayout layout = (MyRelativeLayout) findViewById(R.id.task_overview);
+        layout.setSlidingDrawer(R.id.sliding_drawer);
 	}
 
 	@Override
