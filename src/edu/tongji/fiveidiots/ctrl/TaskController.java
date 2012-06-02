@@ -91,7 +91,7 @@ public class TaskController {
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			tempDate = tempTask.getStarttime();
-			if (tempDate.getYear() == cur.getYear() && tempDate.getMonth() == cur.getMonth() && tempDate.getDate() == cur.getDate()){
+			if (tempDate.getYear() == cur.getYear() && tempDate.getMonth() == cur.getMonth() && tempDate.getDate() == cur.getDate() && !tempTask.IsFinish() && !tempTask.IsExpire()){
 				tempContainer.add(tempTask);
 			}
 		}
@@ -105,7 +105,7 @@ public class TaskController {
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			tempDate = tempTask.getStarttime();
-			if (tempDate.after(cur)){
+			if (tempDate.after(cur) && !tempTask.IsFinish() && !tempTask.IsExpire()){
 				tempContainer.add(tempTask);
 			}
 		}
@@ -119,7 +119,7 @@ public class TaskController {
 		for ( int i = 0; i < taskContainer.size(); ++ i){
 			tempTask = taskContainer.get(i);
 			int tt = tempTask.getWay() >> 21;
-			if (tt > 0) tempContainer.add(tempTask);
+			if (tt > 0 && !tempTask.IsFinish() && !tempTask.IsExpire()) tempContainer.add(tempTask);
 		}
 		return tempContainer;
 	}
@@ -359,11 +359,11 @@ public class TaskController {
 			ArrayList<String> tag = new ArrayList<String>();
 			Boolean expire,finish,determine;
 			int num;
-			System.out.println("ok");
+			
 			num = scanner.nextInt();
 			for ( int i = 0; i < num; ++ i){
 				pri = scanner.nextInt();
-				System.out.println("ok");
+				
 				pre_id = scanner.nextInt();
 				next_id = scanner.nextInt();
 				pcycle = scanner.nextInt();
@@ -372,12 +372,12 @@ public class TaskController {
 				interrupt = scanner.nextInt();
 				id = scanner.nextInt();
 				percent = scanner.nextDouble();
-				System.out.println("ok");
+				
 				name = scanner.nextLine();
 				name = scanner.nextLine();
 				addr = scanner.nextLine();
 				hint = scanner.nextLine();
-				System.out.println("ok");
+				
 				starttime = new Date(scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt());
 				deadline = new Date(scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt(),scanner.nextInt());
 				int number = scanner.nextInt();
@@ -397,7 +397,7 @@ public class TaskController {
 				else determine = false;
 				TaskInfo tt = new TaskInfo(pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id,percent,name,addr,hint,starttime,deadline,tag,expire,finish,determine);
 				taskContainer.add(tt);
-				System.out.println("ok");
+				
 			}
 			fin.close();
 		}

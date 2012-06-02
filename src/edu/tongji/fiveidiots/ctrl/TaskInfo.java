@@ -2,8 +2,8 @@
  * Author: Qrc
  * Date:2012-05-28
  */
-package edu.tongji.fiveidiots.ctrl;
 
+package edu.tongji.fiveidiots.ctrl;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -96,6 +96,7 @@ public class TaskInfo {
 		else this.finish = false;
 		if (aTask.IsDetermine()) this.determine = true;
 		else this.determine = false;
+		this.tag = aTask.ExportTag();
 	}
 	
 	public int getId() {
