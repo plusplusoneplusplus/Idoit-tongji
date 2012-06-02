@@ -3,34 +3,34 @@ package edu.tongji.fiveidiots.ui;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SlidingDrawer;
 
+/**
+ * 自定义slidingdrawer，使他只能拖拽无法点击
+ * @author IRainbow5
+ *
+ */
 
 public class ClickForbiddenSD extends SlidingDrawer {
-	
-	private int mHandleId = 0;
-	private static enum HandleTouchState{UP, MOVE, DOWN};
-	private HandleTouchState mPreTouchState = HandleTouchState.UP;
-	private boolean mIsClicked = false;
+
+	private int mPerAction = MotionEvent.ACTION_UP;
+	private boolean mActionInHandle = false;
+	private MotionEvent mPreEvent;
 	
 	public ClickForbiddenSD(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-	
-	public void setHandleId(int resId){
-		mHandleId = resId;
-	}
-	
-	public int getHandleId(){
-		return mHandleId;
+
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent event) {
+		View view = this.getHandle();
+		Rect rect = getRectOnScreen(view);
+		mActionInHandle = rect.contains((int)event.getRawX(), (int)event.getRawY());
+		return super.onInterceptTouchEvent(event);
 	}
 
-    /*
-     * 获取控件的屏幕区域
-     */
     private Rect getRectOnScreen(View view){
         Rect rect = new Rect();
         int[] location = new int[2];
@@ -44,85 +44,40 @@ public class ClickForbiddenSD extends SlidingDrawer {
         
         return rect;
     }
-	
-/*	@Override
-	public boolean onInterceptTouchEvent(MotionEvent event) {
-
-		Log.i("__Rainbow__", "onInterceptTouchEvent");
-		if(event.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			//Log.i("__Rainbow__", "hit DOWN");
-			
-			View view = findViewById(mHandleId);
-			Rect rect = getRectOnScreen(view);
-			
-			//Log.i("__Rainbow__", String.format("%d, %d, %d, %d, -----%f, %f", rect.left, rect.right, rect.top, rect.bottom, event.getX(), event.getY()));
-			
-			if(rect.contains((int)event.getX(), (int)event.getY()))
-			{
-				Log.i("__Rainbow__", "hit handle");
-				mPreTouchState = HandleTouchState.DOWN;
-				//return false;
-			}
-			
-		}
-		
-		if(event.getAction() == MotionEvent.ACTION_UP && mPreTouchState == HandleTouchState.DOWN){
-			mPreTouchState = HandleTouchState.UP;
-			mIsClicked = true;
-			Log.i("__Rainbow__", "click handle");
-		}
-		
-		if(event.getAction() == MotionEvent.ACTION_MOVE && mPreTouchState == HandleTouchState.DOWN){
-			mPreTouchState = HandleTouchState.MOVE;
-			mIsClicked = false;
-			Log.i("__Rainbow__", "move handle");
-		}
-
-		return super.onInterceptTouchEvent(event);
-	}*/
-
+    
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-//		MotionEvent.
-		//Log.i("__Rainbow__", String.format("On touch %d", event.getAction()));
+
+		//此处逻辑很烦，最好别看
 		
-		//Log.i("__Rainbow__", "onInterceptTouchEvent");
-		if(event.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			//Log.i("__Rainbow__", "hit DOWN");
-			
-			View view = findViewById(mHandleId);
-			Rect rect = getRectOnScreen(view);
-			
-			//Log.i("__Rainbow__", String.format("%d, %d, %d, %d, -----%f, %f", rect.left, rect.right, rect.top, rect.bottom, event.getRawX(), event.getRawY()));
-			
-			if(rect.contains((int)event.getRawX(), (int)event.getRawY()))
-			{
-				Log.i("__Rainbow__", "hit handle");
-				mPreTouchState = HandleTouchState.DOWN;
-				//return false;
-			}
-			
+		int action = event.getAction();
+		
+		if(mActionInHandle == false){
+			mPerAction = action;
+			return false;
+		}
+
+		if(action == MotionEvent.ACTION_UP && mPerAction == MotionEvent.ACTION_DOWN){
+			mPerAction = action;
+			return true;
 		}
 		
-		if(event.getAction() == MotionEvent.ACTION_UP && mPreTouchState == HandleTouchState.DOWN){
-			mPreTouchState = HandleTouchState.UP;
-			mIsClicked = true;
-			Log.i("__Rainbow__", "click handle");
+		if(action == MotionEvent.ACTION_MOVE && mPerAction == MotionEvent.ACTION_DOWN){
+			mPerAction = action;
+			super.onTouchEvent(mPreEvent);
+			super.onTouchEvent(event);
+			return true;
 		}
 		
-		if(event.getAction() == MotionEvent.ACTION_MOVE && mPreTouchState == HandleTouchState.DOWN){
-			mPreTouchState = HandleTouchState.MOVE;
-			mIsClicked = false;
-			Log.i("__Rainbow__", "move handle");
-		}
 		
-		if(mIsClicked == true){
+		mPerAction = action;
+		if(action == MotionEvent.ACTION_DOWN){
+			mPreEvent = event;
 			return true;
 		}
 		
 		return super.onTouchEvent(event);
 	}
+	
+	
 }
-

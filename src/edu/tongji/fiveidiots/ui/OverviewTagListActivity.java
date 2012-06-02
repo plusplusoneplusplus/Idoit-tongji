@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.TestingHelper;
@@ -27,36 +28,38 @@ import edu.tongji.fiveidiots.util.TestingHelper;
 		
 public abstract class OverviewTagListActivity extends OverviewActionBarActivity {
 
-	private ListView tagListView;
-	private ClickForbiddenSD sd;
-	private List<String> tags = new ArrayList<String>();
+	private ListView mTagListView;
+	private SlidingDrawer mSD;
+	private List<String> mTags = new ArrayList<String>();
+	private TagListAdapter mTagListAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
-		sd = (ClickForbiddenSD) findViewById(R.id.sliding_drawer);
-		sd.setHandleId(R.id.tag_handle);
+		mSD = (SlidingDrawer) findViewById(R.id.sliding_drawer);
+		//sd.setHandleId(R.id.tag_handle);
 		
 		//test begin
 
 		//test end
-		
-		tags = TestingHelper.getRandomTagList();
-		tagListView = (ListView) findViewById(R.id.tagListView);
-		tagListView.setAdapter(new TagListAdapter());
+		mTagListAdapter = new TagListAdapter();
+		mTags = TestingHelper.getRandomTagList();
+		mTagListView = (ListView) findViewById(R.id.tagListView);
+		mTagListView.setAdapter(mTagListAdapter);
+		mTagListView.setOnItemClickListener(mTagListAdapter);
 	}
 	
 	private class TagListAdapter extends BaseAdapter implements OnItemClickListener{
 
 		@Override
 		public int getCount() {
-			return tags.size();
+			return mTags.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return tags.get(position);
+			return mTags.get(position);
 		}
 
 		@Override
@@ -76,7 +79,7 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 			}
 			
 			ItemCache cache = (ItemCache)convertView.getTag();
-			cache.mTextView.setText(tags.get(position));
+			cache.mTextView.setText(mTags.get(position));
 
 			return convertView;
 		}
@@ -84,7 +87,8 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			//刷新显示tag下的tasks
+			Log.i("__Rainbow__", "WTHF");
+			mSD.animateClose();
 		}
 		
 	}
