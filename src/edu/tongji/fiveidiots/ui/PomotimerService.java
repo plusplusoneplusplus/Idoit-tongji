@@ -132,7 +132,7 @@ public class PomotimerService extends Service {
 		this.remainTime = remain;
 
 		//=====TODO 仅为测试用
-		this.remainTime = 5;
+		this.remainTime = 10;
 		//=====END
 		
 		this.countingTimerTask = new TimerTask() {
@@ -182,6 +182,7 @@ public class PomotimerService extends Service {
 		
 		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
 		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,	notificationIntent, 0);
 		notification.setLatestEventInfo(this, "IDoit", 	"番茄周期开始！", pendingIntent);
 		this.startForeground(POMO_NOTIFICATION_ID, notification);
@@ -208,6 +209,7 @@ public class PomotimerService extends Service {
 		}
 		
 		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, 	notificationIntent, 0);
 		notification.setLatestEventInfo(this, "IDoit", message,	contentIntent);
 
