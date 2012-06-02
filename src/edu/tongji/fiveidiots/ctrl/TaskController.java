@@ -6,10 +6,6 @@ package edu.tongji.fiveidiots.ctrl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import android.R.integer;
-import android.R.layout;
 
 public class TaskController {
 	
@@ -27,15 +23,11 @@ public class TaskController {
 		taskContainer.add(aTask);
 	}
 	
-	public void RemoveTask(int id){
-		for ( int i = 0; i < taskContainer.size(); ++ i){
-			tempTask = taskContainer.get(i);
-			if (tempTask.getId() == id){
-				taskContainer.remove(i);
-				break;
-			}
-		}	
+	public void RemoveTask(int id){	
+		tempTask = GetTaskInfo(id);
+		taskContainer.remove(tempTask);
 	}
+	
 	public TaskInfo GetTaskInfo(int id){
 		TaskInfo task = null;
 		for ( int i = 0; i < taskContainer.size(); ++ i){
@@ -113,15 +105,9 @@ public class TaskController {
 	}
 	
 	public void FinishCycle(int id,int interrupt,double percent,Date cur){
-		for ( int i = 0; i < taskContainer.size(); ++ i){
-			tempTask = taskContainer.get(i);
-			if (tempTask.getId() == id){
-				tempTask.FinishCycle(interrupt,percent,cur);
-				break;
-			}
-		}
+		tempTask = GetTaskInfo(id);
+		tempTask.FinishCycle(interrupt, percent, cur);
 	}
-	
 	
 	
 }

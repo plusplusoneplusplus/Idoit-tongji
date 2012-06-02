@@ -122,6 +122,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 			case R.string.about:
 				break;
 			case R.string.exit:
+				OverviewActionBarActivity.this.finish();
 				break;
 			default:
 				break;
