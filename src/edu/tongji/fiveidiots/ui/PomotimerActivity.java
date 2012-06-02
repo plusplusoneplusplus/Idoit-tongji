@@ -1,28 +1,30 @@
 package edu.tongji.fiveidiots.ui;
 
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ui.PomotimerService.PomotimerBinder;
+import edu.tongji.fiveidiots.util.TimeUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,94 +37,101 @@ import android.widget.Toast;
 public class PomotimerActivity extends Activity {
 
 	//=====界面相关=====
-	private TextView timeLeftTextView;
+	private TextView remainTimeTextView;
 	private PomotimerCakeView cakeView;
 	private ImageView addIdeaImageView;
-	
-	//=====计时时间参数相关=====
-	private static final String TOTAL_TIME_STR = "total_time";
-	private static final String LEFT_TIME_STR = "left_time";
-	private long totalTime = 0;
-	private long leftTime = 0;
 
 	//=====消息机制相关=====
+	//=====其他几个消息MSG_XX在PomotimerService里=====
 	private Handler timerHandler;
-	private static final int MSG_TIMES_UP = 100;
-	private static final int MSG_TIME_LEFT_CHANGED = 101;
-	private static final int MSG_WANT_TO_QUIT = 102;
-
-	//=====计时的状态和timertask相关=====
-	private TimerTask countingTimerTask;
-	private int countingState = STATE_IDLE;
-	private static final String STATE_STR = "timer_state";
-	private static final int STATE_IDLE = 1;
-	private static final int STATE_READY = 2;
-	private static final int STATE_COUNTING = 3;
-
+	/** 将要退出的消息，通过back键 */
+	public static final int MSG_WILL_QUIT = 102;	
+	
+	/**
+	 * 当前对应的task_id，如果没有对应task，就是-1
+	 */
+	private long currentTaskID = -1;
+	public static final String TASK_ID_STR = "task_id";
+	public static final String TASK_NAME_STR = "task_name";
+	
+	/**
+	 * service是否bind了
+	 */
+	private boolean serviceBound = false;
+	/**
+	 * 用来与service交互的binder
+	 */
+	private PomotimerBinder serviceBinder = null;
+	/**
+	 * 用于与pomotimer service进行bind的connection
+	 */
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			serviceBound = false;
+			serviceBinder = null;
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			serviceBinder = (PomotimerBinder) service;
+			serviceBound = true;
+			serviceBinder.setTaskID(currentTaskID);
+			serviceBinder.init(timerHandler);
+			
+			//=====UI的显示初始化=====
+			refreshRemainTimeText();
+			refreshCakeView();
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//====初始化handler，恢复状态=====
-		this.timerHandler = new Handler(new PomotimerCallback());
-		if (savedInstanceState != null) {
-			//=====如果横竖屏切换或者其他什么的，可以读取之前的状态=====
-			countingState = savedInstanceState.getInt(STATE_STR, STATE_IDLE);
-			totalTime = savedInstanceState.getLong(TOTAL_TIME_STR, 0);
-			leftTime = savedInstanceState.getLong(LEFT_TIME_STR, 0);
+		//=====恢复状态、初始化Handler=====
+		Bundle bundle = this.getIntent().getExtras();
+		if (bundle != null) {
+			this.currentTaskID = bundle.getLong(TASK_ID_STR, -1); 
+			this.setTaskName(bundle.getString(TASK_NAME_STR));
 		}
+		else {
+			this.setTaskName("这里将显示TASK_NAME");
+		}
+		this.timerHandler = new Handler(new PomotimerCallback());
 
 		//=====设置全屏，但是有标题=====
-		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//TODO 为了测试，先不全屏
+//		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setContentView(R.layout.timer);
-		this.timeLeftTextView = (TextView) findViewById(R.id.timeLeftTextView);
+		this.remainTimeTextView = (TextView) findViewById(R.id.remainTimeTextView);
 		this.addIdeaImageView = (ImageView) findViewById(R.id.addIdeaImageView);
 
-		//=====绘制中间的大饼图=====
+		//=====中间的大饼图=====
 		RelativeLayout cakeViewLayout = (RelativeLayout) findViewById(R.id.cakeViewLayout);
 		this.cakeView = new PomotimerCakeView(this);
 		cakeViewLayout.addView(this.cakeView);
-
-		//=====计时器的初始化or重建=====
-		switch (countingState) {
-		case STATE_IDLE:
-			this.resetTimer(20, 20);
-			break;
-		case STATE_READY:
-			break;
-		case STATE_COUNTING:
-			//=====resume上一次计时=====
-			this.resetTimer(totalTime, leftTime);
-			this.startTimer();
-			break;
-		default:
-			break;
-		}
-		
-		this.setTaskName("这里将显示任务名称");
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		//=====UI的显示初始化=====
-		this.refreshTimeLeftText();
+
 		this.cakeView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				switch (countingState) {
-				case STATE_IDLE:
-					resetTimer(20, 20);
+				switch (serviceBinder.getCountingState()) {
+				case PomotimerService.STATE_IDLE:
+					serviceBinder.resetBySetting();
 					//=====有意不break，继续执行吧少年=====
-				case STATE_READY:
-					startTimer();
+				case PomotimerService.STATE_READY:
+					serviceBinder.start();
 					Toast.makeText(PomotimerActivity.this, "计时开始！", Toast.LENGTH_SHORT).show();
 					break;
-				case STATE_COUNTING:
+				case PomotimerService.STATE_COUNTING:
 					//=====计时中，又按了一下，就不鸟它了吧=====
 					break;
 
@@ -141,23 +150,29 @@ public class PomotimerActivity extends Activity {
 		});
 	}
 
-	/**
-	 * 如果横竖屏什么的，可以存储当前的状态，供之后读取
-	 * @param outState
-	 */
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+	protected void onStart() {
+		super.onStart();
 
-		outState.putInt(STATE_STR, countingState);
-		outState.putLong(TOTAL_TIME_STR, totalTime);
-		outState.putLong(LEFT_TIME_STR, leftTime);
-		this.releaseTimer();
+		//=====bind pomotimer service=====
+		Intent serviceIntent = new Intent(this, PomotimerService.class);
+		this.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onDestroy() {
+		//=====unbind pomotimer service=====
+		if (serviceBound) {
+			this.unbindService(serviceConnection);
+			serviceBound = false;
+		}
+
+		super.onDestroy();
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (this.countingState == STATE_COUNTING) {
+		if (serviceBound && serviceBinder.isCounting()) {
 			//=====正在counting呢，哪能说退就退=====
 			AlertDialog.Builder builder = new Builder(this);
 			builder.setTitle(R.string.PT_quit_title);
@@ -166,7 +181,7 @@ public class PomotimerActivity extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Message msg = Message.obtain(timerHandler, MSG_WANT_TO_QUIT);
+					Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
 					msg.sendToTarget();
 				}
 			});
@@ -184,52 +199,6 @@ public class PomotimerActivity extends Activity {
 	}
 
 	/**
-	 * 初始化计时器
-	 * @param total 一共多少秒
-	 */
-	private void resetTimer(long total, long left) {
-		this.releaseTimer();
-		this.totalTime = total;
-		this.leftTime = left;
-		this.countingTimerTask = new TimerTask() {
-			
-			@Override
-			public void run() {
-				if (leftTime <= 0) {
-					Message msg = Message.obtain(timerHandler, MSG_TIMES_UP);
-					msg.sendToTarget();
-					return;
-				}
-
-				leftTime--;
-				Message msg = Message.obtain(timerHandler, MSG_TIME_LEFT_CHANGED);
-				msg.sendToTarget();
-			}
-		};
-		this.countingState = STATE_READY;
-	}
-	
-	/**
-	 * 释放计时器及其相应的timertask
-	 */
-	private void releaseTimer() {
-		if (countingTimerTask != null) {
-			countingTimerTask.cancel();
-			countingTimerTask = null;
-		}
-		this.countingState = STATE_IDLE;
-	}
-	
-	/**
-	 * 开始计时器
-	 */
-	private void startTimer() {
-		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
-		this.countingState = STATE_COUNTING;
-	}
-	
-	
-	/**
 	 * 将任务的名字显示在界面上
 	 * 初步决定放在title栏
 	 * @param name
@@ -242,18 +211,23 @@ public class PomotimerActivity extends Activity {
 	 * 将倒计时显示在屏幕上
 	 * 初步决定放在右下角 
 	 */
-	private void refreshTimeLeftText() {
-		switch (countingState) {
-		case STATE_IDLE:
-			this.timeLeftTextView.setText(new Date().toGMTString());
+	private void refreshRemainTimeText() {
+		if (!serviceBound) {
+			//=====还没有连接，也显示不了什么=====
+			return;
+		}
+
+		switch (serviceBinder.getCountingState()) {
+		case PomotimerService.STATE_IDLE:
+			this.remainTimeTextView.setText(TimeUtil.parseDateTime(new Date()));
 			break;
 
-		case STATE_READY:
-			this.timeLeftTextView.setText("Ready? Go!");
+		case PomotimerService.STATE_READY:
+			this.remainTimeTextView.setText("此次番茄时钟周期共：" + TimeUtil.parseRemainingTime(serviceBinder.getTotalTime()));
 			break;
 
-		case STATE_COUNTING:
-			this.timeLeftTextView.setText("剩余：" + this.leftTime);
+		case PomotimerService.STATE_COUNTING:
+			this.remainTimeTextView.setText("剩余：" + TimeUtil.parseRemainingTime(serviceBinder.getRemainTime()));
 			break;
 
 		default:
@@ -267,9 +241,11 @@ public class PomotimerActivity extends Activity {
 	private void refreshCakeView() {
 		this.cakeView.invalidate();
 	}
+	
+	
 
 	/**
-	 * 处理计时器内的消息的callback
+	 * 处理番茄计时器相关的消息
 	 * 处理了番茄周期结束、剩余时间改变
 	 * @author Andriy
 	 */
@@ -277,33 +253,36 @@ public class PomotimerActivity extends Activity {
 
 		@Override
 		public boolean handleMessage(Message msg) {
+			boolean msgHandled = false;
 			switch (msg.what) {
-			case MSG_TIMES_UP:
-				releaseTimer();
+			case PomotimerService.MSG_TIMES_UP:
 				refreshCakeView();
-				refreshTimeLeftText();
-				Log.d("__ANDRIY__", "timer finished, total: " + totalTime);
-				return true;
+				refreshRemainTimeText();
+				msgHandled = true;
+				break;
 
-			case MSG_TIME_LEFT_CHANGED:
-				refreshTimeLeftText();
+			case PomotimerService.MSG_REMAIN_TIME_CHANGED:
+				refreshRemainTimeText();
 				refreshCakeView();
-				return true;
+				msgHandled = true;
+				break;
 				
-			case MSG_WANT_TO_QUIT:
-				if (countingState == STATE_COUNTING) {
-					releaseTimer();
+			case MSG_WILL_QUIT:
+				if (serviceBound && serviceBinder.isCounting()) {
+					serviceBinder.stop();
+					serviceBinder.notifyInterrupted();
 					refreshCakeView();
-					refreshTimeLeftText();
-					// TODO 告诉XXX这个任务中断了！
+					refreshRemainTimeText();
 				}
 				onBackPressed();
-				return true;
+				msgHandled = true;
+				break;
 
 			default:
-				return false;
+				msgHandled = false;
 			}
-		}		
+			return msgHandled;
+		}
 	}
 
 	/**
@@ -336,16 +315,20 @@ public class PomotimerActivity extends Activity {
 		@Override
 		protected void onDraw(Canvas canvas) {
 			super.onDraw(canvas);
+			if (!serviceBound) {
+				//=====service都没有连上，画什么呀，洗洗睡吧=====
+				return;
+			}
 
 			//=====根据当前计时器状态不同重绘=====
-			switch (countingState) {
-			case STATE_IDLE:
+			switch (serviceBinder.getCountingState()) {
+			case PomotimerService.STATE_IDLE:
 				this.onDrawIdle(canvas);
 				break;
-			case STATE_READY:
+			case PomotimerService.STATE_READY:
 				this.onDrawReady(canvas);
 				break;
-			case STATE_COUNTING:
+			case PomotimerService.STATE_COUNTING:
 				this.onDrawCounting(canvas);
 				break;
 
@@ -380,15 +363,18 @@ public class PomotimerActivity extends Activity {
 		private void onDrawCounting(Canvas canvas) {
 			Paint paint = new Paint();
 			paint.setDither(true);
+			
+			long total = serviceBinder.getTotalTime();
+			long remain = serviceBinder.getRemainTime();
 
 			paint.setColor(CONSUMED_COLOR);
 			float startAngle = -90;
-			float sweepAngle = 360 * (totalTime - leftTime) / totalTime;
+			float sweepAngle = 360 * (total - remain) / total;
 			canvas.drawArc(boundRect, startAngle, sweepAngle, true, paint);
 
 			paint.setColor(AVAILABLE_COLOR);
-			startAngle = 360 * (totalTime - leftTime) / totalTime - 90;
-			sweepAngle = 360 * leftTime / totalTime;
+			startAngle = 360 * (total - remain) / total - 90;
+			sweepAngle = 360 * remain / total;
 			canvas.drawArc(boundRect, startAngle, sweepAngle, true, paint);
 		}
 	}

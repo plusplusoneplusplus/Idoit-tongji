@@ -29,6 +29,10 @@
         <activity android:name=".ui.TestingActivity" >
         </activity>
 
+        <service
+            android:name=".ui.PomotimerService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

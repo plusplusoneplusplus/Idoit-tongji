@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
+import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TestingHelper;
 
 /**
@@ -50,7 +50,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//TODO
+//		Intent serviceIntent = new Intent(this, PomotimerService.class);
+//		this.startService(serviceIntent);
 		
+		//=====在父类中已经调用过mySetActionBarContentView了=====
         taskListView = (ListView) findViewById(R.id.taskListView);
         
         Button testButton = (Button) findViewById(R.id.testButton);
@@ -64,8 +69,14 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		});
 
 	}
-	
 
+	@Override
+	protected void onDestroy() {
+		//TODO
+//		Intent serviceIntent = new Intent(this, PomotimerService.class);
+//		this.stopService(serviceIntent);
+		super.onDestroy();
+	}
 
 	/**
 	 * 因为此activity终将继承于GDActivity，告诉其加载哪个layout
@@ -133,20 +144,24 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		boolean isSelected;
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//TODO
 			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			return true;
+			isSelected = true;
+			break;
 		case R.id.TL_longclicked_delete:
 			//TODO
 			Toast.makeText(this, "pos: " + info.position, Toast.LENGTH_SHORT).show();
-			return true;
-
+			isSelected = true;
+			break;
 		default:
-			return super.onContextItemSelected(item);
+			isSelected = super.onContextItemSelected(item);
 		}
+		
+		return isSelected;
 	}
 
 	/**
@@ -258,8 +273,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-									+ " is about to start", Toast.LENGTH_SHORT).show();
+					//=====进入番茄钟界面，传入TASK_ID和TASK_NAME=====
+					Bundle bundle = new Bundle();
+					bundle.putLong(PomotimerActivity.TASK_ID_STR, task.getId());
+					bundle.putString(PomotimerActivity.TASK_NAME_STR, task.getName());
+					ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
 				}
 			});
 			finishBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
