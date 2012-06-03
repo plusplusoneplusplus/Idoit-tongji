@@ -4,222 +4,223 @@
     android:layout_height="match_parent"
     android:background="@color/white" >
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="30dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="30dp" >
-
-        <!-- 第一部分，未开始/进行中/完成/删除状态 -->
+        android:layout_height="match_parent" >
 
         <RelativeLayout
-            android:id="@+id/currentStateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@color/whitesmoke" >
+            android:paddingBottom="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="30dp" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:text="@string/Detail_state_intro_text" />
+            <!-- 第一部分，未开始/进行中/完成/删除状态 -->
 
-            <TextView
-                android:id="@+id/taskStateTextView"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/currentStateLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:text="STATE"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/blue" />
+                android:layout_margin="5dp"
+                android:background="@color/whitesmoke" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/Detail_state_intro_text" />
+
+                <TextView
+                    android:id="@+id/taskStateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:text="STATE"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/blue" />
+            </RelativeLayout>
+
+            <!-- 分隔符2-1 -->
+
+            <View
+                android:id="@+id/seperator21"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/currentStateLayout"
+                android:layout_margin="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <!-- 第二部分，任务先后顺序，前驱后继 -->
+
+            <RelativeLayout
+                android:id="@+id/sequenceDetailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/seperator21"
+                android:background="@color/whitesmoke" >
+
+                <!-- 前驱任务 -->
+
+                <RelativeLayout
+                    android:id="@+id/previousTaskLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/whitesmoke" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/Detail_previous_intro_text" />
+
+                    <TextView
+                        android:id="@+id/taskPreviousTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="PREVIOUS"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+
+                <!-- 后续任务 -->
+
+                <RelativeLayout
+                    android:id="@+id/followingTaskLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/previousTaskLayout"
+                    android:layout_margin="5dp"
+                    android:background="@color/whitesmoke" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/Detail_following_intro_text" />
+
+                    <TextView
+                        android:id="@+id/taskFollowingTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="FOLLOWING"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!-- 分隔符2-2 -->
+
+            <View
+                android:id="@+id/seperator22"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/sequenceDetailLayout"
+                android:layout_margin="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <!-- 第三部分，任务执行情况，已花费/预计总，中断 -->
+
+            <RelativeLayout
+                android:id="@+id/progressDetailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/seperator22"
+                android:background="@color/whitesmoke" >
+
+                <!-- 已花费 -->
+
+                <RelativeLayout
+                    android:id="@+id/pastTimeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/whitesmoke" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/Detail_pasttime_intro_text" />
+
+                    <TextView
+                        android:id="@+id/taskUsedTimeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="USED_TIME"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+
+                <!-- 预计总时间 -->
+
+                <RelativeLayout
+                    android:id="@+id/totalTimeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pastTimeLayout"
+                    android:layout_margin="5dp"
+                    android:background="@color/whitesmoke" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/Detail_totaltime_intro_text" />
+
+                    <TextView
+                        android:id="@+id/taskTotalTimeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="TOTAL_TIME"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+
+                <!-- 中断次数 -->
+
+                <RelativeLayout
+                    android:id="@+id/interruptLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/totalTimeLayout"
+                    android:layout_margin="5dp"
+                    android:background="@color/whitesmoke" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/Detail_interrupt_intro_text" />
+
+                    <TextView
+                        android:id="@+id/taskInterruptTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:text="INTERRUPT"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/blue" />
+                </RelativeLayout>
+            </RelativeLayout>
         </RelativeLayout>
-
-        
-        
-		<!-- 分隔符2-1 -->
-
-        <View
-            android:id="@+id/seperator21"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/currentStateLayout"
-            android:layout_margin="10dp"
-            android:background="@android:color/darker_gray" />
-
-        <!-- 第二部分，任务先后顺序，前驱后继 -->
-
-        <RelativeLayout
-            android:id="@+id/sequenceDetailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/seperator21"
-            android:background="@color/whitesmoke" >
-
-            <!-- 前驱任务 -->
-
-            <RelativeLayout
-                android:id="@+id/previousTaskLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_previous_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskPreviousTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="PREVIOUS"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-
-            <!-- 后续任务 -->
-
-            <RelativeLayout
-                android:id="@+id/followingTaskLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/previousTaskLayout"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_following_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskFollowingTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="FOLLOWING"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-        </RelativeLayout>
-        
-        
-        
-        <!-- 分隔符2-2 -->
-
-        <View
-            android:id="@+id/seperator22"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/sequenceDetailLayout"
-            android:layout_margin="10dp"
-            android:background="@android:color/darker_gray" />
-
-        <!-- 第三部分，任务执行情况，已花费/预计总，中断 -->
-
-        <RelativeLayout
-            android:id="@+id/progressDetailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/seperator22"
-            android:background="@color/whitesmoke" >
-
-            <!-- 已花费 -->
-
-            <RelativeLayout
-                android:id="@+id/pastTimeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_pasttime_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskUsedTimeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="USED_TIME"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-
-            <!-- 预计总时间 -->
-
-            <RelativeLayout
-                android:id="@+id/totalTimeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/pastTimeLayout"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_totaltime_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskTotalTimeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="TOTAL_TIME"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-
-            <!-- 中断次数 -->
-
-            <RelativeLayout
-                android:id="@+id/interruptLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/totalTimeLayout"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_interrupt_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskInterruptTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="INTERRUPT"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-        </RelativeLayout>
-    </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
