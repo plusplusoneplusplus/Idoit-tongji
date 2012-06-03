@@ -31,11 +31,13 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  * 生成、初始化任务细节部分的UI
@@ -117,7 +119,7 @@ public class TaskDetailViewHelper {
 	 */
 	public TaskInfo getTask() {
 		String name = taskNameText.getText().toString();
-		if (name.isEmpty()) {
+		if (name == null || name.isEmpty()) {
 			return null;
 		}
 		
@@ -173,7 +175,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO ①无重复；②每隔多少天；③每周周几
+				showSetPeriodicDialog();
 			}
 		});
 
@@ -194,6 +196,118 @@ public class TaskDetailViewHelper {
 				showSetTimeDialog(false);
 			}
 		});
+	}
+	
+	/**
+	 * 显示设置重复任务信息的dialog
+	 */
+	private void showSetPeriodicDialog() {
+		//=====生成、初始化builder=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_period_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_periodic, null);
+		builder.setView(view);
+
+		//=====设置界面交互=====
+		final RadioButton byDayButton = (RadioButton) view.findViewById(R.id.dialog_set_periodic_radioLeft);
+		final RadioButton byWeekButton = (RadioButton) view.findViewById(R.id.dialog_set_periodic_radioRight);
+		final EditText intervalEditText = (EditText) view.findViewById(R.id.dialog_set_periodic_editText);
+		final ToggleButton monday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_mondayButton);
+		final ToggleButton tuesday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_tuesdayButton);
+		final ToggleButton wednesday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_wednesdayButton);
+		final ToggleButton thursday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_thursdayButton);
+		final ToggleButton friday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_fridayButton);
+		final ToggleButton saturday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_saturdayButton);
+		final ToggleButton sunday = (ToggleButton) view.findViewById(R.id.dialog_set_periodic_sundayButton);
+		byDayButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				intervalEditText.setEnabled(isChecked);
+				monday.setEnabled(!isChecked);
+				tuesday.setEnabled(!isChecked);
+				wednesday.setEnabled(!isChecked);
+				thursday.setEnabled(!isChecked);
+				friday.setEnabled(!isChecked);
+				saturday.setEnabled(!isChecked);
+				sunday.setEnabled(!isChecked);
+			}
+		});
+		byWeekButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				intervalEditText.setEnabled(!isChecked);
+				monday.setEnabled(isChecked);
+				tuesday.setEnabled(isChecked);
+				wednesday.setEnabled(isChecked);
+				thursday.setEnabled(isChecked);
+				friday.setEnabled(isChecked);
+				saturday.setEnabled(isChecked);
+				sunday.setEnabled(isChecked);
+			}
+		});
+
+		//=====确认按钮，设置周期信息=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (byDayButton.isChecked()) {
+					//=====by day=====
+					String numberString = intervalEditText.getText().toString();
+					if (numberString == null || numberString.isEmpty()) {
+						return;
+					}
+					Integer interval = Integer.parseInt(numberString);
+					//TODO
+				}
+				else {
+					//=====by week=====
+					if (monday.isChecked()) {
+						
+					}
+					if (tuesday.isChecked()) {
+						
+					}
+					if (wednesday.isChecked()) {
+						
+					}
+					if (thursday.isChecked()) {
+						
+					}
+					if (friday.isChecked()) {
+						
+					}
+					if (saturday.isChecked()) {
+						
+					}
+					if (sunday.isChecked()) {
+						
+					}
+				}
+				//TODO 设置周期信息
+				refreshPeriodicInfo();
+			}
+		});
+		
+		//=====清除周期信息=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//TODO 清楚周期信息
+			}
+		});
+		
+		//=====取消，离开=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
 	}
 
 	/**
@@ -548,7 +662,7 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String numberString = editText.getText().toString();
-				if (numberString.isEmpty()) {
+				if (numberString == null || numberString.isEmpty()) {
 					return;
 				}
 
