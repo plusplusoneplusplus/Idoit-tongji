@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -226,6 +227,9 @@ public class TaskDetailsActivity extends GDActivity {
 
 			EditText taskNameText = (EditText) view.findViewById(R.id.taskNameEditText);
 			EditText taskMemoText = (EditText) view.findViewById(R.id.taskMemoEditText);
+			TextView periodicInfoText = (TextView) view.findViewById(R.id.taskPeriodicInfoTextView);
+			TextView startTimeText = (TextView) view.findViewById(R.id.taskStartTimeTextView);
+			TextView deadlineText = (TextView) view.findViewById(R.id.taskDeadlineTextView);
 			
 			//TODO 完善VIEW1的交互
 

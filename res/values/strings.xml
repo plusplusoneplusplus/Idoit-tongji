@@ -26,4 +26,9 @@
     <string name="settings_sound">声音设置</string>
     <string name="settings_minute">分钟</string>
     <string name="settings_count">个</string>
+    <string name="Detail_name_edit_hint">名称</string>
+    <string name="Detail_memo_edit_hint">备注</string>
+    <string name="Detail_period_intro_text">重复任务</string>
+    <string name="Detail_starttime_intro_text">开始时间</string>
+    <string name="Detail_deadline_intro_text">截止时间</string>
 </resources>

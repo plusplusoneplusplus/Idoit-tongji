@@ -9,31 +9,135 @@
     android:paddingRight="20dp"
     android:paddingTop="30dp" >
 
-    <EditText
-        android:id="@+id/taskNameEditText"
+    <!-- 第一部分，name + memo -->
+
+    <RelativeLayout
+        android:id="@+id/nameMemoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="名称" >
+        android:background="@color/whitesmoke" >
 
-        <requestFocus />
-    </EditText>
+        <EditText
+            android:id="@+id/taskNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/Detail_name_edit_hint" >
 
-    <EditText
-        android:id="@+id/taskMemoEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/taskNameEditText"
-        android:ems="10"
-        android:hint="备注"
-        android:inputType="textMultiLine" />
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/taskMemoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/taskNameEditText"
+            android:ems="10"
+            android:hint="@string/Detail_memo_edit_hint"
+            android:inputType="textMultiLine" />
+    </RelativeLayout>
+
+    <!-- 分隔符1 -->
 
     <View
         android:id="@+id/seperator1"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/taskMemoEditText"
-        android:layout_margin="5dp"
+        android:layout_below="@+id/nameMemoLayout"
+        android:layout_margin="10dp"
         android:background="@android:color/darker_gray" />
+
+    <!-- 第二部分，任务时间相关 -->
+
+    <RelativeLayout
+        android:id="@+id/taskTimeDetailLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seperator1"
+        android:background="@color/whitesmoke" >
+
+        <!-- 周期相关信息 -->
+
+        <RelativeLayout
+            android:id="@+id/periodicInfoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_period_intro_text" />
+
+            <TextView
+                android:id="@+id/taskPeriodicInfoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="PERIODIC_INFO"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+
+        <!-- 开始时间 -->
+
+        <RelativeLayout
+            android:id="@+id/startTimeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/periodicInfoLayout"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_starttime_intro_text" />
+
+            <TextView
+                android:id="@+id/taskStartTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="START_TIME"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+
+        <!-- 截止时间 -->
+
+        <RelativeLayout
+            android:id="@+id/deadlineLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/startTimeLayout"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_deadline_intro_text" />
+
+            <TextView
+                android:id="@+id/taskDeadlineTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="DEADLINE"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
