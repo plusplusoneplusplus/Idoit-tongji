@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -75,7 +76,7 @@ public class TaskDetailsActivity extends GDActivity {
 		}
 		if (bundle != null) {
 			long taskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1);
-			//TODO 测试时，直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
+			//TODO 测试时直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
 			task = TestingHelper.getRandomTask();
 			task.setId(taskID);
 		}
@@ -205,10 +206,10 @@ public class TaskDetailsActivity extends GDActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			switch (position) {
 			case 0:
-				convertView =this.getViewNo1(); 
+				convertView =this.getDescriptionView(); 
 				break;
 			case 1:
-            	convertView = this.getViewNo2();
+            	convertView = this.getProgressView();
 				break;
 
 			default:
@@ -218,18 +219,23 @@ public class TaskDetailsActivity extends GDActivity {
 		}
 		
 		/**
-		 * @return 第一个page（即page0）的View
+		 * @return 第一个page（即page0）的View，task基本信息的description
 		 */
-		private View getViewNo1() {
+		private View getDescriptionView() {
 			View view = LayoutInflater.from(TaskDetailsActivity.this).inflate(R.layout.taskdetails_paged_view_item1, null);
+
+			EditText taskNameText = (EditText) view.findViewById(R.id.taskNameEditText);
+			EditText taskMemoText = (EditText) view.findViewById(R.id.taskMemoEditText);
+			
 			//TODO 完善VIEW1的交互
+
 			return view;
 		}
 		
 		/**
-		 * @return 第二个page（即page1）的View
+		 * @return 第二个page（即page1）的View，task任务进度、完成信息的展示
 		 */
-		private View getViewNo2() {
+		private View getProgressView() {
 			View view = LayoutInflater.from(TaskDetailsActivity.this).inflate(R.layout.taskdetails_paged_view_item2, null);
 			//TODO 完善VIEW2的交互
 			return view;
