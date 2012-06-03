@@ -25,6 +25,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -162,7 +164,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				showSetTimeDialog(true, task.getStarttime());
+				showSetTimeDialog(true);
 			}
 		});
 		
@@ -171,7 +173,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				showSetTimeDialog(false, task.getDeadline());
+				showSetTimeDialog(false);
 			}
 		});
 	}
@@ -180,7 +182,7 @@ public class TaskDetailViewHelper {
 	 * 显示设置时间的dialog
 	 * @param isStartTime true则设置开始时间、false则为设置截止时间
 	 */
-	private void showSetTimeDialog(final boolean isStartTime, Date previousDate) {
+	private void showSetTimeDialog(final boolean isStartTime) {
 		//=====新建builder=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getResources().getString(isStartTime ?
@@ -203,6 +205,7 @@ public class TaskDetailViewHelper {
 		});
 		
 		//=====恢复时间到dialog的UI上，如果有的话=====
+		Date previousDate = isStartTime ? task.getStarttime() : task.getDeadline();
 		if (previousDate != null) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(previousDate);
@@ -271,7 +274,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				showSetPriorityDialog();
 			}
 		});
 		
@@ -304,6 +307,67 @@ public class TaskDetailViewHelper {
 	}
 	
 	/**
+	 * 显示设置优先级的dialog
+	 */
+	private void showSetPriorityDialog() {
+		//=====初始化设置builder=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getResources().getString(R.string.Detail_priority_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_priority, null);
+		builder.setView(view);
+		final RadioButton highButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_high);
+		final RadioButton middleButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_middle);
+		final RadioButton lowButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_low);
+		final RadioButton noneButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_none);
+		
+		//=====根据已有参数先恢复UI=====
+		switch (task.getPriority()) {	//TODO priority修改之后改这里
+		case 0:
+			highButton.setChecked(true);
+			break;
+		case 1:
+			middleButton.setChecked(true);
+			break;
+		case 2:
+			lowButton.setChecked(true);
+			break;
+
+		default:
+			noneButton.setChecked(true);
+			break;
+		}
+		
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//TODO 当后台定了以后改这里
+				if (highButton.isChecked()) {
+					task.setPriority(0);
+				}
+				else if (middleButton.isChecked()) {
+					task.setPriority(1);
+				}
+				else if (lowButton.isChecked()) {
+					task.setPriority(2);
+				}
+				else if (noneButton.isChecked()) {
+					task.setPriority(-1);
+				}
+				refreshPriority();
+			}
+		});
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
+	/**
 	 * 刷新TaskName的编辑框
 	 */
 	private void refreshTaskName() {
@@ -331,7 +395,7 @@ public class TaskDetailViewHelper {
 		Date startTime = task.getStarttime();
 		if (startTime == null) {
 			startTimeText.setTextColor(context.getResources().getColor(R.color.grey));
-			startTimeText.setText("无");
+			startTimeText.setText(R.string.Detail_none);
 		}
 		else {
 			if (new Date().getTime() >= startTime.getTime()) {
@@ -354,7 +418,7 @@ public class TaskDetailViewHelper {
 		Date deadline = task.getDeadline();
 		if (deadline == null) {
 			deadlineText.setTextColor(context.getResources().getColor(R.color.grey));
-			deadlineText.setText("无");
+			deadlineText.setText(R.string.Detail_none);
 		}
 		else {
 			if (new Date().getTime() >= deadline.getTime()) {
@@ -391,7 +455,10 @@ public class TaskDetailViewHelper {
 			priorityText.setTextColor(context.getResources().getColor(R.color.low_priority));
 			priorityText.setText(R.string.Detail_low_priority_text);
 			break;
+
 		default:
+			priorityText.setTextColor(context.getResources().getColor(R.color.grey));
+			priorityText.setText(R.string.Detail_unset);
 			break;
 		}
 	}
@@ -403,7 +470,7 @@ public class TaskDetailViewHelper {
 		ArrayList<String> tags = task.ExportTag();
 		if (tags == null || tags.isEmpty()) {
 			tagsText.setTextColor(context.getResources().getColor(R.color.grey));
-			tagsText.setText("无");
+			tagsText.setText(R.string.Detail_none);
 		}
 		else {
 			tagsText.setTextColor(context.getResources().getColor(R.color.black));			
@@ -422,7 +489,7 @@ public class TaskDetailViewHelper {
 		String address = task.getAddr();
 		if (address == null || address.isEmpty()) {
 			contextText.setTextColor(context.getResources().getColor(R.color.grey));
-			contextText.setText("无");
+			contextText.setText(R.string.Detail_none);
 		}
 		else {
 			contextText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -529,7 +596,7 @@ public class TaskDetailViewHelper {
 	private void refreshPrevious() {
 		if (this.previousTask == null) {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			previousTaskText.setText("无");
+			previousTaskText.setText(R.string.Detail_none);
 		}
 		else {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -543,7 +610,7 @@ public class TaskDetailViewHelper {
 	private void refreshFollowing() {
 		if (this.followingTask == null) {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			followingTaskText.setText("无");
+			followingTaskText.setText(R.string.Detail_none);
 		}
 		else {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -558,7 +625,7 @@ public class TaskDetailViewHelper {
 		int minutes = task.getFinishedCycle();
 		if (minutes == -1) {
 			usedTimeText.setTextColor(context.getResources().getColor(R.color.grey));
-			usedTimeText.setText("无");
+			usedTimeText.setText(R.string.Detail_none);
 		}
 		else {
 			usedTimeText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -583,7 +650,7 @@ public class TaskDetailViewHelper {
 		int minutes = task.getUnfinishedCycle();
 		if (minutes == -1) {
 			totalTimeText.setTextColor(context.getResources().getColor(R.color.grey));
-			totalTimeText.setText("未设置");
+			totalTimeText.setText(R.string.Detail_unset);
 		}
 		else {
 			totalTimeText.setTextColor(context.getResources().getColor(R.color.blue));
