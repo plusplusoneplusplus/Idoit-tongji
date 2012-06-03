@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.jar.Attributes.Name;
 
+import android.R.integer;
 import android.content.Context;
 
 //import dalvik.system.DexClassLoader;
@@ -167,5 +168,9 @@ public class TaskController {
 		t.setInterrupt(t.getInterrupt() + interrupt);
 		t.setusedtime(t.getusedtime() + time);
 		ModifyTaskInfo(id,t);
+	}
+	
+	public void InterruptTask(int id,int time){
+		FinishCycle(id, 1, time);
 	}
 }
