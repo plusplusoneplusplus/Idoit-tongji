@@ -11,13 +11,17 @@ public class Settings {
 
 	/**
 	 * 这里放所有默认的设定吧
-	 * @author Andriy
+	 * @author Andriy 
 	 */
 	public static class DefaultSettings {
 		/** 默认一个番茄钟时间周期是25min */
-		public static final int POMOTIMER_DURATION = 25;
+		public static final int POMO_DURATION = 25;
 		/** 默认一个番茄钟2个时间周期之间的间隔为5min */
-		public static final int POMOTIMER_INTERVAL = 5;
+		public static final int POMO_INTERVAL = 5;
+		/** 默认一个番茄钟2个时间周期之间的长间隔为15min */
+		public static final int POMO_LONG_INTERVAL = 15;
+		/** 默认4个番茄周期后执行一次长间隔 */
+		public static final int POMO_COUNT = 4;
 
 		/** 默认番茄计时器的状态 */
 		public static final int TIMER_STATE = PomotimerService.STATE_IDLE;
@@ -40,8 +44,8 @@ public class Settings {
 	 * 重置所有的参数为默认值
 	 */
 	public void reset() {
-		this.setPomotimerDuration(DefaultSettings.POMOTIMER_DURATION);
-		this.setPomotimerInterval(DefaultSettings.POMOTIMER_INTERVAL);
+		this.setPomotimerDuration(DefaultSettings.POMO_DURATION);
+		this.setPomotimerInterval(DefaultSettings.POMO_INTERVAL);
 
 		new TimerTempSettings().reset();
 	}
@@ -52,7 +56,7 @@ public class Settings {
 	 * @return 一个番茄钟周期的时间，单位分钟
 	 */
 	public int getPomotimerDuration() {
-		return this.preferences.getInt(POMOTIMER_DURATION_STR, DefaultSettings.POMOTIMER_DURATION);
+		return this.preferences.getInt(POMOTIMER_DURATION_STR, DefaultSettings.POMO_DURATION);
 	}
 	/**
 	 * 设置一个番茄钟周期的时间
@@ -68,7 +72,7 @@ public class Settings {
 	 * @return 两个番茄时钟周期之间的休息间隔，单位：分钟
 	 */
 	public int getPomotimerInterval() {
-		return this.preferences.getInt(POMOTIMER_INTERVAL_STR, DefaultSettings.POMOTIMER_INTERVAL);
+		return this.preferences.getInt(POMOTIMER_INTERVAL_STR, DefaultSettings.POMO_INTERVAL);
 	}
 	/**
 	 * 设置两个番茄时钟周期之间的休息间隔
@@ -77,7 +81,40 @@ public class Settings {
 	public void setPomotimerInterval(int interval) {
 		this.preferences.edit().putInt(POMOTIMER_INTERVAL_STR, interval).commit();
 	}
+	
+	//==========
+	private static final String POMOTIMER_LONG_INTERVAL_STR = "pomo_long_timer_interval";
+	/**
+	 * @return 两个番茄时钟周期之间的长休息间隔，单位：分钟
+	 */
+	public int getPomotimerLongInterval() {
+		return this.preferences.getInt(POMOTIMER_LONG_INTERVAL_STR, DefaultSettings.POMO_LONG_INTERVAL);
+	}
+	/**
+	 * 设置两个番茄时钟周期之间的长休息间隔
+	 * @param interval 单位：分钟
+	 */
+	public void setPomotimerLongInterval(int interval) {
+		this.preferences.edit().putInt(POMOTIMER_LONG_INTERVAL_STR, interval).commit();
+	}
+	
+	//==========
+	private static final String POMOTIMER_COUNT = "pomo_count";
+	/**
+	 * @return 长休息间隔所需番茄数，单位：个
+	 */
+	public int getPomotimerCount() {
+		return this.preferences.getInt(POMOTIMER_COUNT, DefaultSettings.POMO_COUNT);
+	}
+	/**
+	 * 设置长休息间隔所需番茄数
+	 * @param interval 单位：个
+	 */
+	public void setPomotimerCount(int count) {
+		this.preferences.edit().putInt(POMOTIMER_COUNT, count).commit();
+	}
 
+	
 	/**
 	 * 一个类with有参构造函数，其内部类with无参构造函数，怎么搞！
 	 * @return 一个TimerTempSettings实例

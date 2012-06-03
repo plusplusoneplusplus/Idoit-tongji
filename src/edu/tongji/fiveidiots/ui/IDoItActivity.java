@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.ActivityUtil;
+import edu.tongji.fiveidiots.util.Settings;
 
 /**
  * IDoItActivity是预留用来显示教学界面、介绍界面或App Logo的
@@ -19,5 +20,6 @@ public class IDoItActivity extends Activity {
         setContentView(R.layout.main);
 
         ActivityUtil.startNewActivity(this, OverviewTaskListActivity.class, 1000L, true);
+        //ActivityUtil.startNewActivity(this, SettingsActivity.class, 1000L, true);
     }
 }

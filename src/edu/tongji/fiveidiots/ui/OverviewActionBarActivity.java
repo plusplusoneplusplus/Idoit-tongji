@@ -118,6 +118,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 			case R.string.analysis:
 				break;
 			case R.string.settings:
+				ActivityUtil.startNewActivity(OverviewActionBarActivity.this, SettingsActivity.class, 0L, false);
 				break;
 			case R.string.about:
 				break;

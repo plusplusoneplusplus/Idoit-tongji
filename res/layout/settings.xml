@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+        	xmlns:android="http://schemas.android.com/apk/res/android">
+        
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/white" >
+	    
+	   <TextView android:id="@+id/settings_timer_bar"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_timer"
+	       android:textColor="@color/white"
+	       android:background="@drawable/settings_title_bg"
+	       android:textAppearance="?android:attr/textAppearanceLarge" />
+	   
+	   <TextView android:id="@+id/settings_pomotime_textview"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_pomotime"
+	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:layout_below="@id/settings_timer_bar"
+	       android:textColor="@color/black"
+	       android:padding="8dip" />
+	   
+	   <SeekBar android:id="@+id/settings_pomotime_seekbar"
+	       android:layout_width="fill_parent"
+	       android:layout_height="wrap_content"
+	       android:paddingLeft="40dip"
+	       android:paddingRight="40dip"
+	       android:layout_below="@id/settings_pomotime_textview"/>
+	       
+	   	   
+	   <TextView android:id="@+id/settings_shortbreak_textview"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_shortbreak"
+	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:layout_below="@id/settings_pomotime_seekbar"
+	       android:textColor="@color/black"
+	       android:padding="8dip" />
+	   
+	   <SeekBar android:id="@+id/settings_shortbreak_seekbar"
+	       android:layout_width="fill_parent"
+	       android:layout_height="wrap_content"
+	       android:paddingLeft="40dip"
+	       android:paddingRight="40dip"
+	       android:layout_below="@id/settings_shortbreak_textview"/>
+	       
+	   
+	   <TextView android:id="@+id/settings_longbreak_textview"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_longbreak"
+	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:layout_below="@id/settings_shortbreak_seekbar"
+	       android:textColor="@color/black"
+	       android:padding="8dip" />
+	   
+	   <SeekBar android:id="@+id/settings_longbreak_seekbar"
+	       android:layout_width="fill_parent"
+	       android:layout_height="wrap_content"
+	       android:paddingLeft="40dip"
+	       android:paddingRight="40dip"
+	       android:layout_below="@id/settings_longbreak_textview"/>
+	   
+	   
+	   <TextView android:id="@+id/settings_longbreak_interval_textview"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_longbreak_interval"
+	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:layout_below="@id/settings_longbreak_seekbar"
+	       android:textColor="@color/black"
+	       android:padding="8dip" />
+	   
+	   <SeekBar android:id="@+id/settings_longbreak_interval_seekbar"
+	       android:layout_width="fill_parent"
+	       android:layout_height="wrap_content"
+	       android:paddingLeft="40dip"
+	       android:paddingRight="40dip"
+	       android:paddingBottom="15dip"
+	       android:layout_below="@id/settings_longbreak_interval_textview"/>
+	   
+	   <TextView android:id="@+id/settings_sound_bar"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:text="@string/settings_sound"
+	       android:textColor="@color/white"
+	       android:background="@drawable/settings_title_bg"
+	       android:textAppearance="?android:attr/textAppearanceLarge"
+	       android:layout_below="@id/settings_longbreak_interval_seekbar" />
+	   
+	   
+	</RelativeLayout>
+
+</ScrollView>

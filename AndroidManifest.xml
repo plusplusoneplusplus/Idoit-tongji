@@ -34,6 +34,11 @@
             android:name=".ui.TaskDetailsActivity"
             android:theme="@style/Theme.IDoIt" >
         </activity>
+        
+        <activity 
+            android:name=".ui.SettingsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
         <service
             android:name=".ui.PomotimerService"

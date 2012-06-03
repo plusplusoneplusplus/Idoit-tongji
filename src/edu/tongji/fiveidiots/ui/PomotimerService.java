@@ -18,6 +18,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 
 /**
  * 番茄钟的Service，运行在后台
@@ -132,7 +133,8 @@ public class PomotimerService extends Service {
 		this.remainTime = remain;
 
 		//=====TODO 仅为测试用
-		this.remainTime = 5;
+		//this.remainTime = 10;
+		//this.remainTime = 5;
 		//=====END
 		
 		this.countingTimerTask = new TimerTask() {
