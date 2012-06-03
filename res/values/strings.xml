@@ -53,5 +53,6 @@
     <string name="Dialog_cancel_text">取消</string>
     <string name="Detail_none">无</string>
     <string name="Detail_unset">未设置</string>
+    <string name="Dialog_neutral_text">清除</string>
 
 </resources>

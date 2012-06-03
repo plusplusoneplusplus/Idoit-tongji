@@ -38,6 +38,10 @@ public class TaskInfo {
 	private Date starttime, deadline; // 任务开始时间，截止时间
 	private ArrayList<String> tag = new ArrayList<String>(); // 任务标签们
 	private boolean expire, finish, determine; // 任务是否过期，是否完成
+	
+	/** 提醒的时间 */
+	private  Date alarm;
+	
 	public TaskInfo(){
 		
 	}
@@ -203,6 +207,21 @@ public class TaskInfo {
 	}
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
+	}
+	
+	/**
+	 * 设置提醒
+	 * @param aDate
+	 */
+	public void setAlarm(Date aDate) {
+		this.alarm = aDate;
+	}
+	
+	/**
+	 * @return 提醒
+	 */
+	public Date getAlarm() {
+		return this.alarm;
 	}
 	
 	public void ImportTag(ArrayList<String> tag){

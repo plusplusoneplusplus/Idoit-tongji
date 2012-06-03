@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +36,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 /**
  * 生成、初始化任务细节部分的UI
@@ -261,6 +263,22 @@ public class TaskDetailViewHelper {
 			}
 		});
 		
+		//=====利用neutral button做什么=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (isStartTime) {
+					task.setStarttime(null);
+					refreshStartTime();
+				}
+				else {
+					task.setDeadline(null);
+					refreshDeadline();
+				}
+			}
+		});
+		
 		//=====取消按钮做什么=====
 		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
 			
@@ -307,7 +325,11 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				if (task.getStarttime() == null) {
+					Toast.makeText(context, "先设置开始时间才能设置提醒", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				showSetAlarmDialog();
 			}
 		});
 	}
@@ -499,6 +521,54 @@ public class TaskDetailViewHelper {
 	}
 	
 	/**
+	 * 显示设置提醒的dialog，只有当设置了开始时间才会弹出这个dialog
+	 */
+	private void showSetAlarmDialog() {
+		//=====初始化builder，dialog的界面=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_alarm_intro_text));
+		final EditText editText = new EditText(context);
+		editText.setHint("提前多少分钟");
+		editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+		builder.setView(editText);
+
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String numberString = editText.getText().toString();
+				if (numberString.equals("")) {
+					return;
+				}
+
+				//=====向前推number分钟=====
+				Integer number = Integer.parseInt(numberString);
+				task.setAlarm(new Date(task.getStarttime().getTime() - number * 60 * 1000));
+				refreshAlarm();
+			}
+		});
+		
+		//=====利用neutral button做什么，清除！=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setAlarm(null);
+				refreshAlarm();
+			}
+		});
+		
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
+	/**
 	 * 刷新TaskName的编辑框
 	 */
 	private void refreshTaskName() {
@@ -632,7 +702,15 @@ public class TaskDetailViewHelper {
 	 *  刷新提醒
 	 */
 	private void refreshAlarm() {
-		//TODO
+		Date alarm = task.getAlarm();
+		if (alarm == null) {
+			alarmText.setTextColor(context.getResources().getColor(R.color.grey));
+			alarmText.setText(context.getText(R.string.Detail_unset));
+		}
+		else {
+			alarmText.setTextColor(context.getResources().getColor(R.color.blue));
+			alarmText.setText(TimeUtil.parseDateTime(alarm));
+		}
 	}
 	
 	
