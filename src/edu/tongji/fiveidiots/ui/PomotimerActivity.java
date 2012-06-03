@@ -80,7 +80,7 @@ public class PomotimerActivity extends Activity {
 			serviceBinder.init(timerHandler);
 			
 			//=====UI的显示初始化=====
-			refreshRemainTimeText();
+			refreshRemainTimeText(PomotimerService.SECTION_POMO);
 			refreshCakeView();
 		}
 	};
@@ -209,20 +209,32 @@ public class PomotimerActivity extends Activity {
 	/**
 	 * 将倒计时显示在屏幕上
 	 * 初步决定放在右下角 
+	 * 参数表示当前处于什么阶段，详见阶段定义
 	 */
-	private void refreshRemainTimeText() {
+	private void refreshRemainTimeText(int section) {
 		if (!serviceBound) {
 			//=====还没有连接，也显示不了什么=====
 			return;
 		}
-
+		
+		String str = TimeUtil.parseRemainingTime(serviceBinder.getTotalTime());
+		switch (section) {
+		case PomotimerService.SECTION_POMO:
+			str = "此次番茄时钟周期共：" + str;
+			break;
+		case PomotimerService.SECTION_SHORTBREAK:
+		case PomotimerService.SECTION_LONGBREAK:
+			str = "此次休息时间共：" + str;
+			break;
+		default:
+			break;
+		}
+		
+		
 		switch (serviceBinder.getCountingState()) {
 		case PomotimerService.STATE_IDLE:
-			this.remainTimeTextView.setText(TimeUtil.parseDateTime(new Date()));
-			break;
-
 		case PomotimerService.STATE_READY:
-			this.remainTimeTextView.setText("此次番茄时钟周期共：" + TimeUtil.parseRemainingTime(serviceBinder.getTotalTime()));
+			this.remainTimeTextView.setText(str);
 			break;
 
 		case PomotimerService.STATE_COUNTING:
@@ -256,12 +268,12 @@ public class PomotimerActivity extends Activity {
 			switch (msg.what) {
 			case PomotimerService.MSG_TIMES_UP:
 				refreshCakeView();
-				refreshRemainTimeText();
+				refreshRemainTimeText(msg.arg1);
 				msgHandled = true;
 				break;
 
 			case PomotimerService.MSG_REMAIN_TIME_CHANGED:
-				refreshRemainTimeText();
+				refreshRemainTimeText(msg.arg1);
 				refreshCakeView();
 				msgHandled = true;
 				break;
@@ -271,7 +283,7 @@ public class PomotimerActivity extends Activity {
 					serviceBinder.stop();
 					serviceBinder.notifyInterrupted();
 					refreshCakeView();
-					refreshRemainTimeText();
+					refreshRemainTimeText(msg.arg1);
 				}
 				onBackPressed();
 				msgHandled = true;

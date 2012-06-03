@@ -54,6 +54,19 @@ public class PomotimerService extends Service {
 	
 	//=====task相关的信息=====
 	private long taskID = -1;
+	
+
+	//=====状态：表示是番茄时间阶段，还是短/长休息时间阶段=====
+	public static final int SECTION_POMO = 1000;
+	public static final int SECTION_SHORTBREAK = 1001;
+	public static final int SECTION_LONGBREAK = 1002;
+	/**
+	 * currentSection表示当前所处阶段
+	 * 如果当前倒计时处于暂停，则表示下一个将要开始的阶段
+	 * 如果倒计时处于执行中，则表示当前阶段
+	 * @author IRainbow5
+	 */
+	private int currentSection = SECTION_POMO;
 
 	@Override
 	public void onCreate() {
@@ -81,7 +94,24 @@ public class PomotimerService extends Service {
 	 * 初始化计时器的状态及相关变量
 	 */
 	private void initState() {
-		int duration = new Settings(PomotimerService.this).getPomotimerDuration();
+		Settings settings = new Settings(PomotimerService.this);
+		int duration = 1;
+		
+		switch (currentSection) {
+		case SECTION_POMO:
+			duration = settings.getPomotimerDuration();
+			break;
+		case SECTION_SHORTBREAK:
+			duration = settings.getPomotimerInterval();
+			break;
+		case SECTION_LONGBREAK:
+			duration = settings.getPomotimerLongInterval();
+			break;
+			
+		default:
+			break;
+		}
+		
 		switch (countingState) {
 		case STATE_IDLE:
 			resetTimer(duration*60, duration*60);
@@ -142,18 +172,46 @@ public class PomotimerService extends Service {
 			@Override
 			public void run() {
 				if (remainTime <= 0) {
+					
 					releaseTimer();
-					showNotification("此次番茄周期结束！", true, false);
+					
+					String str = "此次番茄周期结束！";
+					switch(currentSection) {
+					case SECTION_POMO:
+						str = "此次番茄周期结束！";
+						break;
+					case SECTION_SHORTBREAK:
+						str = "休息结束！";
+						break;
+					case SECTION_LONGBREAK:
+						str = "长休息结束！";
+						break;
+					default:
+						break;
+					}
+					showNotification(str, true, false);
+					
+					/**
+					 * 我认为service的totaltime等值应该是自己独立变化
+					 * 而不是依靠activity的click事件
+					 * 因此我在这里重置了totaltime等值
+					 * @author IRainbow5
+					 */
+					changeState();
+					
 					if (handler != null) {
 						Message msg = Message.obtain(handler, MSG_TIMES_UP);
+						msg.arg1 = currentSection;
 						msg.sendToTarget();
 					}
+					
 				}
 				else {
 					remainTime--;
 					showNotification("剩余："+TimeUtil.parseRemainingTime(remainTime), false, true);
 					if (handler != null) {
 						Message msg = Message.obtain(handler, MSG_REMAIN_TIME_CHANGED);
+						msg.arg1 = currentSection;
 						msg.sendToTarget();
 					}
 				}
@@ -161,6 +219,24 @@ public class PomotimerService extends Service {
 
 		};
 		this.countingState = STATE_READY;
+	}
+	
+	/**
+	 * 根据当前阶段改变新阶段
+	 * 读取新的计时器相关数据
+	 */
+	private void changeState() {
+		/**
+		 * 修改所处阶段
+		 */
+		if(currentSection == SECTION_POMO) {
+			currentSection = SECTION_SHORTBREAK;
+		}
+		else {
+			currentSection = SECTION_POMO;
+		}
+		
+		initState();
 	}
 
 	/**
@@ -173,6 +249,7 @@ public class PomotimerService extends Service {
 		}
 		this.countingState = STATE_IDLE;
 		this.stopForeground(true);
+		
 	}
 
 	/**
@@ -182,11 +259,29 @@ public class PomotimerService extends Service {
 		new Timer().scheduleAtFixedRate(countingTimerTask, 0, 1000);
 		this.countingState = STATE_COUNTING;
 		
+		/**
+		 * 判断处于哪个阶段
+		 */
+		String str = "番茄周期开始！";
+		switch(currentSection) {
+		case SECTION_POMO:
+			str = "番茄周期开始！";
+			break;
+		case SECTION_SHORTBREAK:
+			str = "休息时间开始！";
+			break;
+		case SECTION_LONGBREAK:
+			str = "长休息时间开始！";
+			break;
+		default:
+			break;
+		}
+		
 		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
 		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,	notificationIntent, 0);
-		notification.setLatestEventInfo(this, "IDoit", 	"番茄周期开始！", pendingIntent);
+		notification.setLatestEventInfo(this, "IDoit",  str, pendingIntent);
 		this.startForeground(POMO_NOTIFICATION_ID, notification);
 	}
 
@@ -285,8 +380,9 @@ public class PomotimerService extends Service {
 		 * 重置计时器，total和remain是根据Settings里的设置而设定的
 		 */
 		public void resetBySetting() {
-			int duration = new Settings(PomotimerService.this).getPomotimerDuration();
-			resetTimer(duration*60, duration*60);
+			//int duration = new Settings(PomotimerService.this).getPomotimerDuration();
+			//resetTimer(duration*60, duration*60);
+
 		}
 		
 		/**

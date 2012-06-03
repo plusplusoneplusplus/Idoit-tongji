@@ -1,10 +1,13 @@
 package edu.tongji.fiveidiots.ui;
 
+import java.util.concurrent.TimeUnit;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.Settings;
+import edu.tongji.fiveidiots.util.TimeUtil;
 
 /**
  * 设置界面
@@ -59,7 +63,7 @@ public class SettingsActivity extends Activity {
 	 * Pomotime的取值范围
 	 */
 	private final static int mPomotimeMin = 10;
-	private final static int mPomotimeMax = 60;
+	private final static int mPomotimeMax = 40;
 	
 	/**
 	 * ShortBreak的取值范围
@@ -218,7 +222,7 @@ public class SettingsActivity extends Activity {
 						String.format("%d", progress + mPomotimeMin)
 						+ SettingsActivity.this.getString(R.string.settings_minute));
 				mSettings.setPomotimerDuration(progress + mPomotimeMin);
-				
+				mSettings.getTimerSettings().setTotalTime((progress + mPomotimeMin) * 60);
 			}
 		});
 		
