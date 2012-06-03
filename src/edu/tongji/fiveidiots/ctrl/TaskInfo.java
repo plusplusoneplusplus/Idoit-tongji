@@ -1,245 +1,174 @@
-/*
- * Author: Qrc
- * Date:2012-05-28
- */
-
 package edu.tongji.fiveidiots.ctrl;
-import java.util.ArrayList;
+
 import java.util.Date;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import edu.tongji.fiveidiots.ctrl.DBHelper.TimeAreaSelector;
 
-
-/*
- * TaskInfo记录每个任务详细信息
- * 成员：见下面注释
- * 方法：该类中方法不对外部开放，仅供TaskController类调用
- * void copy(TaskInfo aTask) 复制aTask的任务信息
- * void ImportTag(ArrayList<String> tag) 将tag数组中内容复制给任务中的标签
- * ArrayList<String> ExportTag() 导出任务中标签的内容
- * void addTag(String atag) 新增一个tag
- * void deleteTag(int id) 删除一个tag
- * Boolean searchTag(String str) 搜索一个tag如果存在，返回true
- * Boolean IsExpire() 返回该任务是否过期
- * void SetExpire() 设置该任务过期
- * Boolean IsFinish() 返回该任务是否完成
- * void SetFinish() 设置该任务状态为完成
- * Boolean IsDetermine()
- * void SetDetermine()
- * void FinishCycle(int interrupt,double percent,Date cur) 该任务完成一个蕃茄钟，调用一次该函数
- * 
+/**
+ * @author luyiguang
+ * @hint 下面的代码中，变量或函数两边有下划线的意思是返回的String两边都回加空格
  */
 public class TaskInfo {
-	private int pri,pre_id,next_id,pcycle,ncycle,way,interrupt,id; //优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，是否为周期任务，中断个数，任务ID
-	//way变量的赋值：非周期任务：0  每周特定日执行的任务：其二进制第22位数值为1，剩下21位记录特定日，例如周一，周三，周四，周日要执行的任务：数值二进制表示为：1 000 000 000 001 011 100 111  如果是每隔特定日期执行的任务，其二进制表示的第23，22位为10，剩下21位表示相隔的日期。
-	private double percent;  //完成任务的百分比
-	private String name,addr,hint; //任务名称，地址，注释
-	private Date starttime,deadline;  //任务开始时间，截止时间
-	private ArrayList<String> tag;  //任务标签们
-	private Boolean expire,finish,determine;  //任务是否过期，是否完成
+	public final static String TABLE_NAME = "TASK_INFO";	
+	public final static String _TABLE_NAME_ = " TASK_INFO ";
+	public final static String TABLE_CONTENT_ARRAY [] = {
+		"id", "INTEGER PRIMARY KEY",
+		"name", "NTEXT",
+		"hint", "NTEXT",
+		"begin_time", "INTEGER",
+		"finis_time", "INTEGER",
+		"priority", "INTEGER",
+		"prev_task_id", "INTEGER",
+		"next_task_id", "INTEGER",
+		"finishing_state", "INTEGER",
+		"finishing_place", "NTEXT",
+		"minutes_done", "INTEGER",
+		"minutes_todo", "INTEGER",
+		"alarm_time_ahead", "INTEGER",
+		"repeat_way", "INTEGER"
+	};
 	
-	public TaskInfo(int pri, int pre_id, int next_id, int pcycle, int ncycle,int way,int interrupt, int id, double percent, String name, String addr, String hint, Date starttime, Date deadline, ArrayList<String> tag, Boolean expire, Boolean finish, Boolean determine){
-		this.id = id;
-		this.name = name;
-		this.addr = addr;
-		this.hint = hint;
-		this.pri = pri;
-		this.pre_id = pre_id;
-		this.next_id = next_id;
-		this.pcycle = pcycle;
-		this.ncycle = ncycle;
-		this.way = way;
-		this.deadline = new Date(deadline.getYear(),deadline.getMonth(),deadline.getDate(),deadline.getHours(),deadline.getMinutes());
-		this.starttime = new Date(starttime.getYear(),starttime.getMonth(),starttime.getDate(),starttime.getHours(),starttime.getMinutes());
-		this.expire = expire;
-		this.finish = finish;
-		this.percent = percent;
-		this.tag = new ArrayList<String>(tag);
-		this.determine = determine;
-	}
+	private long id;
+	private String name;
+	private String hint;
 	
-	public TaskInfo(int pri,int id,String name,ArrayList<String> tag){
-		this.id = id;
-		this.name = name;
-		this.addr = new String();
-		this.hint = new String();
-		this.pri = pri;
-		this.pre_id = 0;
-		this.next_id = 0;
-		this.pcycle = 0;
-		this.ncycle = 0;
-		this.way = 0;
-		this.deadline = new Date(0,0,1,0,0);
-		this.starttime = new Date(0,0,1,0,0);
-		this.expire = false;
-		this.finish = false;
-		this.percent = 0.0;
-		this.tag = new ArrayList<String>(tag);
-		this.determine = false;
-	}
+	private Date begTime = new Date();
+	private Date dueTime = new Date();
 	
-	public void copy(TaskInfo aTask){
-		this.id = aTask.getId();
-		this.name = aTask.getName();
-		this.addr = aTask.getAddr();
-		this.hint = aTask.getHint();
-		this.pri = aTask.getPri();
-		this.pre_id = aTask.getPre_id();
-		this.next_id = aTask.getNext_id();
-		this.pcycle = aTask.getPcycle();
-		this.ncycle = aTask.getNcycle();
-		this.way = aTask.getWay();
-		this.deadline = aTask.getDeadline();
-		this.percent = aTask.getPercent();
-		if (aTask.IsExpire()) this.expire = true;
-		else this.expire = false;
-		if (aTask.IsFinish()) this.finish = true;
-		else this.finish = false;
-		if (aTask.IsDetermine()) this.determine = true;
-		else this.determine = false;
-		this.tag = aTask.ExportTag();
+	public enum PRIORITY_TYPE {
+		LOW, MID, HIGH
 	}
+	private PRIORITY_TYPE priority = PRIORITY_TYPE.LOW;
 	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-	public int getPcycle() {
-		return pcycle;
-	}
-	public void setPcycle(int pcycle) {
-		this.pcycle = pcycle;
-	}
-	public int getNcycle() {
-		return ncycle;
-	}
-	public void setNcycle(int ncycle) {
-		this.ncycle = ncycle;
-	}
-	public int getPri() {
-		return pri;
-	}
-	public void setPri(int pri) {
-		this.pri = pri;
-	}
-	public int getPre_id() {
-		return pre_id;
-	}
-	public void setPre_id(int pre_id) {
-		this.pre_id = pre_id;
-	}
-	public int getNext_id() {
-		return next_id;
-	}
-	public void setNext_id(int next_id) {
-		this.next_id = next_id;
-	}
+	private long prevTaskId;
+	private long nextTaskId;
 	
-	public int getWay() {
-		return way;
+	public enum TASK_STATE {
+		WORKING, DELAYED, FINISHED, DELETED
 	}
-	public void setWay(int way) {
-		this.way = way;
-	}
-	public int getInterrupt() {
-		return interrupt;
-	}
-	public void setInterrupt(int interrupt) {
-		this.interrupt = interrupt;
-	}
-	public double getPercent() {
-		return percent;
-	}
-	public void setPercent(double percent) {
-		this.percent = percent;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getAddr() {
-		return addr;
-	}
-	public void setAddr(String addr) {
-		this.addr = addr;
-	}
-	public String getHint() {
-		return hint;
-	}
-	public void setHint(String hint) {
-		this.hint = hint;
-	}
+	private TASK_STATE state = TASK_STATE.WORKING;
 	
-	public Date getStarttime() {
-		return starttime;
-	}
-	public void setStarttime(Date starttime) {
-		this.starttime = starttime;
-	}
-	public Date getDeadline() {
-		return deadline;
-	}
-	public void setDeadline(Date deadline) {
-		this.deadline = deadline;
-	}
+	private int minutesDone = 0;
+	private int minutesTodo = 50;
 	
+	private int alarmTimeAhead = 60;
 	
-	public void ImportTag(ArrayList<String> tag){
-		this.tag.clear();
-		this.tag.addAll(tag);
-	}	
-	public ArrayList<String> ExportTag(){
-		return this.tag;
-	}
+	private long repeatWay = 0;
 	
-	public void addTag(String atag){
-		tag.add(atag);
-	}
-	public void deleteTag(int id){
-		tag.remove(id);
-	}
-	public Boolean searchTag(String str){
-		for ( int i = 0; i < tag.size(); ++ i){
-			if (str.equals(tag.get(i))){
-				return true;
+	/** 
+	 * where do we finish the task
+	 */
+	private String where;
+		
+	/**
+	 * Get TaskInfo db table content value WITHOUT table name
+	 * @return tables to string
+	 */
+	public String get_DBTableContentValueString_() {
+		String table_value[] = new String [] {
+				Long.toString(id),
+				name,
+				hint,
+				Long.toString(begTime.getTime()),
+				Long.toString(dueTime.getTime()),
+				Integer.toString(priority.ordinal()),
+				Long.toString(prevTaskId),
+				Long.toString(nextTaskId),
+				Integer.toString(state.ordinal()),
+				where,
+				Integer.toString(minutesDone),
+				Integer.toString(minutesTodo),
+				Integer.toString(alarmTimeAhead),
+				Long.toString(repeatWay)
+		};
+		
+		String value = " values(";
+		for (int i = 0; i < table_value.length; i++) {
+			value += table_value[i];
+			if (i + 1 < table_value.length) {
+				value += ",";
 			}
 		}
-		return false;
+		value += ") ";
+		return value;
 	}
 	
-	public Boolean IsExpire(){
-		return expire;
-	}
-	public void SetExpire(){
-		expire = true;
-	}
-	
-	public Boolean IsFinish(){
-		return finish;
-	}
-	public void SetFinish(){
-		finish = true;
-	}
-	
-	public Boolean IsDetermine(){
-		return determine;
-	}
-	public void SetDetermine(){
-		determine = true;
-	}
-	
-	public void FinishCycle(int interrupt,double percent,Date cur){
-		this.interrupt += interrupt;
-		this.percent += percent;
-		if (this.percent >= 100) finish = true;
-		if (this.deadline.before(cur)) expire = true;
-		pcycle ++;
-		ncycle = (int)Math.ceil((100.0 - percent) / (percent / pcycle));
+	/**
+	 * Generate a TaskInfo from db cursor
+	 * @param dbCursor 
+	 */
+	public TaskInfo(Cursor dbCursor) {
+		id = dbCursor.getLong(0);
+		name = dbCursor.getString(1);
+		hint = dbCursor.getString(2);
+		
+		begTime.setTime(dbCursor.getInt(3));
+		dueTime.setTime(dbCursor.getInt(4));
+		
+		priority = PRIORITY_TYPE.values()[dbCursor.getInt(5)];
+		
+		prevTaskId = dbCursor.getLong(6);
+		nextTaskId = dbCursor.getLong(7);
+		
+		state = TASK_STATE.values()[dbCursor.getInt(8)];
+		
+		where = dbCursor.getString(9);
+		minutesDone = dbCursor.getInt(10);
+		minutesTodo = dbCursor.getInt(11);
+		alarmTimeAhead = dbCursor.getInt(12);
+		repeatWay = dbCursor.getLong(13);
 	}
 	
+	private static String[] get_TableContentNameArray() {
+		String tableContentName[] = new String [TABLE_CONTENT_ARRAY.length >> 1];
+		for (int i = 0; i < TABLE_CONTENT_ARRAY.length; i += 2) {
+			tableContentName[i >> 1] = TABLE_CONTENT_ARRAY[i];
+		}
+		return tableContentName;
+	}
 	
+	private static String get_TableContentNameString_() {
+		String tableContentName = "" + TABLE_CONTENT_ARRAY[0];
+		
+		for (int i = 2; i < TABLE_CONTENT_ARRAY.length; i += 2) {
+			tableContentName += "," + TABLE_CONTENT_ARRAY[i];
+		}
+		
+		return tableContentName;
+	}
+
+	public void insert(SQLiteDatabase db) {
+		db.execSQL("INSERT INTO" + _TABLE_NAME_ + get_TableContentNameString_() + get_DBTableContentValueString_());
+	}
+	
+	public void delete(SQLiteDatabase db) {
+		db.execSQL("DELETE FROM" + _TABLE_NAME_ + "where id = " + id);
+	}
+	
+	public static void createTable(SQLiteDatabase db) {
+		db.execSQL("CREATE TABLE" + _TABLE_NAME_ + get_TableContentNameString_());
+	}
+	
+	public static void dropTable(SQLiteDatabase db) {
+		db.execSQL("DROP TABLE IF EXISTS " + _TABLE_NAME_);
+	}
+	
+	private static Cursor select(SQLiteDatabase db, String condition) {
+		return db.query(TABLE_NAME, get_TableContentNameArray(), condition, null, null, null, null);
+	}
+	
+	public static Cursor select(SQLiteDatabase db, TimeAreaSelector selector) {
+		String condition = "";
+		condition += "begin_time < " + selector.getFinisTime() + " AND begin_time > " + selector.getStartTime() + " ";
+		if ((selector.flag & DBHelper.INCLUDE_DELETED) == 0) {
+			condition += " AND finishing_state <> " + TASK_STATE.DELETED.ordinal();
+		}
+		if ((selector.flag & DBHelper.INCLUDE_FINISHED) == 0) {
+			condition += " AND finishing_state <> " + TASK_STATE.FINISHED.ordinal();
+		}
+		
+		return select(db, condition);
+	}
 }
