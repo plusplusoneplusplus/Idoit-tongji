@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="high_priority">#ff0000</color>
-    <color name="mid_priority">#0000ff</color>
-    <color name="low_priority">#333333</color>
+    <color name="high_priority">#cc0000</color>
+    <color name="mid_priority">#cccc00</color>
+    <color name="low_priority">#00cc00</color>
     <color name="text_color">#000000</color>
     
 </resources>

@@ -1,6 +1,7 @@
 package edu.tongji.fiveidiots.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -69,5 +70,14 @@ public class TimeUtil {
 		}
 
 		return date.getHours() == 0 && date.getMinutes() == 0; 
+	}
+
+	/**
+	 * 决定一个date是不是代表全天，即其时分为00:00
+	 * @param calendar
+	 * @return
+	 */
+	public static boolean isFullDay(Calendar calendar) {
+		return isFullDay(calendar.getTime());
 	}
 }

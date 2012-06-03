@@ -1,23 +1,32 @@
 package edu.tongji.fiveidiots.ui;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
+import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TestingHelper;
 import edu.tongji.fiveidiots.util.TimeUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 /**
  * 生成、初始化任务细节部分的UI
@@ -50,6 +59,8 @@ public class TaskDetailViewHelper {
 		this.task.setDeadline(date);
 		this.task.setDeadline(new Date(new Date().getTime() - 10000));
 		this.task.setStarttime(new Date());
+//		this.task.setUnfinishedCycle(60);
+		this.task.setFinishedCycle(101);
 		
 		this.previousTask = TestingHelper.getRandomTask();
 		this.previousTask.setName("PREV: " + this.previousTask.getName());
@@ -151,7 +162,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				showSetTimeDialog(true, task.getStarttime());
 			}
 		});
 		
@@ -160,9 +171,95 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				showSetTimeDialog(false, task.getDeadline());
 			}
 		});
+	}
+
+	/**
+	 * 显示设置时间的dialog
+	 * @param isStartTime true则设置开始时间、false则为设置截止时间
+	 */
+	private void showSetTimeDialog(final boolean isStartTime, Date previousDate) {
+		//=====新建builder=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getResources().getString(isStartTime ?
+				R.string.Detail_starttime_intro_text : R.string.Detail_deadline_intro_text));
+		View timeView = LayoutInflater.from(context).inflate(R.layout.dialog_set_time, null);
+		builder.setView(timeView);
+		
+		//=====初始化dialog上的UI=====
+		final DatePicker datePicker = (DatePicker) timeView.findViewById(R.id.dialog_set_time_datePicker);
+		final TimePicker timePicker = (TimePicker) timeView.findViewById(R.id.dialog_set_time_timePicker);
+		final CheckBox checkBox = (CheckBox) timeView.findViewById(R.id.dialog_set_time_checkBox);
+		timePicker.setIs24HourView(true);
+		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				//=====选中->timepicker disabled=====
+				timePicker.setEnabled(!isChecked);
+			}
+		});
+		
+		//=====恢复时间到dialog的UI上，如果有的话=====
+		if (previousDate != null) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(previousDate);
+			datePicker.updateDate(calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH),
+					calendar.get(Calendar.DAY_OF_MONTH));
+			if (TimeUtil.isFullDay(calendar)) {
+				checkBox.setChecked(true);
+			}
+			else {
+				checkBox.setChecked(false);
+				timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+				timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+			}
+		}
+
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//=====读datepicker=====
+				Calendar calendar = new GregorianCalendar();
+				calendar.set(Calendar.YEAR, datePicker.getYear());
+				calendar.set(Calendar.MONTH, datePicker.getMonth());
+				calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
+
+				//=====读timepicker=====
+				if (!checkBox.isChecked()) {
+					calendar.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
+					calendar.set(Calendar.MINUTE, timePicker.getCurrentMinute());
+				}
+				else {
+					calendar.set(Calendar.HOUR_OF_DAY, 0);
+					calendar.set(Calendar.MINUTE, 0);
+				}
+
+				//=====设置结果=====
+				if (isStartTime) {
+					task.setStarttime(calendar.getTime());
+					refreshStartTime();
+				}
+				else {
+					task.setDeadline(calendar.getTime());
+					refreshDeadline();					
+				}
+			}
+		});
+		
+		//=====取消按钮做什么=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
 	}
 	
 	/**
@@ -262,7 +359,7 @@ public class TaskDetailViewHelper {
 		else {
 			if (new Date().getTime() >= deadline.getTime()) {
 				//=====超期了，用红色=====
-				deadlineText.setTextColor(context.getResources().getColor(R.color.red));				
+				deadlineText.setTextColor(context.getResources().getColor(R.color.red));
 			}
 			else {
 				//=====否则用蓝色=====
@@ -280,12 +377,18 @@ public class TaskDetailViewHelper {
 		//TODO 等后台的priority的类型定好（enum || static final int）
 		switch (task.getPriority()) {
 		case 0:
+			//HIGH
+			priorityText.setTextColor(context.getResources().getColor(R.color.high_priority));
 			priorityText.setText(R.string.Detail_high_priority_text);
 			break;
 		case 1:
+			//MIDDLE
+			priorityText.setTextColor(context.getResources().getColor(R.color.mid_priority));
 			priorityText.setText(R.string.Detail_middle_priority_text);
 			break;
 		case 2:
+			//LOW
+			priorityText.setTextColor(context.getResources().getColor(R.color.low_priority));
 			priorityText.setText(R.string.Detail_low_priority_text);
 			break;
 		default:
@@ -299,16 +402,16 @@ public class TaskDetailViewHelper {
 	private void refreshTags() {
 		ArrayList<String> tags = task.ExportTag();
 		if (tags == null || tags.isEmpty()) {
-			contextText.setTextColor(context.getResources().getColor(R.color.grey));
-			contextText.setText("无");
+			tagsText.setTextColor(context.getResources().getColor(R.color.grey));
+			tagsText.setText("无");
 		}
 		else {
-			contextText.setTextColor(context.getResources().getColor(R.color.blue));			
+			tagsText.setTextColor(context.getResources().getColor(R.color.black));			
 			String message = tags.get(0);
 			for (int i = 1; i < tags.size(); i++) {
 				message += (", " + tags.get(i));
 			}
-			contextText.setText(message);
+			tagsText.setText(message);
 		}
 	}
 	
@@ -316,7 +419,15 @@ public class TaskDetailViewHelper {
 	 * 刷新情境（上下文、地点）
 	 */
 	private void refreshContext() {
-		//TODO
+		String address = task.getAddr();
+		if (address == null || address.isEmpty()) {
+			contextText.setTextColor(context.getResources().getColor(R.color.grey));
+			contextText.setText("无");
+		}
+		else {
+			contextText.setTextColor(context.getResources().getColor(R.color.blue));
+			contextText.setText(address);
+		}
 	}
 	
 	/**
@@ -444,14 +555,49 @@ public class TaskDetailViewHelper {
 	 * 刷新已用时间
 	 */
 	private void refreshUsedTime() {
-		//TODO
+		int minutes = task.getFinishedCycle();
+		if (minutes == -1) {
+			usedTimeText.setTextColor(context.getResources().getColor(R.color.grey));
+			usedTimeText.setText("无");
+		}
+		else {
+			usedTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+			int pomoDuration = new Settings(context).getPomotimerDuration();
+			if (minutes % pomoDuration == 0) {
+				//=====整数个番茄周期=====
+				usedTimeText.setText(minutes / pomoDuration + "个番茄周期");
+			}
+			else {
+				//=====非整数个番茄周期=====
+				int cycle = minutes / pomoDuration;
+				usedTimeText.setText(cycle + "~" + (cycle+1) + "个番茄周期");
+			}
+		}
 	}
 	
 	/**
 	 * 刷新预计总时间
 	 */
 	private void refreshTotalTime() {
-		//TODO
+		//TODO 等变量更新，改这里
+		int minutes = task.getUnfinishedCycle();
+		if (minutes == -1) {
+			totalTimeText.setTextColor(context.getResources().getColor(R.color.grey));
+			totalTimeText.setText("未设置");
+		}
+		else {
+			totalTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+			int pomoDuration = new Settings(context).getPomotimerDuration();
+			if (minutes % pomoDuration == 0) {
+				//=====整数个番茄周期=====
+				totalTimeText.setText(minutes / pomoDuration + "个番茄周期");
+			}
+			else {
+				//=====非整数个番茄周期=====
+				int cycle = minutes / pomoDuration;
+				totalTimeText.setText(cycle + "~" + (cycle+1) + "个番茄周期");
+			}
+		}
 	}
 	
 	/**
