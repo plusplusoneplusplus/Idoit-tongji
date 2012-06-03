@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
@@ -16,15 +17,20 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -292,7 +298,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				showSetContextDialog();
 			}
 		});
 		
@@ -371,27 +377,98 @@ public class TaskDetailViewHelper {
 	 * 显示设置tags的dialog
 	 */
 	private void showSetTagsDialog() {
-		//TODO 可能要用到list adapter，比较复杂，后头再来写吧
+		//=====builder的生成与初始化=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getString(R.string.Detail_tag_intro_text));
 		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_tags, null);
 		builder.setView(view);
-		
-		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+		final EditText editText = (EditText) view.findViewById(R.id.dialog_set_tags_editText);
+		final Button addButton = (Button) view.findViewById(R.id.dialog_set_tags_addButton);
+		final ListView listView = (ListView) view.findViewById(R.id.dialog_set_tags_listView);
+
+		//=====设置adapter及交互操作=====
+		final SetTagsAdapter tagsAdapter = new SetTagsAdapter();
+		listView.setAdapter(tagsAdapter);
+		addButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
+			public void onClick(View v) {
+				String text = editText.getText().toString();
+				if (text == null || text.equals("")) {
+					return;
+				}
+				//=====以空格分隔，每一个token尝试加入tag=====
+				StringTokenizer tokenizer = new StringTokenizer(text, " ");
+				while (tokenizer.hasMoreTokens()) {
+					String s = tokenizer.nextToken();
+					if (!task.ExportTag().contains(s)) {
+						task.addTag(s);
+					}
+				}
+				editText.setText("");
+				tagsAdapter.notifyDataSetChanged();
 			}
 		});
-		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+
+		//=====因为没有确认和取消按键，按dialog之外或者按back就相当于cancel=====
+		builder.setOnCancelListener(new OnCancelListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onCancel(DialogInterface dialog) {
+				refreshTags();
 			}
 		});
 		builder.create().show();
+	}
+	
+	/**
+	 * 用于设置tags的dialog中的listview
+	 * @author Andriy
+	 */
+	private class SetTagsAdapter extends BaseAdapter {
+		private ArrayList<String> tags = task.ExportTag();
+
+		@Override
+		public int getCount() {
+			return this.tags.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return this.tags.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			convertView = LayoutInflater.from(context).inflate(R.layout.dialog_set_tag_item, null);
+			TextView textView = (TextView) convertView.findViewById(R.id.dialog_set_tag_item_textView);
+			Button button = (Button) convertView.findViewById(R.id.dialog_set_tag_item_button);
+			
+			textView.setText(tags.get(position));
+			button.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					tags.remove(position);
+					notifyDataSetChanged();
+				}
+			});
+			return convertView;
+		}
+	}
+	
+	/**
+	 * 显示设置情境的dialog
+	 */
+	private void showSetContextDialog() {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_context_intro_text));
+		//TODO
 	}
 	
 	/**
