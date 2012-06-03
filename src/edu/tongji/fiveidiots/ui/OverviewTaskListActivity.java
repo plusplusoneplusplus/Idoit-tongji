@@ -244,7 +244,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		 */
 		private View getBriefView(TaskInfo task) {
 			View view = LayoutInflater.from(OverviewTaskListActivity.this).inflate(R.layout.tasklist_item_brief, null);
-			switch (task.getPri()) {
+			switch (task.getPriority()) {
 			case 0:
 				view.setBackgroundResource(R.drawable.high_priority_bg);
 				break;
