@@ -60,10 +60,6 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//TODO
-//		Intent serviceIntent = new Intent(this, PomotimerService.class);
-//		this.startService(serviceIntent);
-		
 		//=====在父类中已经调用过mySetActionBarContentView了=====
         taskListView = (ListView) findViewById(R.id.taskListView);
         
@@ -76,17 +72,6 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				resetTaskList();
 			}
 		});
-
-        
-
-	}
-
-	@Override
-	protected void onDestroy() {
-		//TODO
-//		Intent serviceIntent = new Intent(this, PomotimerService.class);
-//		this.stopService(serviceIntent);
-		super.onDestroy();
 	}
 
 	/**
