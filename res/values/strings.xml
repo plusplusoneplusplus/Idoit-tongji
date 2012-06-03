@@ -31,4 +31,8 @@
     <string name="Detail_period_intro_text">重复任务</string>
     <string name="Detail_starttime_intro_text">开始时间</string>
     <string name="Detail_deadline_intro_text">截止时间</string>
+    <string name="Detail_priority_intro_text">优先级</string>
+    <string name="Detail_tag_intro_text">标签</string>
+    <string name="Detail_context_intro_text">地点</string>
+    <string name="Detail_alarm_intro_text">提醒</string>
 </resources>

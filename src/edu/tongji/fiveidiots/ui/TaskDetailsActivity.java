@@ -230,6 +230,10 @@ public class TaskDetailsActivity extends GDActivity {
 			TextView periodicInfoText = (TextView) view.findViewById(R.id.taskPeriodicInfoTextView);
 			TextView startTimeText = (TextView) view.findViewById(R.id.taskStartTimeTextView);
 			TextView deadlineText = (TextView) view.findViewById(R.id.taskDeadlineTextView);
+			TextView priorityText = (TextView) view.findViewById(R.id.taskPriorityTextView);
+			TextView tagsText = (TextView) view.findViewById(R.id.taskTagsTextView);
+			TextView contextText = (TextView) view.findViewById(R.id.taskContextTextView);
+			TextView alarmText = (TextView) view.findViewById(R.id.taskAlarmTextView);
 			
 			//TODO 完善VIEW1的交互
 

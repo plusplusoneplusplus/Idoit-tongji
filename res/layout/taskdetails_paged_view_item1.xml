@@ -50,7 +50,7 @@
     <!-- 第二部分，任务时间相关 -->
 
     <RelativeLayout
-        android:id="@+id/taskTimeDetailLayout"
+        android:id="@+id/timeDetailLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/seperator1"
@@ -140,4 +140,154 @@
         </RelativeLayout>
     </RelativeLayout>
 
+    <!-- 分隔符2 -->
+
+    <View
+        android:id="@+id/seperator2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/timeDetailLayout"
+        android:layout_margin="10dp"
+        android:background="@android:color/darker_gray" />
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <!-- 第三部分，任务逻辑相关部分，优先级、tag、context、alarm -->
+
+    <RelativeLayout
+        android:id="@+id/logicDetailLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seperator2"
+        android:background="@color/whitesmoke" >
+
+        <!-- 优先级 -->
+
+        <RelativeLayout
+            android:id="@+id/priorityInfoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_priority_intro_text" />
+
+            <TextView
+                android:id="@+id/taskPriorityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="PRIORITY"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+
+        <!-- tags -->
+
+        <RelativeLayout
+            android:id="@+id/tagsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/priorityInfoLayout"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_tag_intro_text" />
+
+            <TextView
+                android:id="@+id/taskTagsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="TAGS"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+
+        <!-- 任务完成地点context -->
+
+        <RelativeLayout
+            android:id="@+id/contextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tagsLayout"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_context_intro_text" />
+
+            <TextView
+                android:id="@+id/taskContextTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="CONTEXT"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+        
+		<!-- 任务提醒 -->
+
+        <RelativeLayout
+            android:id="@+id/alarmLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contextLayout"
+            android:layout_margin="5dp"
+            android:background="@color/whitesmoke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/Detail_alarm_intro_text" />
+
+            <TextView
+                android:id="@+id/taskAlarmTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="ALARM"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blue" />
+        </RelativeLayout>
+        
+    </RelativeLayout>
+    
+    
+    
+    
+    
+    
+    
+    
 </RelativeLayout>
