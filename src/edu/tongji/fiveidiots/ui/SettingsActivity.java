@@ -189,8 +189,7 @@ public class SettingsActivity extends Activity {
 		 * 初始化Notify Ringtone
 		 */
 		String str = RingtoneManager.getRingtone(this, mSettings.getPomotimerNotifyRingTone()).getTitle(this);
-		str = str.substring(0, str.lastIndexOf("."));
-		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + cutFileType(str));
 	}
 	
 	/**
@@ -367,8 +366,26 @@ public class SettingsActivity extends Activity {
 	private void handleRingtonePicked(Uri uri) {
 		mSettings.setPomotimerNotifyRingTome(uri);
 		String str = RingtoneManager.getRingtone(this, uri).getTitle(this);
-		str = str.substring(0, str.lastIndexOf("."));
-		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + cutFileType(str));
 	}
 	
+	
+	/**
+	 * 删除铃声文件名中的后缀
+	 * 如abc.ogg输出abc
+	 */
+	private String cutFileType(String str) {
+		/**
+		 * 如果输入null，输出"Unknown"
+		 */
+		if(str == null) {
+			return "Unknown";
+		}
+		
+		int i = str.lastIndexOf(".");
+		if(i > 0) {
+			return str.substring(0, i);
+		}
+		return str;
+	}
 }
