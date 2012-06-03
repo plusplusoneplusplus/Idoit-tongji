@@ -1,10 +1,13 @@
 package edu.tongji.fiveidiots.ui;
 
+import java.util.concurrent.TimeUnit;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.Settings;
+import edu.tongji.fiveidiots.util.TimeUtil;
 
 /**
  * 设置界面
@@ -59,7 +63,7 @@ public class SettingsActivity extends Activity {
 	 * Pomotime的取值范围
 	 */
 	private final static int mPomotimeMin = 10;
-	private final static int mPomotimeMax = 60;
+	private final static int mPomotimeMax = 40;
 	
 	/**
 	 * ShortBreak的取值范围
@@ -189,8 +193,7 @@ public class SettingsActivity extends Activity {
 		 * 初始化Notify Ringtone
 		 */
 		String str = RingtoneManager.getRingtone(this, mSettings.getPomotimerNotifyRingTone()).getTitle(this);
-		str = str.substring(0, str.lastIndexOf("."));
-		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + cutFileType(str));
 	}
 	
 	/**
@@ -219,7 +222,7 @@ public class SettingsActivity extends Activity {
 						String.format("%d", progress + mPomotimeMin)
 						+ SettingsActivity.this.getString(R.string.settings_minute));
 				mSettings.setPomotimerDuration(progress + mPomotimeMin);
-				
+				mSettings.getTimerSettings().setTotalTime((progress + mPomotimeMin) * 60);
 			}
 		});
 		
@@ -330,7 +333,7 @@ public class SettingsActivity extends Activity {
 		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
 		
 		//设置铃声类型
-		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
 		
 		//不显示静音
 		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
@@ -367,8 +370,26 @@ public class SettingsActivity extends Activity {
 	private void handleRingtonePicked(Uri uri) {
 		mSettings.setPomotimerNotifyRingTome(uri);
 		String str = RingtoneManager.getRingtone(this, uri).getTitle(this);
-		str = str.substring(0, str.lastIndexOf("."));
-		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + cutFileType(str));
 	}
 	
+	
+	/**
+	 * 删除铃声文件名中的后缀
+	 * 如abc.ogg输出abc
+	 */
+	private String cutFileType(String str) {
+		/**
+		 * 如果输入null，输出"Unknown"
+		 */
+		if(str == null) {
+			return "Unknown";
+		}
+		
+		int i = str.lastIndexOf(".");
+		if(i > 0) {
+			return str.substring(0, i);
+		}
+		return str;
+	}
 }
