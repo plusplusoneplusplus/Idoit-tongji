@@ -466,9 +466,36 @@ public class TaskDetailViewHelper {
 	 * 显示设置情境的dialog
 	 */
 	private void showSetContextDialog() {
+		//=====初始化builder=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getString(R.string.Detail_context_intro_text));
-		//TODO
+		final EditText editText = new EditText(context);
+		builder.setView(editText);
+
+		//=====如果有数据的话，恢复上去=====
+		if (task.getAddr() != null) {
+			editText.setText(task.getAddr());
+		}
+		
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setAddr(editText.getText().toString());
+				refreshContext();
+			}
+		});
+
+		//=====取消按钮做什么=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		builder.create().show();
 	}
 	
 	/**
