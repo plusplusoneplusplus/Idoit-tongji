@@ -11,12 +11,9 @@ import greendroid.widget.PagedAdapter;
 import greendroid.widget.PagedView;
 import greendroid.widget.PagedView.OnPagedViewChangeListener;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -55,9 +52,9 @@ public class TaskDetailsActivity extends GDActivity {
 	private PagedView pagedView;
 	
 	/**
-	 * 要展示details的对应task
+	 * 帮助生成、初始化界面，要删除、修改也通过它收集必要信息
 	 */
-	private TaskInfo task;
+	private TaskDetailViewHelper viewHelper = null;
 	
 	/**
 	 * actionbar为空
@@ -78,8 +75,9 @@ public class TaskDetailsActivity extends GDActivity {
 		if (bundle != null) {
 			long taskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1);
 			//TODO 测试时直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
-			task = TestingHelper.getRandomTask();
+			TaskInfo task = TestingHelper.getRandomTask();
 			task.setId(taskID);
+			this.viewHelper = new TaskDetailViewHelper(this, task);
 		}
 
 		//=====GDActivity，及搞定action bar上的item=====
@@ -205,57 +203,22 @@ public class TaskDetailsActivity extends GDActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			if (viewHelper == null) {
+				return convertView;
+			}
+
 			switch (position) {
 			case 0:
-				convertView =this.getDescriptionView(); 
+				convertView = viewHelper.getDescriptionView(); 
 				break;
 			case 1:
-            	convertView = this.getProgressView();
+            	convertView = viewHelper.getProgressView();
 				break;
 
 			default:
 				break;
 			}
 			return convertView;
-		}
-		
-		/**
-		 * @return 第一个page（即page0）的View，task基本信息的description
-		 */
-		private View getDescriptionView() {
-			View view = LayoutInflater.from(TaskDetailsActivity.this).inflate(R.layout.taskdetails_paged_view_item1, null);
-
-			EditText taskNameText = (EditText) view.findViewById(R.id.taskNameEditText);
-			EditText taskMemoText = (EditText) view.findViewById(R.id.taskMemoEditText);
-			TextView periodicInfoText = (TextView) view.findViewById(R.id.taskPeriodicInfoTextView);
-			TextView startTimeText = (TextView) view.findViewById(R.id.taskStartTimeTextView);
-			TextView deadlineText = (TextView) view.findViewById(R.id.taskDeadlineTextView);
-			TextView priorityText = (TextView) view.findViewById(R.id.taskPriorityTextView);
-			TextView tagsText = (TextView) view.findViewById(R.id.taskTagsTextView);
-			TextView contextText = (TextView) view.findViewById(R.id.taskContextTextView);
-			TextView alarmText = (TextView) view.findViewById(R.id.taskAlarmTextView);
-			
-			//TODO 完善VIEW1的交互
-
-			return view;
-		}
-		
-		/**
-		 * @return 第二个page（即page1）的View，task任务进度、完成信息的展示
-		 */
-		private View getProgressView() {
-			View view = LayoutInflater.from(TaskDetailsActivity.this).inflate(R.layout.taskdetails_paged_view_item2, null);
-			
-			TextView stateText = (TextView) view.findViewById(R.id.taskStateTextView);
-			TextView previousTaskText = (TextView) view.findViewById(R.id.taskPreviousTextView);
-			TextView followingTaskText = (TextView) view.findViewById(R.id.taskFollowingTextView);
-			TextView usedTimeText = (TextView) view.findViewById(R.id.taskUsedTimeTextView);
-			TextView totalTimeText = (TextView) view.findViewById(R.id.taskTotalTimeTextView);
-			TextView interruptedText = (TextView) view.findViewById(R.id.taskInterruptTextView);
-
-			//TODO 完善VIEW2的交互
-
-			return view;
 		}
     }
 

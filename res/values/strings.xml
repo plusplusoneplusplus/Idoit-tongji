@@ -46,5 +46,8 @@
     <string name="Detail_pasttime_intro_text">已经努力了</string>
     <string name="Detail_totaltime_intro_text">预计将耗费</string>
     <string name="Detail_interrupt_intro_text">中断次数</string>
+    <string name="Detail_high_priority_text">高</string>
+    <string name="Detail_middle_priority_text">中</string>
+    <string name="Detail_low_priority_text">低</string>
 
 </resources>
