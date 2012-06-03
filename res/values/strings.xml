@@ -35,4 +35,6 @@
     <string name="Detail_tag_intro_text">标签</string>
     <string name="Detail_context_intro_text">地点</string>
     <string name="Detail_alarm_intro_text">提醒</string>
+    <string name="Detail_previous_intro_text">前驱任务</string>
+    <string name="Detail_following_intro_text">后续任务</string>
 </resources>
