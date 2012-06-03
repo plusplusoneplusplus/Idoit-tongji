@@ -199,7 +199,10 @@ public class PomotimerService extends Service {
 	private void showNotification(String message, boolean attention, boolean ongoing) {
 		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
 		if (attention) {
-			notification.defaults |= Notification.DEFAULT_ALL;
+			Settings settings = new Settings(this);
+			if(settings.getPomotimerNotifyVibrate()) {
+				notification.defaults |= Notification.DEFAULT_VIBRATE;
+			}
 		}
 		if (ongoing) {
 			notification.flags |= Notification.FLAG_ONGOING_EVENT;

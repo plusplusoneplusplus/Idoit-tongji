@@ -6,120 +6,175 @@
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:background="@color/white" >
+	    android:background="#bfbfbf" >
 	    
-	   <TextView android:id="@+id/settings_timer_bar"
+	    <TextView android:id="@+id/settings_timer_bar"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_timer"
+		       android:textColor="@color/white"
+		       android:background="@drawable/settings_title_bg"
+		       android:textAppearance="?android:attr/textAppearanceMedium" />
+	    
+	   <RelativeLayout android:id="@+id/settings_timer1"
 	       android:layout_width="match_parent"
 	       android:layout_height="wrap_content"
-	       android:text="@string/settings_timer"
-	       android:textColor="@color/white"
-	       android:background="@drawable/settings_title_bg"
-	       android:textAppearance="?android:attr/textAppearanceLarge" />
-	   
-	   <TextView android:id="@+id/settings_pomotime_textview"
-	       android:layout_width="match_parent"
-	       android:layout_height="wrap_content"
-	       android:text="@string/settings_pomotime"
-	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:background="@color/white" 
 	       android:layout_below="@id/settings_timer_bar"
-	       android:textColor="@color/black"
-	       android:padding="8dip" />
-	   
-	   <SeekBar android:id="@+id/settings_pomotime_seekbar"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"
-	       android:paddingLeft="40dip"
-	       android:paddingRight="40dip"
-	       android:layout_below="@id/settings_pomotime_textview"/>
+	       android:layout_margin="1dip"
+	       android:padding="10dip">
+	       "
+		   <TextView android:id="@+id/settings_pomotime_textview"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_pomotime"
+		       android:textAppearance="?android:attr/textAppearanceMedium"
+		       android:textColor="@color/black" />
+		   
+		   <SeekBar android:id="@+id/settings_pomotime_seekbar"
+		       android:layout_width="fill_parent"
+		       android:layout_height="wrap_content"
+		       android:paddingLeft="30dip"
+		       android:paddingRight="30dip"
+		       android:paddingTop="10dip"
+		       android:layout_below="@id/settings_pomotime_textview"/>
 	       
-	   	   
-	   <TextView android:id="@+id/settings_shortbreak_textview"
+	   </RelativeLayout>
+	   
+	   <RelativeLayout android:id="@+id/settings_timer2"
 	       android:layout_width="match_parent"
 	       android:layout_height="wrap_content"
-	       android:text="@string/settings_shortbreak"
-	       android:textAppearance="?android:attr/textAppearanceMedium"
-	       android:layout_below="@id/settings_pomotime_seekbar"
-	       android:textColor="@color/black"
-	       android:padding="8dip" />
-	   
-	   <SeekBar android:id="@+id/settings_shortbreak_seekbar"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"
-	       android:paddingLeft="40dip"
-	       android:paddingRight="40dip"
-	       android:layout_below="@id/settings_shortbreak_textview"/>
+	       android:background="@color/white" 
+	       android:layout_below="@id/settings_timer1"
+	       android:layout_margin="1dip"
+	       android:padding="10dip">
+		   
+		   <TextView android:id="@+id/settings_shortbreak_textview"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_shortbreak"
+		       android:textAppearance="?android:attr/textAppearanceMedium"
+		       android:textColor="@color/black" />
+		   
+		   <SeekBar android:id="@+id/settings_shortbreak_seekbar"
+		       android:layout_width="fill_parent"
+		       android:layout_height="wrap_content"
+		       android:paddingLeft="30dip"
+		       android:paddingRight="30dip"
+		       android:paddingTop="10dip"
+		       android:layout_below="@id/settings_shortbreak_textview"/>
 	       
+	   </RelativeLayout>
+
 	   
-	   <TextView android:id="@+id/settings_longbreak_textview"
+	   <RelativeLayout android:id="@+id/settings_timer3"
 	       android:layout_width="match_parent"
 	       android:layout_height="wrap_content"
-	       android:text="@string/settings_longbreak"
-	       android:textAppearance="?android:attr/textAppearanceMedium"
-	       android:layout_below="@id/settings_shortbreak_seekbar"
-	       android:textColor="@color/black"
-	       android:padding="8dip" />
+	       android:background="@color/white" 
+	       android:layout_below="@id/settings_timer2"
+	       android:layout_margin="1dip"
+	       android:padding="10dip">
+		   
+		   <TextView android:id="@+id/settings_longbreak_textview"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_longbreak"
+		       android:textAppearance="?android:attr/textAppearanceMedium"
+		       android:textColor="@color/black" />
+		   
+		   <SeekBar android:id="@+id/settings_longbreak_seekbar"
+		       android:layout_width="fill_parent"
+		       android:layout_height="wrap_content"
+		       android:paddingLeft="30dip"
+		       android:paddingRight="30dip"
+		       android:paddingTop="10dip"
+		       android:layout_below="@id/settings_longbreak_textview"/>
 	   
-	   <SeekBar android:id="@+id/settings_longbreak_seekbar"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"
-	       android:paddingLeft="40dip"
-	       android:paddingRight="40dip"
-	       android:layout_below="@id/settings_longbreak_textview"/>
+	       
+	   </RelativeLayout>
 	   
 	   
-	   <TextView android:id="@+id/settings_longbreak_interval_textview"
+	   <RelativeLayout android:id="@+id/settings_timer4"
 	       android:layout_width="match_parent"
 	       android:layout_height="wrap_content"
-	       android:text="@string/settings_longbreak_interval"
-	       android:textAppearance="?android:attr/textAppearanceMedium"
-	       android:layout_below="@id/settings_longbreak_seekbar"
-	       android:textColor="@color/black"
-	       android:padding="8dip" />
+	       android:background="@color/white" 
+	       android:layout_below="@id/settings_timer3"
+	       android:layout_margin="1dip"
+	       android:padding="10dip">
 	   
-	   <SeekBar android:id="@+id/settings_longbreak_interval_seekbar"
-	       android:layout_width="fill_parent"
-	       android:layout_height="wrap_content"
-	       android:paddingLeft="40dip"
-	       android:paddingRight="40dip"
-	       android:paddingBottom="15dip"
-	       android:layout_below="@id/settings_longbreak_interval_textview"/>
-	   
+		   <TextView android:id="@+id/settings_longbreak_interval_textview"
+		       android:layout_width="match_parent"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_longbreak_interval"
+		       android:textAppearance="?android:attr/textAppearanceMedium"
+		       android:textColor="@color/black" />
+		   
+		   <SeekBar android:id="@+id/settings_longbreak_interval_seekbar"
+		       android:layout_width="fill_parent"
+		       android:layout_height="wrap_content"
+		       android:paddingLeft="30dip"
+		       android:paddingRight="30dip"
+		       android:paddingTop="10dip"
+		       android:layout_below="@id/settings_longbreak_interval_textview"/>
+		   
+	   </RelativeLayout>
+	  
+
 	   <TextView android:id="@+id/settings_sound_bar"
 	       android:layout_width="match_parent"
 	       android:layout_height="wrap_content"
-	       android:text="@string/settings_sound"
+	       android:text="@string/settings_notify"
 	       android:textColor="@color/white"
 	       android:background="@drawable/settings_title_bg"
-	       android:textAppearance="?android:attr/textAppearanceLarge"
-	       android:layout_below="@id/settings_longbreak_interval_seekbar" />
+	       android:textAppearance="?android:attr/textAppearanceMedium"
+	       android:layout_below="@id/settings_timer4"/>
 	   
-	   <RelativeLayout android:id="@+id/settings_vibrate_session"
-	       android:layout_width="match_parent"
-	       android:layout_height="wrap_content"
-	       android:layout_below="@id/settings_sound_bar"
-	       android:layout_marginRight="40dip"
-	       android:layout_marginTop="10dip">
-	       
-		   <TextView android:id="@+id/settings_vibrate_textview"
-		       android:layout_width="wrap_content"
+	   	   <RelativeLayout android:id="@+id/settings_sound1"
+		       android:layout_width="match_parent"
 		       android:layout_height="wrap_content"
-		       android:text="@string/settings_vibrate"
-		       android:textColor="@color/black"
-		       android:textAppearance="?android:attr/textAppearanceMedium"
-		       android:layout_centerVertical="true"
-		       android:padding="10dip"/>
-		   
-		   
-		   <ToggleButton android:id="@+id/settings_vibrate_toggle"
-		       android:layout_width="wrap_content"
+		       android:background="@color/white" 
+		       android:layout_below="@id/settings_sound_bar"
+		       android:layout_margin="1dip"
+		       android:padding="0dip">
+			   
+	   	       <Button android:id="@+id/settings_soundselect_btn"
+	   	           android:layout_width="fill_parent"
+			       android:layout_height="60dip"
+			       android:background="@drawable/settings_soundselect_bg"
+			       android:text="@string/settings_sound"
+			       android:gravity="left|center_vertical"
+			       android:padding="10dip"
+			       android:textAppearance="?android:attr/textAppearanceMedium"/>
+	   	       
+	   	   </RelativeLayout>
+	   	   
+	   	   <RelativeLayout android:id="@+id/settings_sound2"
+		       android:layout_width="match_parent"
 		       android:layout_height="wrap_content"
-		       android:textOn="@string/settings_open"
-		       android:textOff="@string/settings_close"
-		       android:layout_centerVertical="true"
-		       android:layout_alignParentRight="true"/>
+		       android:background="@color/white" 
+		       android:layout_below="@+id/settings_sound1"
+		       android:layout_margin="1dip"
+		       android:padding="10dip">
 		   
-	   </RelativeLayout>
-	   
+		   	   <TextView android:id="@+id/settings_vibrate_textview"
+			       android:layout_width="wrap_content"
+			       android:layout_height="wrap_content"
+			       android:text="@string/settings_vibrate"
+			       android:textColor="@color/black"
+			       android:textAppearance="?android:attr/textAppearanceMedium"
+			       android:layout_centerVertical="true"/>
+			   
+			   
+			   <ToggleButton android:id="@+id/settings_vibrate_toggle"
+			       android:layout_width="wrap_content"
+			       android:layout_height="wrap_content"
+			       android:textOn="@string/settings_open"
+			       android:textOff="@string/settings_close"
+			       android:layout_centerVertical="true"
+			       android:layout_alignParentRight="true"/>
+			   
+		   </RelativeLayout>
+		   
 
 	</RelativeLayout>
 

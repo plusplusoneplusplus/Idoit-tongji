@@ -1,11 +1,14 @@
 package edu.tongji.fiveidiots.util;
 
-import edu.tongji.fiveidiots.ui.PomotimerService;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import edu.tongji.fiveidiots.ui.PomotimerService;
 
 /**
  * 用来处理用户的设置（配置）
+ * @author Andriy @author IRainbow5
  */
 public class Settings {
 
@@ -14,6 +17,9 @@ public class Settings {
 	 * @author Andriy 
 	 */
 	public static class DefaultSettings {
+		/**
+		 * 时间设置部分
+		 */
 		/** 默认一个番茄钟时间周期是25min */
 		public static final int POMO_DURATION = 25;
 		/** 默认一个番茄钟2个时间周期之间的间隔为5min */
@@ -22,7 +28,20 @@ public class Settings {
 		public static final int POMO_LONG_INTERVAL = 15;
 		/** 默认4个番茄周期后执行一次长间隔 */
 		public static final int POMO_COUNT = 4;
-
+		
+		/**
+		 * 提醒设置部分
+		 */
+		/** 默认震动开启 */
+		public static final boolean POMO_NOTIFY_VIBRATE = true;
+		/** 默认提示音为系统提醒铃声 
+		 *  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		 */
+		
+		
+		/**
+		 * 番茄计时器部分
+		 */
 		/** 默认番茄计时器的状态 */
 		public static final int TIMER_STATE = PomotimerService.STATE_IDLE;
 		/** 默认番茄计时器当前周期的总时间 */
@@ -46,6 +65,10 @@ public class Settings {
 	public void reset() {
 		this.setPomotimerDuration(DefaultSettings.POMO_DURATION);
 		this.setPomotimerInterval(DefaultSettings.POMO_INTERVAL);
+		this.setPomotimerLongInterval(DefaultSettings.POMO_LONG_INTERVAL);
+		this.setPomotimerCount(DefaultSettings.POMO_COUNT);
+		this.setPomotimerNotifyRingTome(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+		this.setPomotimerNotifyVibrate(DefaultSettings.POMO_NOTIFY_VIBRATE);
 
 		new TimerTempSettings().reset();
 	}
@@ -114,7 +137,44 @@ public class Settings {
 		this.preferences.edit().putInt(POMOTIMER_COUNT, count).commit();
 	}
 
+
+	//===============
+	public static final String POMOTIMER_NOTIFY_VIBRATE = "pomo_notify_vibrate";
+	/**
+	 * @return 是否启用震动提醒
+	 */
+	public boolean getPomotimerNotifyVibrate() {
+		return this.preferences.getBoolean(POMOTIMER_NOTIFY_VIBRATE, DefaultSettings.POMO_NOTIFY_VIBRATE);
+	}
 	
+	/**
+	 * 设置是否启用震动提醒
+	 * @param b
+	 */
+	public void setPomotimerNotifyVibrate(boolean b) {
+		this.preferences.edit().putBoolean(POMOTIMER_NOTIFY_VIBRATE, b).commit();
+	}
+	
+	//===============
+	public static final String POMOTIMER_NOTIFY_RINGTONE = "pomo_notify_ringtone";
+	/**
+	 * @return 返回铃声URI的string
+	 */
+	public Uri getPomotimerNotifyRingTone() {
+		Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		String str = uri.toString();
+		str = this.preferences.getString(POMOTIMER_NOTIFY_RINGTONE, str);
+		return Uri.parse(str);
+	}
+	/**
+	 * 设置铃声，通过String转换为Uri写入
+	 */
+	public void setPomotimerNotifyRingTome(Uri uri) {
+		this.preferences.edit().putString(POMOTIMER_NOTIFY_RINGTONE, uri.toString()).commit();
+	}
+	
+	
+	//=====================
 	/**
 	 * 一个类with有参构造函数，其内部类with无参构造函数，怎么搞！
 	 * @return 一个TimerTempSettings实例
@@ -122,7 +182,7 @@ public class Settings {
 	public TimerTempSettings getTimerSettings() {
 		return new TimerTempSettings();
 	}
-
+	
 	/**
 	 * 专门存储和番茄计时器相关的参数
 	 * @author Andriy

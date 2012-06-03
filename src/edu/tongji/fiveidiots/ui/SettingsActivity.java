@@ -2,9 +2,13 @@ package edu.tongji.fiveidiots.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.Settings;
 
@@ -30,6 +34,11 @@ public class SettingsActivity extends Activity {
 	private SeekBar mSB_ShortBreak;
 	private SeekBar mSB_LongBreak;
 	private SeekBar mSB_LongBreak_Interval;
+	
+	/**
+	 * 是否震动的togglebutton
+	 */
+	private ToggleButton mTB_Vibrate;
 	
 	/**
 	 * Pomotime的取值范围
@@ -93,6 +102,11 @@ public class SettingsActivity extends Activity {
 		mSB_LongBreak_Interval = (SeekBar) findViewById(R.id.settings_longbreak_interval_seekbar);
 		
 		/**
+		 * ToggleButton绑定
+		 */
+		mTB_Vibrate = (ToggleButton) findViewById(R.id.settings_vibrate_toggle);
+		
+		/**
 		 * 设置值域
 		 */
 		mSB_Pomotime.setMax(mPomotimeMax - mPomotimeMin);
@@ -144,6 +158,12 @@ public class SettingsActivity extends Activity {
 				value
 				+ SettingsActivity.this.getString(R.string.settings_count));
 		mSB_LongBreak_Interval.setProgress(value - mLongBreakIntervalMin);
+		
+		/**
+		 * 初始化Notify Vibrate
+		 */
+		boolean b = mSettings.getPomotimerNotifyVibrate();
+		mTB_Vibrate.setChecked(b);
 	}
 	
 	/**
@@ -250,6 +270,18 @@ public class SettingsActivity extends Activity {
 						String.format("%d", progress + mLongBreakIntervalMin)
 						+ SettingsActivity.this.getString(R.string.settings_count));
 				mSettings.setPomotimerCount(progress + mLongBreakIntervalMin);
+			}
+		});
+		
+		/**
+		 * Notify Vibrate ToggleButton监听器
+		 */
+		mTB_Vibrate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Log.i("__Rainbow__", "" + isChecked);
+				mSettings.setPomotimerNotifyVibrate(isChecked);
 			}
 		});
 	}
