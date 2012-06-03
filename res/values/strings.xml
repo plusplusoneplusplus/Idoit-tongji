@@ -37,4 +37,8 @@
     <string name="Detail_alarm_intro_text">提醒</string>
     <string name="Detail_previous_intro_text">前驱任务</string>
     <string name="Detail_following_intro_text">后续任务</string>
+    <string name="Detail_state_intro_text">当前状态</string>
+    <string name="Detail_pasttime_intro_text">已经努力了</string>
+    <string name="Detail_totaltime_intro_text">预计将耗费</string>
+    <string name="Detail_interrupt_intro_text">中断次数</string>
 </resources>

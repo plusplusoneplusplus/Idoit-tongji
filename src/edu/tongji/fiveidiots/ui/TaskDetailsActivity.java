@@ -245,7 +245,16 @@ public class TaskDetailsActivity extends GDActivity {
 		 */
 		private View getProgressView() {
 			View view = LayoutInflater.from(TaskDetailsActivity.this).inflate(R.layout.taskdetails_paged_view_item2, null);
+			
+			TextView stateText = (TextView) view.findViewById(R.id.taskStateTextView);
+			TextView previousTaskText = (TextView) view.findViewById(R.id.taskPreviousTextView);
+			TextView followingTaskText = (TextView) view.findViewById(R.id.taskFollowingTextView);
+			TextView usedTimeText = (TextView) view.findViewById(R.id.taskUsedTimeTextView);
+			TextView totalTimeText = (TextView) view.findViewById(R.id.taskTotalTimeTextView);
+			TextView interruptedText = (TextView) view.findViewById(R.id.taskInterruptTextView);
+
 			//TODO 完善VIEW2的交互
+
 			return view;
 		}
     }

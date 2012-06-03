@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/white" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
         android:paddingBottom="30dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
@@ -41,10 +40,10 @@
                 android:inputType="textMultiLine" />
         </RelativeLayout>
 
-        <!-- 分隔符1 -->
+        <!-- 分隔符1-1 -->
 
         <View
-            android:id="@+id/seperator1"
+            android:id="@+id/seperator11"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/nameMemoLayout"
@@ -57,7 +56,7 @@
             android:id="@+id/timeDetailLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/seperator1"
+            android:layout_below="@+id/seperator11"
             android:background="@color/whitesmoke" >
 
             <!-- 周期相关信息 -->
@@ -144,10 +143,10 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <!-- 分隔符2 -->
+        <!-- 分隔符1-2 -->
 
         <View
-            android:id="@+id/seperator2"
+            android:id="@+id/seperator12"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/timeDetailLayout"
@@ -160,7 +159,7 @@
             android:id="@+id/logicDetailLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/seperator2"
+            android:layout_below="@+id/seperator12"
             android:background="@color/whitesmoke" >
 
             <!-- 优先级 -->
@@ -270,81 +269,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:text="ALARM"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <!-- 分隔符3 -->
-
-        <View
-            android:id="@+id/seperator3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/logicDetailLayout"
-            android:layout_margin="10dp"
-            android:background="@android:color/darker_gray" />
-
-        <!-- 第四部分，任务先后顺序，前驱后继 -->
-
-        <RelativeLayout
-            android:id="@+id/sequenceDetailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/seperator3"
-            android:background="@color/whitesmoke" >
-
-            <!-- 前驱任务 -->
-
-            <RelativeLayout
-                android:id="@+id/previousTaskLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_previous_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskPreviousTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="PREVIOUS"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blue" />
-            </RelativeLayout>
-
-            <!-- 后续任务 -->
-
-            <RelativeLayout
-                android:id="@+id/followingTaskLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/previousTaskLayout"
-                android:layout_margin="5dp"
-                android:background="@color/whitesmoke" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/Detail_following_intro_text" />
-
-                <TextView
-                    android:id="@+id/taskFollowingTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:text="FOLLOWING"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/blue" />
             </RelativeLayout>
