@@ -212,7 +212,7 @@ public class TaskDetailViewHelper {
 	 */
 	private void refreshPriority() {
 		//TODO 等后台的priority的类型定好（enum || static final int）
-		switch (task.getPri()) {
+		switch (task.getPriority()) {
 		case 0:
 			priorityText.setText(R.string.Detail_high_priority_text);
 			break;
