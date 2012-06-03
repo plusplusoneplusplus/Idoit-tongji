@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;

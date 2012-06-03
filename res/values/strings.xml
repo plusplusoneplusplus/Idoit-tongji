@@ -23,7 +23,11 @@
     <string name="settings_shortbreak">短休息时间：</string>
     <string name="settings_longbreak">长休息时间：</string>
     <string name="settings_longbreak_interval">长休息间隔番茄数：</string>
-    <string name="settings_sound">声音设置</string>
     <string name="settings_minute">分钟</string>
     <string name="settings_count">个</string>
+    <string name="settings_notify">提醒设置</string>
+    <string name="settings_vibrate">震动</string>
+    <string name="settings_open">开启</string>
+    <string name="settings_close">关闭</string>
+    <string name="settings_sound">提示音</string>
 </resources>
