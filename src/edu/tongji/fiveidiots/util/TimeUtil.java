@@ -42,4 +42,32 @@ public class TimeUtil {
 		SimpleDateFormat formatter = new SimpleDateFormat(format);
 		return formatter.format(d);
 	}
+	
+	/**
+	 * @return 得到一个date的yyyy-MM-dd的格式字符串
+	 * @param d : date
+	 * @author Andriy
+	 */
+	public static String parseDate(Date d) {
+		if (d == null) {
+			throw new IllegalArgumentException("别传个null的参数date进来啊");
+		}
+
+		String format = "yyyy-MM-dd";
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		return formatter.format(d);
+	}
+	
+	/**
+	 * 决定一个date是不是代表全天，即其时分为00:00
+	 * @param date
+	 * @return
+	 */
+	public static boolean isFullDay(Date date) {
+		if (date == null) {
+			throw new IllegalArgumentException("别传个null的参数date进来啊");
+		}
+
+		return date.getHours() == 0 && date.getMinutes() == 0; 
+	}
 }

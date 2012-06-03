@@ -139,6 +139,7 @@ public class TaskDetailsActivity extends GDActivity {
     	switch (item.getItemId()) {
 		case R.id.detail_action_bar_save:
 			//TODO 保存当前做的修改
+			TaskInfo task = viewHelper.getTask();
 			Toast.makeText(this, "to be saved", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.detail_action_bar_delete:

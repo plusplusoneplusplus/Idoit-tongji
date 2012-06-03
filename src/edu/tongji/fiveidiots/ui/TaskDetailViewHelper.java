@@ -1,8 +1,18 @@
 package edu.tongji.fiveidiots.ui;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
+import edu.tongji.fiveidiots.util.ActivityUtil;
+import edu.tongji.fiveidiots.util.TestingHelper;
+import edu.tongji.fiveidiots.util.TimeUtil;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,11 +29,31 @@ public class TaskDetailViewHelper {
 	 * 展示这个task的所有细节
 	 */
 	private final TaskInfo task;
+	/**
+	 * 此任务的前驱任务
+	 */
+	private TaskInfo previousTask;
+	/**
+	 * 此任务的后续任务
+	 */
+	private TaskInfo followingTask;
 
 	private final Context context;
 	public TaskDetailViewHelper(Context aContext, TaskInfo aTask) {
 		this.context = aContext;
 		this.task = aTask;
+		
+		//=====TODO 测试中=====
+		this.task.addTag("hello");
+		this.task.addTag("world");
+		Date date = new Date(2012,12,5);
+		this.task.setDeadline(date);
+		this.task.setDeadline(new Date(new Date().getTime() - 10000));
+		this.task.setStarttime(new Date());
+		
+		this.previousTask = TestingHelper.getRandomTask();
+		this.previousTask.setName("PREV: " + this.previousTask.getName());
+		this.followingTask = null;
 	}
 
 	//=====第一页=====
@@ -59,8 +89,14 @@ public class TaskDetailViewHelper {
 	/** 预计总时间 */
 	private TextView totalTimeText;
 	/** 中断次数 */
-	private TextView interruptedText;
+	private TextView interruptText;
 
+	/**
+	 * @return 操作的那个task，做过的修改都存在里头了
+	 */
+	public TaskInfo getTask() {
+		return this.task;
+	}
 	
 	/**
 	 * @return 任务详细信息部分，第一个page（即page0）的View，task基本信息的description
@@ -106,7 +142,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				//TODO ①无重复；②每隔多少天；③每周周几
 			}
 		});
 
@@ -195,16 +231,46 @@ public class TaskDetailViewHelper {
 	 * 刷新开始时间
 	 */
 	private void refreshStartTime() {
-		//TODO 判断time是全天还是具体，如果是全天则只显示年月日
-		//还可以显示与现在隔多久
+		Date startTime = task.getStarttime();
+		if (startTime == null) {
+			startTimeText.setTextColor(context.getResources().getColor(R.color.grey));
+			startTimeText.setText("无");
+		}
+		else {
+			if (new Date().getTime() >= startTime.getTime()) {
+				//=====超期了，用红色=====
+				startTimeText.setTextColor(context.getResources().getColor(R.color.red));				
+			}
+			else {
+				//=====否则用蓝色=====
+				startTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+			}
+			startTimeText.setText(TimeUtil.isFullDay(startTime) ? TimeUtil
+					.parseDate(startTime) : TimeUtil.parseDateTime(startTime));
+		}
 	}
 	
 	/**
 	 * 刷新截止时间
 	 */
 	private void refreshDeadline() {
-		//TODO 判断time是全天还是具体，如果是全天则只显示年月日
-		//还可以显示与现在隔多久
+		Date deadline = task.getDeadline();
+		if (deadline == null) {
+			deadlineText.setTextColor(context.getResources().getColor(R.color.grey));
+			deadlineText.setText("无");
+		}
+		else {
+			if (new Date().getTime() >= deadline.getTime()) {
+				//=====超期了，用红色=====
+				deadlineText.setTextColor(context.getResources().getColor(R.color.red));				
+			}
+			else {
+				//=====否则用蓝色=====
+				deadlineText.setTextColor(context.getResources().getColor(R.color.blue));
+			}
+			deadlineText.setText(TimeUtil.isFullDay(deadline) ? TimeUtil
+					.parseDate(deadline) : TimeUtil.parseDateTime(deadline));
+		}
 	}
 
 	/**
@@ -231,7 +297,19 @@ public class TaskDetailViewHelper {
 	 * 刷新标签
 	 */
 	private void refreshTags() {
-		//TODO
+		ArrayList<String> tags = task.ExportTag();
+		if (tags == null || tags.isEmpty()) {
+			contextText.setTextColor(context.getResources().getColor(R.color.grey));
+			contextText.setText("无");
+		}
+		else {
+			contextText.setTextColor(context.getResources().getColor(R.color.blue));			
+			String message = tags.get(0);
+			for (int i = 1; i < tags.size(); i++) {
+				message += (", " + tags.get(i));
+			}
+			contextText.setText(message);
+		}
 	}
 	
 	/**
@@ -271,7 +349,7 @@ public class TaskDetailViewHelper {
 		//=====任务执行情况=====
 		usedTimeText = (TextView) view.findViewById(R.id.taskUsedTimeTextView);
 		totalTimeText = (TextView) view.findViewById(R.id.taskTotalTimeTextView);
-		interruptedText = (TextView) view.findViewById(R.id.taskInterruptTextView);
+		interruptText = (TextView) view.findViewById(R.id.taskInterruptTextView);
 		this.refreshUsedTime();
 		this.refreshTotalTime();
 		this.refreshInterrupt();
@@ -301,7 +379,13 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				if (previousTask == null || !(context instanceof Activity)) {
+					return;
+				}
+				
+				Bundle bundle = new Bundle();
+				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, previousTask.getId());
+				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);					
 			}
 		});
 		
@@ -310,7 +394,13 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				if (followingTask == null || !(context instanceof Activity)) {
+					return;
+				}
+				
+				Bundle bundle = new Bundle();
+				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, followingTask.getId());
+				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);
 			}
 		});
 	}
@@ -326,14 +416,28 @@ public class TaskDetailViewHelper {
 	 * 刷新前驱任务的显示
 	 */
 	private void refreshPrevious() {
-		//TODO
+		if (this.previousTask == null) {
+			previousTaskText.setTextColor(context.getResources().getColor(R.color.grey));
+			previousTaskText.setText("无");
+		}
+		else {
+			previousTaskText.setTextColor(context.getResources().getColor(R.color.blue));
+			previousTaskText.setText(previousTask.getName());
+		}
 	}
 	
 	/**
 	 * 刷新后续任务的显示
 	 */
 	private void refreshFollowing() {
-		//TODO
+		if (this.followingTask == null) {
+			followingTaskText.setTextColor(context.getResources().getColor(R.color.grey));
+			followingTaskText.setText("无");
+		}
+		else {
+			followingTaskText.setTextColor(context.getResources().getColor(R.color.blue));
+			followingTaskText.setText(followingTask.getName());
+		}
 	}
 	
 	/**
@@ -354,6 +458,9 @@ public class TaskDetailViewHelper {
 	 * 刷新中断次数显示
 	 */
 	private void refreshInterrupt() {
-		//TODO
+		/*
+		 * 不能直接传入一个int，那会被认为是resource_id，会崩
+		 */
+		this.interruptText.setText(task.getInterrupt() + "");
 	}
 }

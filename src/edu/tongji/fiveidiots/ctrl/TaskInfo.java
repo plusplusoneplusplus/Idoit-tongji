@@ -29,12 +29,14 @@ import java.util.Date;
 public class TaskInfo {
 	/** 任务ID */
 	private long id;
-	// 优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，完成任务的方式，中断个数
-	private int priority, preTaskId, nextTaskId, finishedCycle, unfinishedCycle, way, interrupt; 
+	// 优先级，前驱任务ID，后继ID，已经完成的番茄时钟数，尚待完成的番茄时钟数，完成任务的方式
+	private int priority, preTaskId, nextTaskId, finishedCycle, unfinishedCycle, way; 
+	/** 中断个数 */
+	private int interrupt;
 	private double percent; // 完成任务的百分比
 	private String name, addr, hint; // 任务名称，地址，注释
 	private Date starttime, deadline; // 任务开始时间，截止时间
-	private ArrayList<String> tag; // 任务标签们
+	private ArrayList<String> tag = new ArrayList<String>(); // 任务标签们
 	private boolean expire, finish, determine; // 任务是否过期，是否完成
 	public TaskInfo(){
 		
