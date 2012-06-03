@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TestingHelper;
@@ -80,6 +81,17 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	@Override
 	protected void mySetActionBarContentView() {
 		setActionBarContentView(R.layout.taskoverview);
+	}
+	
+	/**
+	 * 实现父类抽象方法，在taglist的item被点击后调用
+	 */
+	@Override
+	protected void tagListItemClick(String tag) {
+		this.adapter.fillData(new TaskController().getTaskListWithTag(tag));
+		this.taskListView.setAdapter(this.adapter);
+		this.taskListView.setOnItemClickListener(this.adapter);
+		this.registerForContextMenu(this.taskListView);
 	}
 
 	/**

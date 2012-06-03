@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SlidingDrawer;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.util.TestingHelper;
 
@@ -90,10 +91,18 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			mSD.animateClose();
+			TextView tv = (TextView)arg1.findViewById(R.id.TL_tagNameTextView);
+			tagListItemClick(tv.getText().toString());
 		}
 		
 	}
 
+	/**
+	 * 抽象方法，继承后实现
+	 * 在taglist被点击后会调用
+	 */
+	protected abstract void tagListItemClick(String tag);
+	
 	//Item缓冲类
 	private static class ItemCache{
 		public TextView mTextView;

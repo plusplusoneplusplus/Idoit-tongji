@@ -379,14 +379,14 @@ public class PomotimerService extends Service {
 		/**
 		 * 重置计时器，total和remain是根据Settings里的设置而设定的
 		 */
-		public void resetBySetting() {
-			/**
-			 * 觉得重置设置应该有service自己干，而不是前台发消息让他干
-			 * @author IRainbow5
-			 */
+		/**
+		 * 觉得重置设置应该有service自己干，而不是前台发消息让他干，因此注释了
+		 * @author IRainbow5
+		 */
+		//public void resetBySetting() {
 			//int duration = new Settings(PomotimerService.this).getPomotimerDuration();
 			//resetTimer(duration*60, duration*60);
-		}
+		//}
 		
 		/**
 		 * 停止计时器，释放资源

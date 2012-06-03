@@ -124,7 +124,7 @@ public class PomotimerActivity extends Activity {
 			public void onClick(View v) {
 				switch (serviceBinder.getCountingState()) {
 				case PomotimerService.STATE_IDLE:
-					serviceBinder.resetBySetting();
+					//serviceBinder.resetBySetting();
 					//=====有意不break，继续执行吧少年=====
 				case PomotimerService.STATE_READY:
 					serviceBinder.start();
