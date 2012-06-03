@@ -203,6 +203,7 @@ public class PomotimerService extends Service {
 			if(settings.getPomotimerNotifyVibrate()) {
 				notification.defaults |= Notification.DEFAULT_VIBRATE;
 			}
+			notification.sound = settings.getPomotimerNotifyRingTone();
 		}
 		if (ongoing) {
 			notification.flags |= Notification.FLAG_ONGOING_EVENT;

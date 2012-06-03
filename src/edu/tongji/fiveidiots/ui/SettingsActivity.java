@@ -1,8 +1,14 @@
 package edu.tongji.fiveidiots.ui;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
@@ -19,6 +25,10 @@ import edu.tongji.fiveidiots.util.Settings;
  */
 public class SettingsActivity extends Activity {
 
+	/**
+	 * 选择铃声的判断标记
+	 */
+	private static final int REQUEST_CODE_PICK_RINGTONE = 1; 
 	/**
 	 * 显示设置值的textview
 	 */
@@ -39,6 +49,11 @@ public class SettingsActivity extends Activity {
 	 * 是否震动的togglebutton
 	 */
 	private ToggleButton mTB_Vibrate;
+	
+	/**
+	 * 选择铃声的button
+	 */
+	private Button mBTN_Ringtone;
 	
 	/**
 	 * Pomotime的取值范围
@@ -107,6 +122,11 @@ public class SettingsActivity extends Activity {
 		mTB_Vibrate = (ToggleButton) findViewById(R.id.settings_vibrate_toggle);
 		
 		/**
+		 * Button绑定
+		 */
+		mBTN_Ringtone = (Button) findViewById(R.id.settings_soundselect_btn);
+		
+		/**
 		 * 设置值域
 		 */
 		mSB_Pomotime.setMax(mPomotimeMax - mPomotimeMin);
@@ -164,6 +184,13 @@ public class SettingsActivity extends Activity {
 		 */
 		boolean b = mSettings.getPomotimerNotifyVibrate();
 		mTB_Vibrate.setChecked(b);
+		
+		/**
+		 * 初始化Notify Ringtone
+		 */
+		String str = RingtoneManager.getRingtone(this, mSettings.getPomotimerNotifyRingTone()).getTitle(this);
+		str = str.substring(0, str.lastIndexOf("."));
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
 	}
 	
 	/**
@@ -284,5 +311,64 @@ public class SettingsActivity extends Activity {
 				mSettings.setPomotimerNotifyVibrate(isChecked);
 			}
 		});
+		
+		/**
+		 * Ringtone Select Button监听器
+		 */
+		mBTN_Ringtone.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				pickRingtone();
+			}
+		});
 	}
+	
+	private void pickRingtone() {
+		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+		//添加 “默认”选项
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+		
+		//设置铃声类型
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+		
+		//不显示静音
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+		
+		Uri ringtongUri = mSettings.getPomotimerNotifyRingTone();
+		
+		//在已选铃声上打勾
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtongUri);
+		
+		//启动选择
+		startActivityForResult(intent, REQUEST_CODE_PICK_RINGTONE);
+	}
+
+	/**
+	 * 选择铃声后进入此函数
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != Activity.RESULT_OK) {
+			return;
+		}
+		
+		switch(requestCode) {
+		case REQUEST_CODE_PICK_RINGTONE: {
+			Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+			handleRingtonePicked(uri);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	
+	private void handleRingtonePicked(Uri uri) {
+		mSettings.setPomotimerNotifyRingTome(uri);
+		String str = RingtoneManager.getRingtone(this, uri).getTitle(this);
+		str = str.substring(0, str.lastIndexOf("."));
+		mBTN_Ringtone.setText(this.getString(R.string.settings_sound) + str);
+	}
+	
 }
