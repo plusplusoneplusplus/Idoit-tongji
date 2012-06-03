@@ -33,7 +33,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -113,9 +112,17 @@ public class TaskDetailViewHelper {
 	private TextView interruptText;
 
 	/**
-	 * @return 操作的那个task，做过的修改都存在里头了
+	 * 操作的那个task，做过的修改都存在里头了
+	 * @return 如果修改name为“”，会返回null
 	 */
 	public TaskInfo getTask() {
+		String name = taskNameText.getText().toString();
+		if (name.isEmpty()) {
+			return null;
+		}
+		
+		this.task.setName(name);
+		this.task.setHint(taskMemoText.getText().toString());
 		return this.task;
 	}
 	
@@ -130,6 +137,9 @@ public class TaskDetailViewHelper {
 		taskMemoText = (EditText) view.findViewById(R.id.taskMemoEditText);
 		this.refreshTaskName();
 		this.refreshTaskMemo();
+		/*
+		 * name和memo的edittex无需额外操作，只需在总结task的时候toString一下就好了
+		 */
 		
 		//=====任务时间相关信息：周期、开始、截止=====
 		periodicInfoText = (TextView) view.findViewById(R.id.taskPeriodicInfoTextView);
@@ -416,7 +426,7 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(View v) {
 				String text = editText.getText().toString();
-				if (text == null || text.equals("")) {
+				if (text == null || text.isEmpty()) {
 					return;
 				}
 				//=====以空格分隔，每一个token尝试加入tag=====
@@ -538,7 +548,7 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String numberString = editText.getText().toString();
-				if (numberString.equals("")) {
+				if (numberString.isEmpty()) {
 					return;
 				}
 
@@ -587,6 +597,7 @@ public class TaskDetailViewHelper {
 	 */
 	private void refreshPeriodicInfo() {
 		//TODO 周期信息如何显示
+		int periodic = task.getWay();
 	}
 	
 	/**
@@ -753,6 +764,7 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(View v) {
 				//TODO
+				
 			}
 		});
 	}
