@@ -93,7 +93,34 @@
 	       android:textAppearance="?android:attr/textAppearanceLarge"
 	       android:layout_below="@id/settings_longbreak_interval_seekbar" />
 	   
+	   <RelativeLayout android:id="@+id/settings_vibrate_session"
+	       android:layout_width="match_parent"
+	       android:layout_height="wrap_content"
+	       android:layout_below="@id/settings_sound_bar"
+	       android:layout_marginRight="40dip"
+	       android:layout_marginTop="10dip">
+	       
+		   <TextView android:id="@+id/settings_vibrate_textview"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:text="@string/settings_vibrate"
+		       android:textColor="@color/black"
+		       android:textAppearance="?android:attr/textAppearanceMedium"
+		       android:layout_centerVertical="true"
+		       android:padding="10dip"/>
+		   
+		   
+		   <ToggleButton android:id="@+id/settings_vibrate_toggle"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:textOn="@string/settings_open"
+		       android:textOff="@string/settings_close"
+		       android:layout_centerVertical="true"
+		       android:layout_alignParentRight="true"/>
+		   
+	   </RelativeLayout>
 	   
+
 	</RelativeLayout>
 
 </ScrollView>

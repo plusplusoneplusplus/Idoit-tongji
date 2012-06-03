@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hello">Hello World, IDoItActivity!</string>
     <string name="app_name">IDoIt</string>
     <string name="analysis">分析</string>
@@ -23,9 +24,13 @@
     <string name="settings_shortbreak">短休息时间：</string>
     <string name="settings_longbreak">长休息时间：</string>
     <string name="settings_longbreak_interval">长休息间隔番茄数：</string>
-    <string name="settings_sound">声音设置</string>
     <string name="settings_minute">分钟</string>
     <string name="settings_count">个</string>
+    <string name="settings_notify">提醒设置</string>
+    <string name="settings_vibrate">震动</string>
+    <string name="settings_open">开启</string>
+    <string name="settings_close">关闭</string>
+    <string name="settings_sound">提示音</string>
     <string name="Detail_name_edit_hint">名称</string>
     <string name="Detail_memo_edit_hint">备注</string>
     <string name="Detail_period_intro_text">重复任务</string>
@@ -41,4 +46,5 @@
     <string name="Detail_pasttime_intro_text">已经努力了</string>
     <string name="Detail_totaltime_intro_text">预计将耗费</string>
     <string name="Detail_interrupt_intro_text">中断次数</string>
+
 </resources>
