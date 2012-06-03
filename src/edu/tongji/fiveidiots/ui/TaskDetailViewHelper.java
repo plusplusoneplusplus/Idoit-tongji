@@ -185,8 +185,8 @@ public class TaskDetailViewHelper {
 	private void showSetTimeDialog(final boolean isStartTime) {
 		//=====新建builder=====
 		AlertDialog.Builder builder = new Builder(context);
-		builder.setTitle("设置" + context.getResources().getString(isStartTime ?
-				R.string.Detail_starttime_intro_text : R.string.Detail_deadline_intro_text));
+		builder.setTitle("设置" + context.getString(isStartTime ? R.string.Detail_starttime_intro_text
+								: R.string.Detail_deadline_intro_text));
 		View timeView = LayoutInflater.from(context).inflate(R.layout.dialog_set_time, null);
 		builder.setView(timeView);
 		
@@ -283,7 +283,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
+				showSetTagsDialog();
 			}
 		});
 		
@@ -312,7 +312,7 @@ public class TaskDetailViewHelper {
 	private void showSetPriorityDialog() {
 		//=====初始化设置builder=====
 		AlertDialog.Builder builder = new Builder(context);
-		builder.setTitle("设置" + context.getResources().getString(R.string.Detail_priority_intro_text));
+		builder.setTitle("设置" + context.getString(R.string.Detail_priority_intro_text));
 		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_priority, null);
 		builder.setView(view);
 		final RadioButton highButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_high);
@@ -356,6 +356,33 @@ public class TaskDetailViewHelper {
 					task.setPriority(-1);
 				}
 				refreshPriority();
+			}
+		});
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
+	/**
+	 * 显示设置tags的dialog
+	 */
+	private void showSetTagsDialog() {
+		//TODO 可能要用到list adapter，比较复杂，后头再来写吧
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_tag_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_tags, null);
+		builder.setView(view);
+		
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
