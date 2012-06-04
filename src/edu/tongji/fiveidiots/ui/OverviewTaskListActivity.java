@@ -390,14 +390,13 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			int totalMinutes = task.getTotalTime();
 			String progressMessage = "";
 			int duration = new Settings(OverviewTaskListActivity.this).getPomotimerDuration();
-			if (pastMinutes > 0) {
-				int cycle = pastMinutes / duration;
-				progressMessage += (cycle + "");
-			}
+			int cycle = pastMinutes / duration;
+			progressMessage += (cycle + "");
 			if (totalMinutes != -1) {
-				int cycle = totalMinutes / duration;
-				progressMessage += (" (" + cycle + ") ");
+				int totalCycle = totalMinutes / duration;
+				progressMessage += (" (" + totalCycle + ") ");
 			}
+			progressMessage += "时钟周期";
 			progressTextView.setText(progressMessage);
 			startButton.setOnClickListener(new OnClickListener() {
 				
@@ -414,8 +413,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 				
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					Toast.makeText(OverviewTaskListActivity.this, "task: " + task.getName()
-							+ " finished? " + isChecked, Toast.LENGTH_SHORT).show();
+					//=====设置完成=====
+					TaskController controller = new TaskController(OverviewTaskListActivity.this);
+					task.setStatus(TaskInfo.STATUS_FINISHED);
+					controller.ModifyTaskInfo(task.getId(), task);
+					Toast.makeText(OverviewTaskListActivity.this, "正在设置完成", Toast.LENGTH_SHORT).show();
+					resetTaskList();
 				}
 			});
 			
@@ -443,12 +446,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			else {
 				if (position <= selectedPos) {
 					//=====要展示的是selected的之前的部分，直接展示brief即可=====
-					try {
-						TaskInfo task = tasks.get(position);
-						convertView = this.getBriefView(task);						
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					TaskInfo task = tasks.get(position);
+					convertView = this.getBriefView(task);						
 				}
 				else if (position == selectedPos+1) {
 					//=====就是你了！是extended information=====
