@@ -145,22 +145,38 @@ public class TaskDetailsActivity extends GDActivity {
     @Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
     	switch (item.getItemId()) {
-		case R.id.detail_action_bar_save:
+		case R.id.detail_action_bar_save: {
 			//=====保存当前做的修改=====
 			TaskInfo task = viewHelper.getTask();
 			if (task == null || task.getName() == null || task.getName().isEmpty()) {
 				Toast.makeText(this, "要保存，请先输入名称！", Toast.LENGTH_SHORT).show();
 				return true;
 			}
-			Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
 			TaskController controller = new TaskController(this);
-			controller.ModifyTaskInfo(task.getId(), task);
+			if (task.getId() == -1) {
+				controller.AddTask(task);
+				Toast.makeText(this, "正在添加", Toast.LENGTH_SHORT).show();
+			}
+			else {
+				controller.ModifyTaskInfo(task.getId(), task);				
+				Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
+			}
 			this.finish();
 			return true;
-		case R.id.detail_action_bar_delete:
-			//TODO 删除当前task，返回前一个tasklist-overview，而且应该要求它自动刷新
-			Toast.makeText(this, "to be deleted", Toast.LENGTH_SHORT).show();
+		}
+		case R.id.detail_action_bar_delete: {
+			TaskInfo task = viewHelper.getTask();
+			if (task == null || task.getId() == -1) {
+				Toast.makeText(this, "此任务尚未建立，无法删除！", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+			
+			TaskController controller = new TaskController(this);
+			controller.RemoveTask(task.getId());
+			Toast.makeText(this, "正在删除", Toast.LENGTH_SHORT).show();
+			this.finish();
 			return true;
+		}
 
 		default:
 			return super.onHandleActionBarItemClick(item, position);
