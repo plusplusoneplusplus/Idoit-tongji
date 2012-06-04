@@ -1,122 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/dialog_set_periodic_radioLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="每隔几天" />
-
-        <RadioButton
-            android:id="@+id/dialog_set_periodic_radioRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="每周循环" />
-    </RadioGroup>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="每隔：（天）" />
-
-        <EditText
-            android:id="@+id/dialog_set_periodic_editText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:enabled="false"
-            android:inputType="number" >
-        </EditText>
-    </LinearLayout>
+    android:layout_height="match_parent" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <TextView
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="每周循环：" />
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/dialog_set_periodic_radioLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="每隔几天" />
+
+            <RadioButton
+                android:id="@+id/dialog_set_periodic_radioRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="每周循环" />
+        </RadioGroup>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal" >
+            android:layout_height="wrap_content" >
 
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_mondayButton"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="周一"
-                android:textOn="周一" />
+                android:text="每隔：（天）" />
 
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_tuesdayButton"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/dialog_set_periodic_editText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textOff="周二"
-                android:textOn="周二" />
-
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_wednesdayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="周三"
-                android:textOn="周三" />
-
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_thursdayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="周四"
-                android:textOn="周四" />
-
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_fridayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="周五"
-                android:textOn="周五" />
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:enabled="false"
+                android:inputType="number" >
+            </EditText>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="horizontal" >
+            android:orientation="vertical" >
 
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_saturdayButton"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="周六"
-                android:textOn="周六" />
+                android:text="每周循环：" />
 
-            <ToggleButton
-                android:id="@+id/dialog_set_periodic_sundayButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textOff="周日"
-                android:textOn="周日" />
+                android:layout_margin="5dp"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_mondayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周一"
+                    android:textOn="周一" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_tuesdayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周二"
+                    android:textOn="周二" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_wednesdayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周三"
+                    android:textOn="周三" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_thursdayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周四"
+                    android:textOn="周四" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_fridayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周五"
+                    android:textOn="周五" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_saturdayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周六"
+                    android:textOn="周六" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_set_periodic_sundayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="周日"
+                    android:textOn="周日" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

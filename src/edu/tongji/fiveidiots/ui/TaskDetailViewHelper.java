@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
@@ -201,7 +203,7 @@ public class TaskDetailViewHelper {
 	/**
 	 * 显示设置重复任务信息的dialog
 	 */
-	private void showSetPeriodicDialog() {
+	private void showSetPeriodicDialog() {	//TODO 未测试
 		//=====生成、初始化builder=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getString(R.string.Detail_period_intro_text));
@@ -251,13 +253,36 @@ public class TaskDetailViewHelper {
 		//=====根据数据先恢复现场=====
 		final PeriodInfo info = new PeriodInfo();
 		info.setKey(task.getWay());
-		//TODO
+		switch (info.getPeriodType()) {
+		case PeriodInfo.PERIOD_NONE:
+			//do nothing
+			break;
+		case PeriodInfo.PERIOD_BY_DAY:
+			byDayButton.setChecked(true);
+			intervalEditText.setText(info.getIntervalByDay() + "");
+			break;
+		case PeriodInfo.PERIOD_BY_WEEK:
+			byWeekButton.setChecked(true);
+			Map<Integer, Boolean> map = info.getCheckedListByWeek();
+			monday.setChecked(map.get(1));
+			tuesday.setChecked(map.get(2));
+			wednesday.setChecked(map.get(3));
+			thursday.setChecked(map.get(4));
+			friday.setChecked(map.get(5));
+			saturday.setChecked(map.get(6));
+			sunday.setChecked(map.get(7));
+			break;
+
+		default:
+			break;
+		}
 
 		//=====确认按钮，设置周期信息=====
 		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				PeriodInfo info = new PeriodInfo();
 				if (byDayButton.isChecked()) {
 					//=====by day=====
 					String numberString = intervalEditText.getText().toString();
@@ -265,33 +290,22 @@ public class TaskDetailViewHelper {
 						return;
 					}
 					Integer interval = Integer.parseInt(numberString);
-					//TODO
+					info.setPeriodByDay(interval);
 				}
 				else {
 					//=====by week=====
-					if (monday.isChecked()) {
-						
-					}
-					if (tuesday.isChecked()) {
-						
-					}
-					if (wednesday.isChecked()) {
-						
-					}
-					if (thursday.isChecked()) {
-						
-					}
-					if (friday.isChecked()) {
-						
-					}
-					if (saturday.isChecked()) {
-						
-					}
-					if (sunday.isChecked()) {
-						
-					}
+					HashMap<Integer, Boolean> hashMap = new HashMap<Integer, Boolean>();
+					hashMap.put(1, monday.isChecked());
+					hashMap.put(2, tuesday.isChecked());
+					hashMap.put(3, wednesday.isChecked());
+					hashMap.put(4, thursday.isChecked());
+					hashMap.put(5, friday.isChecked());
+					hashMap.put(6, saturday.isChecked());
+					hashMap.put(7, sunday.isChecked());
+
+					info.setPeriodByWeek(hashMap);
 				}
-				//TODO 设置周期信息
+				task.setWay(info.getKey());
 				refreshPeriodicInfo();
 			}
 		});
@@ -301,7 +315,10 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				//TODO 清楚周期信息
+				PeriodInfo info = new PeriodInfo();
+				info.setPeriodNone();
+				task.setWay(info.getKey());
+				refreshPeriodicInfo();
 			}
 		});
 		
