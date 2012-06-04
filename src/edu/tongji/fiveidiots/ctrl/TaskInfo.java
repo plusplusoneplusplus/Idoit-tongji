@@ -95,6 +95,12 @@ public class TaskInfo {
 	public void setWay(PeriodInfo p) {
 		this.way = p.TranslateKey();
 	}
+	public int getIntWay(){
+		return way;
+	}
+	public void setIntWay(int way){
+		this.way = way;
+	}
 	public int getInterrupt() {
 		return interrupt;
 	}

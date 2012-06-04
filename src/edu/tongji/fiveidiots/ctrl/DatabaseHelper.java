@@ -96,7 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		tcv.put(STARTTIME, starttime);
 		tcv.put(DEADLINE, deadline);
 		tcv.put(ALARM, alarm);
-		tcv.put(WAY, aTask.getWay());
+		tcv.put(WAY, aTask.getIntWay());
 		tcv.put(PRIORITY, aTask.getPri());
 		tcv.put(PREID, aTask.getPre_id());
 		tcv.put(NEXTID, aTask.getNext_id());
