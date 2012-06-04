@@ -81,7 +81,12 @@ public class PomotimerService extends Service {
 
 	@Override
 	public void onDestroy() {
-		this.saveIntoSettings();
+		/**
+		 * 只有在运行番茄时间是，才将计时器各项值写入sharepreference
+		 */
+		if (this.currentSection == SECTION_POMO) {
+			this.saveIntoSettings();
+		}
 
 		this.releaseTimer();
 		this.cancelNotification();
@@ -410,6 +415,14 @@ public class PomotimerService extends Service {
 		public void init(Handler aHandler) {
 			handler = aHandler;
 			initState();
+		}
+		
+		/**
+		 * 获取当前阶段
+		 * PS:真不想写这个api，有待重构
+		 */
+		public int getCurrentSection() {
+			return currentSection;
 		}
 	}
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -41,6 +43,9 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	private ListView taskListView;
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	private TaskListAdapter adapter = new TaskListAdapter();
+
+	//关于对话框
+	private Dialog mAboutDialog;
 	
 	private static enum TaskSheetType {
 		TODAY,		//今日
@@ -68,7 +73,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
         taskListView = (ListView) findViewById(R.id.taskListView);
         //=====设置缓存背景色======
         taskListView.setCacheColorHint(0);
-        
+
+		//关于对话框初始化
+		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
+				.setMessage(R.string.about_dialog_content).create();
+		
+		
         Button testButton = (Button) findViewById(R.id.testButton);
         testButton.setOnClickListener(new OnClickListener() {
 			
@@ -440,6 +450,45 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			
 			//=====通知数据更新了，该刷新界面了=====
 			this.notifyDataSetChanged();
+		}
+	}
+
+	/**
+	 * 处理当quickaction item按下时的判断，操作
+	 */
+	@Override
+	protected void handleQuickActionItem(int stringId) {
+		switch(stringId)
+		{
+		//左侧，timeline action bar
+		case R.string.today:
+			Toast.makeText(OverviewTaskListActivity.this, "today", Toast.LENGTH_SHORT).show();
+			break;
+		case R.string.future:
+			break;
+		case R.string.periodic:
+			break;
+		case R.string.pool:
+			Toast.makeText(OverviewTaskListActivity.this, "pool", Toast.LENGTH_SHORT).show();
+			break;
+		case R.string.all:
+			break;
+			
+		//右侧，More action bar
+		case R.string.analysis:
+			break;
+		case R.string.settings:
+			ActivityUtil.startNewActivity(OverviewTaskListActivity.this, SettingsActivity.class, 0L, false);
+			break;
+		case R.string.about:
+			mAboutDialog.show();
+			break;
+		case R.string.exit:
+			OverviewTaskListActivity.this.finish();
+			break;
+			
+		default:
+			break;
 		}
 	}
 

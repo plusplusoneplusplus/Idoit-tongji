@@ -169,29 +169,49 @@ public class PomotimerActivity extends Activity {
 		super.onDestroy();
 	}
 
+	/**
+	 * 当想要暂停计时器时，显示的dialog
+	 */
+	private void showStopTimerDialog(int titleID, int msgID, int confirmId, int cancleId) {
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle(titleID);
+		builder.setMessage(msgID);
+		builder.setPositiveButton(confirmId, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
+				msg.arg1 = serviceBinder.getCurrentSection();
+				msg.sendToTarget();
+			}
+		});
+		builder.setNegativeButton(cancleId, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
+	
 	@Override
 	public void onBackPressed() {
 		if (serviceBound && serviceBinder.isCounting()) {
-			//=====正在counting呢，哪能说退就退=====
-			AlertDialog.Builder builder = new Builder(this);
-			builder.setTitle(R.string.PT_quit_title);
-			builder.setMessage(R.string.PT_quit_message);
-			builder.setPositiveButton(R.string.PT_quit_confirm, new DialogInterface.OnClickListener() {
+			if (serviceBinder.getCurrentSection() == PomotimerService.SECTION_POMO) {
+				//=====番茄正在counting呢，哪能说退就退=====
+				showStopTimerDialog(R.string.PT_pomo_quit_title, R.string.PT_pomo_quit_message, 
+						R.string.PT_pomo_quit_confirm, R.string.PT_pomo_quit_cancel);
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
-					msg.sendToTarget();
-				}
-			});
-			builder.setNegativeButton(R.string.PT_quit_cancel, new DialogInterface.OnClickListener() {
+				return;
+			}
+			else if (serviceBinder.getCurrentSection() == PomotimerService.SECTION_SHORTBREAK) {
+				//=====休息正在counting呢，哪能说退就退=====
+				showStopTimerDialog(R.string.PT_break_quit_title, R.string.PT_break_quit_message, 
+						R.string.PT_break_quit_confirm, R.string.PT_break_quit_cancel);
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			});
-			builder.create().show();
-			return;
+				return;
+			}
 		}
 
 		super.onBackPressed();
