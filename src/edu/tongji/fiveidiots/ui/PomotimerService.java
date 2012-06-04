@@ -277,7 +277,7 @@ public class PomotimerService extends Service {
 			break;
 		}
 		
-		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.idoit_icon, null, System.currentTimeMillis());
 		Intent notificationIntent = new Intent(this, PomotimerActivity.class);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,	notificationIntent, 0);
@@ -292,7 +292,7 @@ public class PomotimerService extends Service {
 	 * @param ongoing 是否正在进行中
 	 */
 	private void showNotification(String message, boolean attention, boolean ongoing) {
-		Notification notification = new Notification(R.drawable.icon, null, System.currentTimeMillis());
+		Notification notification = new Notification(R.drawable.idoit_icon, null, System.currentTimeMillis());
 		if (attention) {
 			Settings settings = new Settings(this);
 			if(settings.getPomotimerNotifyVibrate()) {

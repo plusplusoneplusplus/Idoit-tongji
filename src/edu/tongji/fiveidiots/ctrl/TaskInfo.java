@@ -56,7 +56,7 @@ public class TaskInfo {
 	 * 例如周一，周三，周四，周日要执行的任务：数值二进制表示为：11001101  
 	 * 如果是每隔特定日期执行的任务，其二进制表示的第9，8位为10，剩下7位表示相隔的日期。
 	 */
-	private int way;
+	private int way = 0;
 	/**
 	 * 中断个数
 	 */
@@ -181,7 +181,7 @@ public class TaskInfo {
 		this.totaltime = totaltime;
 	}
 
-	public void setNextTaskId(int nextTaskId) {
+	public void setNextTaskId(long nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
 	
