@@ -106,30 +106,31 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 * 刷新任务list的listview
 	 */
 	private void resetTaskList() {
+		TaskController controller = new TaskController(this);
 		switch (currentTaskSheetType) {
 		case POOL:
-			//TODO 得到所有收集池里的任务
+			//=====得到所有收集池里的任务===== TODO
 			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		case TODAY:
-			//TODO 得到所有今日任务
-			this.adapter.fillData(TestingHelper.getRandomTaskList());
+			//=====得到所有今日任务=====
+			this.adapter.fillData(controller.GetTodayTask(new Date()));
 			break;
 
 		case FUTURE:
-			//TODO 得到所有未来任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有未来任务=====
+			this.adapter.fillData(controller.GetFutureTask(new Date()));
 			break;
 
 		case PERIODIC:
-			//TODO 得到所有周期性任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有周期性任务=====
+			this.adapter.fillData(controller.GetPeriodicTask());
 			break;
 
 		case ALL:
-			//TODO 得到所有所有任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有所有任务=====
+			this.adapter.fillData(controller.ShowTaskList());
 			break;
 
 		default:
@@ -203,13 +204,6 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public void fillData(List<TaskInfo> taskInfos) {
 			this.tasks.clear();
 			this.tasks.addAll(taskInfos);
-			
-			//TODO testing
-			if (tasks.size() > 0) {
-				TaskInfo task = tasks.get(0);
-				task.setUsedTime(100);
-				task.setTotalTime(200);
-			}
 		}
 		
 		/**
@@ -229,6 +223,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		
 		@Override
 		public int getCount() {
+			if (tasks.size() == 0) {
+				//=====一个view——无=====
+				return 1;
+			}
+			
 			if (selectedPos == NOT_SELECTED) {
 				return tasks.size();
 			}
@@ -378,7 +377,9 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			//如果任务集合为空，则不显示任何任务
 			if (tasks.isEmpty()) {
-				return null;
+				TextView textView = new TextView(OverviewTaskListActivity.this);
+				textView.setText("无");
+				return textView;
 			}
 			
 			if (convertView != null) {
