@@ -24,6 +24,7 @@ import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -99,9 +100,8 @@ public class PomotimerActivity extends Activity {
 		this.timerHandler = new Handler(new PomotimerCallback());
 
 		//=====设置全屏，但是有标题=====
-		//TODO 为了测试，先不全屏
-//		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setContentView(R.layout.timer);
 		this.remainTimeTextView = (TextView) findViewById(R.id.remainTimeTextView);
 		this.addIdeaImageView = (ImageView) findViewById(R.id.addIdeaImageView);
