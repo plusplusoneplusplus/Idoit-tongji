@@ -5,28 +5,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.PeriodInfo;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
-import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TestingHelper;
 import edu.tongji.fiveidiots.util.TimeUtil;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -54,28 +54,16 @@ public class TaskDetailViewHelper {
 	/**
 	 * 此任务的前驱任务
 	 */
-	private TaskInfo previousTask;
+	private TaskInfo previousTask = null;
 	/**
 	 * 此任务的后续任务
 	 */
-	private TaskInfo followingTask;
+	private TaskInfo followingTask = null;
 
 	private final Context context;
 	public TaskDetailViewHelper(Context aContext, TaskInfo aTask) {
 		this.context = aContext;
 		this.task = aTask;
-		
-		//=====TODO 测试中=====
-		this.task.addTag("hello");
-		this.task.addTag("world");
-		Date date = new Date(2012,12,5);
-		this.task.setDeadline(date);
-		this.task.setDeadline(new Date(new Date().getTime() - 10000));
-		this.task.setStartTime(new Date());
-		
-		this.previousTask = TestingHelper.getRandomTask();
-		this.previousTask.setName("PREV: " + this.previousTask.getName());
-		this.followingTask = null;
 	}
 
 	//=====第一页=====
@@ -140,7 +128,7 @@ public class TaskDetailViewHelper {
 		this.refreshTaskName();
 		this.refreshTaskMemo();
 		/*
-		 * name和memo的edittex无需额外操作，只需在总结task的时候toString一下就好了
+		 * name和memo的edittex无需额外操作，只需在总结task的时候toString检查一下就好了
 		 */
 		
 		//=====任务时间相关信息：周期、开始、截止=====
@@ -201,7 +189,7 @@ public class TaskDetailViewHelper {
 	/**
 	 * 显示设置重复任务信息的dialog
 	 */
-	private void showSetPeriodicDialog() {	//TODO 未测试
+	private void showSetPeriodicDialog() {
 		//=====生成、初始化builder=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getString(R.string.Detail_period_intro_text));
@@ -287,6 +275,10 @@ public class TaskDetailViewHelper {
 						return;
 					}
 					Integer interval = Integer.parseInt(numberString);
+					if (interval <= 0) {
+						Toast.makeText(context, "小于等于0的周期是没有意义的！", Toast.LENGTH_SHORT).show();
+						return;
+					}
 					info.setPeriodByDay(interval);
 				}
 				else {
@@ -496,19 +488,21 @@ public class TaskDetailViewHelper {
 		final RadioButton noneButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_none);
 		
 		//=====根据已有参数先恢复UI=====
-		switch (task.getPriority()) {	//TODO priority修改之后改这里
-		case 0:
+		switch (task.getPriority()) {
+		case TaskInfo.PRIORITY_HIGH:
 			highButton.setChecked(true);
 			break;
-		case 1:
+		case TaskInfo.PRIORITY_MIDDLE:
 			middleButton.setChecked(true);
 			break;
-		case 2:
+		case TaskInfo.PRIORITY_LOW:
 			lowButton.setChecked(true);
+			break;
+		case TaskInfo.PRIORITY_UNSET:
+			noneButton.setChecked(true);
 			break;
 
 		default:
-			noneButton.setChecked(true);
 			break;
 		}
 		
@@ -517,18 +511,17 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				//TODO 当后台定了以后改这里
 				if (highButton.isChecked()) {
-					task.setPriority(0);
+					task.setPriority(TaskInfo.PRIORITY_HIGH);
 				}
 				else if (middleButton.isChecked()) {
-					task.setPriority(1);
+					task.setPriority(TaskInfo.PRIORITY_MIDDLE);
 				}
 				else if (lowButton.isChecked()) {
-					task.setPriority(2);
+					task.setPriority(TaskInfo.PRIORITY_LOW);
 				}
 				else if (noneButton.isChecked()) {
-					task.setPriority(-1);
+					task.setPriority(TaskInfo.PRIORITY_UNSET);
 				}
 				refreshPriority();
 			}
@@ -656,6 +649,16 @@ public class TaskDetailViewHelper {
 			}
 		});
 
+		//=====中间按钮，清除=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setAddr(null);
+				refreshContext();
+			}
+		});
+
 		//=====取消按钮做什么=====
 		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
 			
@@ -737,7 +740,7 @@ public class TaskDetailViewHelper {
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
 			periodicInfoText.setTextColor(context.getResources().getColor(R.color.grey));
-			periodicInfoText.setText(context.getString(R.string.Detail_none));
+			periodicInfoText.setText(context.getString(R.string.Detail_unset));
 			break;
 
 		case PeriodInfo.PERIOD_BY_DAY:
@@ -750,29 +753,29 @@ public class TaskDetailViewHelper {
 			Map<Integer, Boolean> map = info.getCheckedMapByWeek();
 			ArrayList<String> list = new ArrayList<String>();
 			if (map.get(1)) {
-				list.add("周一");
+				list.add("一");
 			}
 			if (map.get(2)) {
-				list.add("周二");
+				list.add("二");
 			}
 			if (map.get(3)) {
-				list.add("周三");
+				list.add("三");
 			}
 			if (map.get(4)) {
-				list.add("周四");
+				list.add("四");
 			}
 			if (map.get(5)) {
-				list.add("周五");
+				list.add("五");
 			}
 			if (map.get(6)) {
-				list.add("周六");
+				list.add("六");
 			}
 			if (map.get(7)) {
-				list.add("周日");
+				list.add("日");
 			}
-			String message = list.get(0);
+			String message = "周" + list.get(0);
 			for (int i = 1; i < list.size(); i++) {
-				message += list.get(1);
+				message += (", " + list.get(i));
 			}
 			periodicInfoText.setText(message);
 			break;
@@ -789,7 +792,7 @@ public class TaskDetailViewHelper {
 		Date startTime = task.getStartTime();
 		if (startTime == null) {
 			startTimeText.setTextColor(context.getResources().getColor(R.color.grey));
-			startTimeText.setText(R.string.Detail_none);
+			startTimeText.setText(R.string.Detail_unset);
 		}
 		else {
 			if (TimeUtil.isFullDay(startTime)) {
@@ -826,7 +829,7 @@ public class TaskDetailViewHelper {
 		Date deadline = task.getDeadline();
 		if (deadline == null) {
 			deadlineText.setTextColor(context.getResources().getColor(R.color.grey));
-			deadlineText.setText(R.string.Detail_none);
+			deadlineText.setText(R.string.Detail_unset);
 		}
 		else {
 			if (new Date().getTime() >= deadline.getTime()) {
@@ -846,27 +849,28 @@ public class TaskDetailViewHelper {
 	 * 刷新优先级
 	 */
 	private void refreshPriority() {
-		//TODO 等后台的priority的类型定好（enum || static final int）
 		switch (task.getPriority()) {
-		case 0:
-			//HIGH
+		case TaskInfo.PRIORITY_HIGH:
 			priorityText.setTextColor(context.getResources().getColor(R.color.high_priority));
 			priorityText.setText(R.string.Detail_high_priority_text);
 			break;
-		case 1:
-			//MIDDLE
+
+		case TaskInfo.PRIORITY_MIDDLE:
 			priorityText.setTextColor(context.getResources().getColor(R.color.mid_priority));
 			priorityText.setText(R.string.Detail_middle_priority_text);
 			break;
-		case 2:
-			//LOW
+		
+		case TaskInfo.PRIORITY_LOW:
 			priorityText.setTextColor(context.getResources().getColor(R.color.low_priority));
 			priorityText.setText(R.string.Detail_low_priority_text);
 			break;
-
-		default:
+		
+		case TaskInfo.PRIORITY_UNSET:
 			priorityText.setTextColor(context.getResources().getColor(R.color.grey));
 			priorityText.setText(R.string.Detail_unset);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -878,10 +882,10 @@ public class TaskDetailViewHelper {
 		ArrayList<String> tags = task.ExportTags();
 		if (tags == null || tags.isEmpty()) {
 			tagsText.setTextColor(context.getResources().getColor(R.color.grey));
-			tagsText.setText(R.string.Detail_none);
+			tagsText.setText(R.string.Detail_unset);
 		}
 		else {
-			tagsText.setTextColor(context.getResources().getColor(R.color.black));			
+			tagsText.setTextColor(context.getResources().getColor(R.color.blue));			
 			String message = tags.get(0);
 			for (int i = 1; i < tags.size(); i++) {
 				message += (", " + tags.get(i));
@@ -897,7 +901,7 @@ public class TaskDetailViewHelper {
 		String address = task.getAddr();
 		if (address == null || address.isEmpty()) {
 			contextText.setTextColor(context.getResources().getColor(R.color.grey));
-			contextText.setText(R.string.Detail_none);
+			contextText.setText(R.string.Detail_unset);
 		}
 		else {
 			contextText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -931,7 +935,13 @@ public class TaskDetailViewHelper {
 		//=====任务当前状态=====
 		stateText = (TextView) view.findViewById(R.id.taskStateTextView);
 		this.refreshState();
-		this.initTaskStatePartsUI();
+		stateText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showSetStateDialog();
+			}
+		});
 		
 		//=====任务先后顺序=====
 		previousTaskText = (TextView) view.findViewById(R.id.taskPreviousTextView);
@@ -947,22 +957,15 @@ public class TaskDetailViewHelper {
 		this.refreshUsedTime();
 		this.refreshTotalTime();
 		this.refreshInterrupt();
-
-		return view;
-	}
-
-	/**
-	 *  初始化任务状态部分的UI
-	 */
-	private void initTaskStatePartsUI() {
-		stateText.setOnClickListener(new OnClickListener() {
+		totalTimeText.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
-				
+				showSetTotalTimeDialog();
 			}
 		});
+
+		return view;
 	}
 	
 	/**
@@ -974,13 +977,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				if (previousTask == null || !(context instanceof Activity)) {
-					return;
-				}
-				
-				Bundle bundle = new Bundle();
-				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, previousTask.getId());
-				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);					
+				showSetSequenceTaskDialog(true);
 			}
 		});
 		
@@ -989,22 +986,259 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				if (followingTask == null || !(context instanceof Activity)) {
-					return;
-				}
-				
-				Bundle bundle = new Bundle();
-				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, followingTask.getId());
-				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);
+				showSetSequenceTaskDialog(false);
 			}
 		});
 	}
+	
+	/**
+	 * 显示设置预期总时间的dialog
+	 */
+	private void showSetTotalTimeDialog() {
+		//=====生成初始化builder及界面=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_totaltime_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_total_time, null);
+		builder.setView(view);
+		final EditText hourText = (EditText) view.findViewById(R.id.dialog_set_total_time_hourEditText);
+		final EditText minuteText = (EditText) view.findViewById(R.id.dialog_set_total_time_minuteEditText);
+		
+		//=====恢复现场=====
+		if (task.getTotalTime() != -1) {
+			int hour = task.getTotalTime() / 60;
+			int minute = task.getTotalTime() % 60;
+			hourText.setText(hour + "");
+			minuteText.setText(minute + "");
+		}
 
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String hourString = hourText.getText().toString();
+				String minuteString = minuteText.getText().toString();
+				if (hourString.isEmpty() && minuteString.isEmpty()) {
+					//=====两个都是空的，就认为是清空吧=====
+					task.setTotalTime(-1);
+				}
+				else {
+					int minutes = 0;
+					if (!hourString.isEmpty()) {
+						Integer hour = Integer.parseInt(hourText.getText().toString());
+						minutes += hour * 60;
+					}
+					if (!minuteString.isEmpty()) {
+						Integer minute = Integer.parseInt(minuteText.getText().toString());
+						minutes += minute;
+					}
+					task.setTotalTime(minutes);					
+				}
+				refreshTotalTime();
+			}
+		});
+		
+		//=====neutral button，清空=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setTotalTime(-1);
+				refreshTotalTime();
+			}
+		});
+		
+		//=====取消按钮，直接退出=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
+	/**
+	 * 显示设置前驱任务还是后续任务的dialog
+	 * @param isPreviousTask true代表设置前驱任务，false代表后续任务
+	 */
+	private void showSetSequenceTaskDialog(final boolean isPreviousTask) {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(isPreviousTask ? R.string.Detail_previous_intro_text
+								: R.string.Detail_following_intro_text));
+		ListView listView = new ListView(context);
+		builder.setView(listView);
+
+		//TODO 调用真正数据库里的数据而不是random
+		final SequenceTaskAdapter adapter = new SequenceTaskAdapter(TestingHelper.getRandomTaskList());
+		listView.setAdapter(adapter);
+
+		//=====neutral button，清除=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (isPreviousTask) {
+					task.setPrevTaskId(-1);
+					previousTask = null;
+					refreshPrevious();
+				}
+				else {
+					task.setNextTaskId(-1);
+					followingTask = null;
+					refreshFollowing();
+				}
+			}
+		});
+		
+		//=====取消，直接退出=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		//=====选中某个item之后的动作=====
+		final AlertDialog dialog = builder.create();
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				TaskInfo taskInfo = adapter.getItem(position);
+				if (isPreviousTask) {
+					task.setPrevTaskId(taskInfo.getId());
+					previousTask = taskInfo;
+					refreshPrevious();
+				}
+				else {
+					task.setNextTaskId(taskInfo.getId());
+					followingTask = taskInfo;
+					refreshFollowing();
+				}
+				dialog.cancel();
+			}
+		});
+		dialog.show();
+	}
+	
+	/**
+	 * 用来在dialog中选取前驱或者后续任务时显示task的adpater
+	 * @author Andriy
+	 */
+	private class SequenceTaskAdapter extends BaseAdapter {
+
+		private List<TaskInfo> theTasks;
+		public SequenceTaskAdapter(List<TaskInfo> tasks) {
+			this.theTasks = tasks;
+		}
+		
+		@Override
+		public int getCount() {
+			return theTasks.size();
+		}
+
+		@Override
+		public TaskInfo getItem(int position) {
+			return theTasks.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = LayoutInflater.from(context).inflate(R.layout.dialog_set_sequence_task_item, null);
+
+			TextView textView = (TextView) convertView.findViewById(R.id.dialog_set_sequence_task_nameTextView);
+			textView.setText(this.getItem(position).getName());
+			
+			return convertView;
+		}
+	}
+
+	/**
+	 * 显示设置任务状态的dialog
+	 */
+	private void showSetStateDialog() {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_state_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_state, null);
+		builder.setView(view);
+		
+		final RadioButton normalButton = (RadioButton) view.findViewById(R.id.dialog_set_state_normalButton);
+		final RadioButton finishedButton = (RadioButton) view.findViewById(R.id.dialog_set_state_finishedButton);
+		final RadioButton deletedButton = (RadioButton) view.findViewById(R.id.dialog_set_state_deletedButton);
+		
+		//=====恢复现场=====
+		switch (task.getStatus()) {
+		case TaskInfo.STATUS_NORMAL:
+			normalButton.setChecked(true);
+			break;
+		case TaskInfo.STATUS_FINISHED:
+			finishedButton.setChecked(true);
+			break;
+		case TaskInfo.STATUS_DELETED:
+			deletedButton.setChecked(true);
+			break;
+
+		default:
+			break;
+		}
+
+		//=====确认按钮做啥子=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (normalButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_NORMAL);
+				}
+				else if (finishedButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_FINISHED);
+				}
+				else if (deletedButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_DELETED);
+				}
+				refreshState();
+			}
+		});
+		
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
 	/**
 	 * 刷新任务状态
 	 */
 	private void refreshState() {
-		//TODO
+		switch (task.getStatus()) {
+		case TaskInfo.STATUS_NORMAL:
+			stateText.setTextColor(context.getResources().getColor(R.color.blue));
+			stateText.setText(R.string.Detail_state_normal);
+			break;
+
+		case TaskInfo.STATUS_FINISHED:
+			stateText.setTextColor(context.getResources().getColor(R.color.green));
+			stateText.setText(R.string.Detail_state_finished);
+			break;
+
+		case TaskInfo.STATUS_DELETED:
+			stateText.setTextColor(context.getResources().getColor(R.color.black));
+			stateText.setText(R.string.Detail_state_deleted);
+			break;
+
+		default:
+			break;
+		}
 	}
 	
 	/**
@@ -1013,7 +1247,7 @@ public class TaskDetailViewHelper {
 	private void refreshPrevious() {
 		if (this.previousTask == null) {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			previousTaskText.setText(R.string.Detail_none);
+			previousTaskText.setText(R.string.Detail_unset);
 		}
 		else {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -1027,7 +1261,7 @@ public class TaskDetailViewHelper {
 	private void refreshFollowing() {
 		if (this.followingTask == null) {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			followingTaskText.setText(R.string.Detail_none);
+			followingTaskText.setText(R.string.Detail_unset);
 		}
 		else {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -1040,7 +1274,7 @@ public class TaskDetailViewHelper {
 	 */
 	private void refreshUsedTime() {
 		int minutes = task.getUsedTime();
-		if (minutes == -1) {
+		if (minutes == 0) {
 			usedTimeText.setTextColor(context.getResources().getColor(R.color.grey));
 			usedTimeText.setText(R.string.Detail_none);
 		}
@@ -1063,7 +1297,6 @@ public class TaskDetailViewHelper {
 	 * 刷新预计总时间
 	 */
 	private void refreshTotalTime() {
-		//TODO 等变量更新，改这里
 		int minutes = task.getTotalTime();
 		if (minutes == -1) {
 			totalTimeText.setTextColor(context.getResources().getColor(R.color.grey));
@@ -1091,6 +1324,7 @@ public class TaskDetailViewHelper {
 		/*
 		 * 不能直接传入一个int，那会被认为是resource_id，会崩
 		 */
+		interruptText.setTextColor(context.getResources().getColor(R.color.grey));
 		this.interruptText.setText(task.getInterrupt() + "");
 	}
 }

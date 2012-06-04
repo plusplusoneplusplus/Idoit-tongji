@@ -55,7 +55,7 @@ public class TaskInfo {
 	 * 例如周一，周三，周四，周日要执行的任务：数值二进制表示为：11001101  
 	 * 如果是每隔特定日期执行的任务，其二进制表示的第9，8位为10，剩下7位表示相隔的日期。
 	 */
-	private int way;
+	private int way = 0;
 	/**
 	 * 中断个数
 	 */
@@ -105,8 +105,27 @@ public class TaskInfo {
 	public TaskInfo(String name) {
 		this.name = name;
 	}
+	
+	public TaskInfo(String name,Date starttime,int way){
+		this.name = name;
+		this.startTime = starttime;
+		this.way = way;
+	}
+	
+	public TaskInfo(String name,ArrayList<String> tag){
+		this.name = name;
+		this.tags = tag;
+	}
+	
+	public TaskInfo(String name,Date deadline,int pri,int usedtime,int totaltime){
+		this.name = name;
+		this.deadline = deadline;
+		this.priority = pri;
+		this.usedtime = usedtime;
+		this.totaltime = totaltime;
+	}
 
-	@Deprecated
+	
 	public TaskInfo(int id,String name,String addr,String hint,ArrayList<String> tag,Date starttime,Date deadline,Date alarm,int way,int pri, int pre_id,int next_id, int usedtime, int totaltime,int interrupt, int status){
 		this.id = id;
 		this.name = name;
@@ -147,7 +166,7 @@ public class TaskInfo {
 		this.totaltime = totaltime;
 	}
 
-	public void setNextTaskId(int nextTaskId) {
+	public void setNextTaskId(long nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
 	

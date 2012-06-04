@@ -53,7 +53,7 @@ public class PeriodInfo {
 		type = way >> 7;
 		map = new HashMap<Integer, Boolean>(7);
 		if (type == PERIOD_BY_DAY){
-			interval = way - type;
+			interval = way - (type << 7);
 		}
 		if (type == PERIOD_BY_WEEK){
 			for ( int i = 1; i <= 7; ++ i){

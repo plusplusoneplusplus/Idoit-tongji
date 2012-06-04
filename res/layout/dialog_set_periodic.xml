@@ -18,7 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="每隔几天" />
+                android:text="每几天循环" />
 
             <RadioButton
                 android:id="@+id/dialog_set_periodic_radioRight"
@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="每隔：（天）" />
+                android:text="每几天：" />
 
             <EditText
                 android:id="@+id/dialog_set_periodic_editText"
@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="每周循环：" />
+                android:text="每周：" />
 
             <LinearLayout
                 android:layout_width="match_parent"

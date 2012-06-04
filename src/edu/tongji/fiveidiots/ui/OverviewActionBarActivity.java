@@ -6,6 +6,7 @@ import greendroid.app.GDActivity;
 import greendroid.widget.ActionBar.OnActionBarListener;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.ActionBarItem.Type;
+import greendroid.widget.NormalActionBarItem;
 import greendroid.widget.QuickAction;
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
@@ -21,7 +22,7 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 /**
@@ -36,8 +37,12 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	private QuickActionGrid mGridMore;
 	private QuickActionGrid mGridTimeLine;
 	
+<<<<<<< HEAD
 	//home键（左上角）
 	private View mHomeButton;
+=======
+	private ImageButton mHomeButton;
+>>>>>>> 35407d2a3948d0082a7dc78294053fac77f34779
 	
 	//关于对话框
 	private Dialog mAboutDialog;
@@ -56,10 +61,15 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		prepareActionBar();
 		prepareQuickActionGrid();
 		
+<<<<<<< HEAD
 		mHomeButton = getActionBar().getHomeButton();
 		
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
+=======
+		mHomeButton = (ImageButton) getActionBar().getHomeButton();
+		mHomeButton.setImageResource(R.drawable.ic_grid);
+>>>>>>> 35407d2a3948d0082a7dc78294053fac77f34779
 	}
 	
 	//继承重写，设置view
@@ -68,9 +78,15 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	//设置ActionBar
 	private void prepareActionBar()
 	{
-		addActionBarItem(Type.Add, R.id.action_bar_add);
-        addActionBarItem(Type.Eye, R.id.action_bar_timer);
-        addActionBarItem(Type.List, R.id.action_bar_more);
+		addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).
+				setDrawable(R.drawable.ic_plus), R.id.action_bar_add);
+		addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).
+				setDrawable(R.drawable.ic_time), R.id.action_bar_timer);
+		addActionBarItem(getActionBar().newActionBarItem(NormalActionBarItem.class).
+				setDrawable(R.drawable.ic_list), R.id.action_bar_more);
+		//addActionBarItem(Type.Add, R.id.action_bar_add);
+        //addActionBarItem(Type.Eye, R.id.action_bar_timer);
+        //addActionBarItem(Type.List, R.id.action_bar_more);
 	}
 	
 	//设置弹出的Grid
@@ -79,20 +95,20 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		//设置“更多操作”按钮
 		mGridMore = new QuickActionGrid(this);
 		QuickActionHelper quickActionHelper = new QuickActionHelper(mGridMoreArray, mGridMore);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.analysis);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.settings);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.about);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.exit);
+		quickActionHelper.addQuickAction(R.drawable.ic_analysis, R.string.analysis);
+		quickActionHelper.addQuickAction(R.drawable.ic_settings, R.string.settings);
+		quickActionHelper.addQuickAction(R.drawable.ic_info, R.string.about);
+		quickActionHelper.addQuickAction(R.drawable.ic_exit, R.string.exit);
 		mGridMore.setOnQuickActionClickListener(mQuickActionMoreListener);
 		
 		//设置“时间线”按钮
 		mGridTimeLine = new QuickActionGrid(this);
 		quickActionHelper.config(mGridTimeLineArray, mGridTimeLine);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.today);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.future);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.periodic);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.pool);
-		quickActionHelper.addQuickAction(R.drawable.gd_action_bar_eye, R.string.all);
+		quickActionHelper.addQuickAction(R.drawable.ic_today, R.string.today);
+		quickActionHelper.addQuickAction(R.drawable.ic_future, R.string.future);
+		quickActionHelper.addQuickAction(R.drawable.ic_preodic, R.string.periodic);
+		quickActionHelper.addQuickAction(R.drawable.ic_pool, R.string.pool);
+		quickActionHelper.addQuickAction(R.drawable.ic_all, R.string.all);
 		mGridTimeLine.setOnQuickActionClickListener(mQuickActionTimeLineListener);
 	}
 	
