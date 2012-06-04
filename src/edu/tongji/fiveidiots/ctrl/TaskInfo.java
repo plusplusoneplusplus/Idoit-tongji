@@ -47,6 +47,7 @@ public class TaskInfo {
 		this.starttime = new Date(starttime.getYear(),starttime.getMonth(),starttime.getDate(),starttime.getHours(),starttime.getMinutes());
 		this.alarm = new Date(alarm.getYear(),alarm.getMonth(),alarm.getDate(),alarm.getHours(),alarm.getMinutes());
 		this.status = status;
+		this.interrupt = interrupt;
 		this.tag = tag;
 	}
 	
