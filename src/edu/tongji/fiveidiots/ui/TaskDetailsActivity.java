@@ -75,9 +75,18 @@ public class TaskDetailsActivity extends GDActivity {
 		if (bundle != null) {
 			long taskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1);
 			//TODO 测试时直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
-			TaskInfo task = TestingHelper.getRandomTask();
-			task.setId(taskID);
-			this.viewHelper = new TaskDetailViewHelper(this, task);
+			if (taskID == -1) {
+				//新建任务
+				TaskInfo task = new TaskInfo("");
+				task.setId(-1);
+				this.viewHelper = new TaskDetailViewHelper(this, task);
+			}
+			else {
+				//展示一个任务 TODO 从后台调一个任务过来！！！！！
+				TaskInfo task = TestingHelper.getRandomTask();
+				task.setId(taskID);
+				this.viewHelper = new TaskDetailViewHelper(this, task);
+			}
 		}
 
 		//=====GDActivity，及搞定action bar上的item=====
