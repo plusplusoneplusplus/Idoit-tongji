@@ -5,11 +5,11 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -90,8 +90,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	protected void tagListItemClick(String tag) {
-		//TODO To 万兄
-//		this.adapter.fillData(new TaskController(this).getTaskListWithTag(tag));
+		this.adapter.fillData(new TaskController(this).SearchTag(tag));
 		this.taskListView.setAdapter(this.adapter);
 		this.taskListView.setOnItemClickListener(this.adapter);
 		this.registerForContextMenu(this.taskListView);
@@ -324,6 +323,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			//如果任务集合为空，则不显示任何任务
+			if (tasks.isEmpty()) {
+				return null;
+			}
+			
 			if (convertView != null) {
 				//据说这里要判断、要优化，不知道怎么确认老的view和新的view是同一种类型并且不需要重绘
 			}

@@ -36,7 +36,7 @@ public class TaskController {
 	private Context context;
 	
 
-	TaskController(Context context){
+	public TaskController(Context context){
 		this.context = context;
 	}
 	public void AddTask(TaskInfo aTask){
