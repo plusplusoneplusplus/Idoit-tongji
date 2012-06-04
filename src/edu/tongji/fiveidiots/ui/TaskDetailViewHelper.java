@@ -66,15 +66,6 @@ public class TaskDetailViewHelper {
 		this.task = aTask;
 		
 		//=====TODO 测试中=====
-		this.task.addTag("hello");
-		this.task.addTag("world");
-		Date date = new Date(2012,12,5);
-		this.task.setDeadline(date);
-		this.task.setDeadline(new Date(new Date().getTime() - 10000));
-		this.task.setStartTime(new Date());
-		this.previousTask = TestingHelper.getRandomTask();
-		this.previousTask.setName("PREV: " + this.previousTask.getName());
-		this.followingTask = null;
 		//=====测试代码结束=====
 	}
 
@@ -661,6 +652,16 @@ public class TaskDetailViewHelper {
 			}
 		});
 
+		//=====中间按钮，清除=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setAddr(null);
+				refreshContext();
+			}
+		});
+
 		//=====取消按钮做什么=====
 		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
 			
@@ -742,7 +743,7 @@ public class TaskDetailViewHelper {
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
 			periodicInfoText.setTextColor(context.getResources().getColor(R.color.grey));
-			periodicInfoText.setText(context.getString(R.string.Detail_none));
+			periodicInfoText.setText(context.getString(R.string.Detail_unset));
 			break;
 
 		case PeriodInfo.PERIOD_BY_DAY:
@@ -794,7 +795,7 @@ public class TaskDetailViewHelper {
 		Date startTime = task.getStartTime();
 		if (startTime == null) {
 			startTimeText.setTextColor(context.getResources().getColor(R.color.grey));
-			startTimeText.setText(R.string.Detail_none);
+			startTimeText.setText(R.string.Detail_unset);
 		}
 		else {
 			if (TimeUtil.isFullDay(startTime)) {
@@ -831,7 +832,7 @@ public class TaskDetailViewHelper {
 		Date deadline = task.getDeadline();
 		if (deadline == null) {
 			deadlineText.setTextColor(context.getResources().getColor(R.color.grey));
-			deadlineText.setText(R.string.Detail_none);
+			deadlineText.setText(R.string.Detail_unset);
 		}
 		else {
 			if (new Date().getTime() >= deadline.getTime()) {
@@ -884,7 +885,7 @@ public class TaskDetailViewHelper {
 		ArrayList<String> tags = task.ExportTags();
 		if (tags == null || tags.isEmpty()) {
 			tagsText.setTextColor(context.getResources().getColor(R.color.grey));
-			tagsText.setText(R.string.Detail_none);
+			tagsText.setText(R.string.Detail_unset);
 		}
 		else {
 			tagsText.setTextColor(context.getResources().getColor(R.color.black));			
@@ -903,7 +904,7 @@ public class TaskDetailViewHelper {
 		String address = task.getAddr();
 		if (address == null || address.isEmpty()) {
 			contextText.setTextColor(context.getResources().getColor(R.color.grey));
-			contextText.setText(R.string.Detail_none);
+			contextText.setText(R.string.Detail_unset);
 		}
 		else {
 			contextText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -1179,7 +1180,7 @@ public class TaskDetailViewHelper {
 	private void refreshPrevious() {
 		if (this.previousTask == null) {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			previousTaskText.setText(R.string.Detail_none);
+			previousTaskText.setText(R.string.Detail_unset);
 		}
 		else {
 			previousTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -1193,7 +1194,7 @@ public class TaskDetailViewHelper {
 	private void refreshFollowing() {
 		if (this.followingTask == null) {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.grey));
-			followingTaskText.setText(R.string.Detail_none);
+			followingTaskText.setText(R.string.Detail_unset);
 		}
 		else {
 			followingTaskText.setTextColor(context.getResources().getColor(R.color.blue));
@@ -1256,6 +1257,7 @@ public class TaskDetailViewHelper {
 		/*
 		 * 不能直接传入一个int，那会被认为是resource_id，会崩
 		 */
+		interruptText.setTextColor(context.getResources().getColor(R.color.grey));
 		this.interruptText.setText(task.getInterrupt() + "");
 	}
 }
