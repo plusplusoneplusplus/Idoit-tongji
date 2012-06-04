@@ -87,6 +87,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		
 		//=====初始化类型，以待后来刷新列表=====
 		currentTaskSheetType = TaskSheetType.TODAY;
+		setTitle(this.getString(R.string.today));
 	}
 
 	@Override
@@ -111,12 +112,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	protected void tagListItemClick(String tag) {
-		adapter.foldAll();
-		
-		this.adapter.fillData(new TaskController(this).SearchTag(tag));
-		this.taskListView.setAdapter(this.adapter);
-		this.taskListView.setOnItemClickListener(this.adapter);
-		this.registerForContextMenu(this.taskListView);
+//		adapter.foldAll();
+//		
+//		this.adapter.fillData(new TaskController(this).SearchTag(tag));
+//		this.taskListView.setAdapter(this.adapter);
+//		this.taskListView.setOnItemClickListener(this.adapter);
+//		this.registerForContextMenu(this.taskListView);
 	}
 
 	/**
@@ -506,26 +507,31 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		case R.string.today:
 			currentTaskSheetType = TaskSheetType.TODAY;
 			resetTaskList();
+			setTitle(this.getString(stringId));
 			break;
 
 		case R.string.future:
 			currentTaskSheetType = TaskSheetType.FUTURE;
 			resetTaskList();
+			setTitle(this.getString(stringId));
 			break;
 
 		case R.string.periodic:
 			currentTaskSheetType = TaskSheetType.PERIODIC;
 			resetTaskList();
+			setTitle(this.getString(stringId));
 			break;
 
 		case R.string.pool:
 			currentTaskSheetType = TaskSheetType.POOL;
 			resetTaskList();
+			setTitle(this.getString(stringId));
 			break;
 
 		case R.string.all:
 			currentTaskSheetType = TaskSheetType.ALL;
 			resetTaskList();
+			setTitle(this.getString(stringId));
 			break;
 			
 		//右侧，More action bar

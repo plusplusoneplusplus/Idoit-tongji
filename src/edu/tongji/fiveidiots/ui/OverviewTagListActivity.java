@@ -41,7 +41,7 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		mSD = (SlidingDrawer) findViewById(R.id.sliding_drawer);
 
 		mTagListAdapter = new TagListAdapter();
-		mTags = TestingHelper.getRandomTagList();
+		mTags.add("Buy VIP");
 		mTagListView = (ListView) findViewById(R.id.tagListView);
 		mTagListView.setAdapter(mTagListAdapter);
 		mTagListView.setOnItemClickListener(mTagListAdapter);
