@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.PeriodInfo;
+import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TestingHelper;
@@ -584,6 +585,12 @@ public class TaskDetailViewHelper {
 	 */
 	private class SetTagsAdapter extends BaseAdapter {
 		private ArrayList<String> tags = task.ExportTags();
+		
+		public SetTagsAdapter() {
+			if (tags == null) {
+				tags = new ArrayList<String>();
+			}
+		}
 
 		@Override
 		public int getCount() {
@@ -1064,8 +1071,8 @@ public class TaskDetailViewHelper {
 		ListView listView = new ListView(context);
 		builder.setView(listView);
 
-		//TODO 调用真正数据库里的数据而不是random
-		final SequenceTaskAdapter adapter = new SequenceTaskAdapter(TestingHelper.getRandomTaskList());
+		TaskController controller = new TaskController(context);
+		final SequenceTaskAdapter adapter = new SequenceTaskAdapter(controller.ShowTaskList());
 		listView.setAdapter(adapter);
 
 		//=====neutral button，清除=====
