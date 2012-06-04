@@ -525,7 +525,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			break;
 			
 		//右侧，More action bar
-		case R.string.analysis:
+		case R.string.recommend:
 			break;
 		case R.string.settings:
 			ActivityUtil.startNewActivity(OverviewTaskListActivity.this, SettingsActivity.class, 0L, false);
