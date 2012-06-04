@@ -51,6 +51,82 @@ public class TaskInfo {
 		this.tag = tag;
 	}
 	
+	public TaskInfo(int id,String name){
+		this.id = id;
+		this.name = name;
+		this.addr = null;
+		this.hint = null;
+		this.pri = -1;
+		this.pre_id = -1;
+		this.next_id = -1;
+		this.usedtime = 0;
+		this.totaltime = -1;
+		this.way = -1;
+		this.deadline = null;
+		this.starttime = null;
+		this.alarm = null;
+		this.status = 0;
+		this.interrupt = 0;
+		this.tag = null;
+	}
+	
+	public TaskInfo(int id,String name,ArrayList<String> tag){
+		this.id = id;
+		this.name = name;
+		this.addr = null;
+		this.hint = null;
+		this.pri = -1;
+		this.pre_id = -1;
+		this.next_id = -1;
+		this.usedtime = 0;
+		this.totaltime = -1;
+		this.way = -1;
+		this.deadline = null;
+		this.starttime = null;
+		this.alarm = null;
+		this.status = 0;
+		this.interrupt = 0;
+		this.tag = tag;
+	}
+	
+	public TaskInfo(int id,String name,Date starttime,int way){
+		this.id = id;
+		this.name = name;
+		this.addr = null;
+		this.hint = null;
+		this.pri = -1;
+		this.pre_id = -1;
+		this.next_id = -1;
+		this.usedtime = 0;
+		this.totaltime = -1;
+		this.way = way;
+		this.deadline = null;
+		this.starttime = new Date(starttime.getYear(),starttime.getMonth(),starttime.getDate(),starttime.getHours(),starttime.getMinutes());;
+		this.alarm = null;
+		this.status = 0;
+		this.interrupt = 0;
+		this.tag = null;
+	}
+	
+	public TaskInfo(int id,String name,Date deadline,int pri,int usedtime,int totaltime){
+		this.id = id;
+		this.name = name;
+		this.addr = null;
+		this.hint = null;
+		this.pri = pri;
+		this.pre_id = -1;
+		this.next_id = -1;
+		this.usedtime = usedtime;
+		this.totaltime = totaltime;
+		this.way = -1;
+		this.deadline = new Date(deadline.getYear(),deadline.getMonth(),deadline.getDate(),deadline.getHours(),deadline.getMinutes());;
+		this.starttime = null;
+		this.alarm = null;
+		this.status = 0;
+		this.interrupt = 0;
+		this.tag = null;
+	}
+	
 	public int getId() {
 		return id;
 	}

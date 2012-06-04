@@ -137,7 +137,7 @@ public class TaskController {
 		TaskInfo ansPri = null;
 		for ( int i = 0; i < totalContainer.size(); ++ i){
 			tempTask = totalContainer.get(i);
-			if (tempTask.getStatus() == 0){
+			if (tempTask.getStatus() == 0 && tempTask.getDeadline() != null && tempTask.gettotaltime() != -1 && tempTask.getusedtime() != -1 && tempTask.getPri() != -1){
 				long num = calculateTime(cur,tempTask.getDeadline());
 				long timeleft = tempTask.gettotaltime() - tempTask.getusedtime() + cycletime - num;
 				if (timeleft < 0){
