@@ -15,9 +15,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
-	private static final String DB_NAME = "p_db";
+	private static final String DB_NAME = "aaa_db";
 	private static final int DB_VERSION = 1;
-	private static final String TABLE_NAME = "p";
+	private static final String TABLE_NAME = "aaa";
 	private static final String ID = "id";
 	private static final String NAME = "name";
 	private static final String HINT = "hint";
@@ -137,13 +137,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	public Date CombineDate(int index){
 		int year = index >> 20;
-		index -= year;
+		index -= (year << 20);
 		int month = index >> 16;
-		index -= month;
+		index -= (month << 16);
 		int day = index >> 11;
-		index -= day;
+		index -= (day << 11);
 		int hour = index >> 6;
-		index -= hour;
+		index -= (hour << 6);
 		int minute = index;
 		Date tempDate = new Date(year,month,day,hour,minute,0);
 		return tempDate;
