@@ -6,7 +6,8 @@
     android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
-    android:padding="5dp" >
+    android:padding="5dp"
+    android:background="#50bfbfbf" >
 
     <TextView
         android:id="@+id/TL_memoTextView"
@@ -15,7 +16,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:text="MEMO"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/gray" />
 
     <TextView
         android:id="@+id/TL_progressTextView"
@@ -24,7 +26,8 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="已过 / 预计"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/gray" />
 
     <Button
         android:id="@+id/TL_startButton"

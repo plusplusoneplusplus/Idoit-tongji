@@ -6,7 +6,8 @@
     android:layout_marginBottom="10dp"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="15dp"
-    android:padding="5dp" >
+    android:padding="5dp" 
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/TL_taskNameTextView"
@@ -15,7 +16,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:text="TASK_NAME"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black" />
 
     <TextView
         android:id="@+id/TL_startTimeTextView"
@@ -26,7 +28,8 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="3dp"
         android:text="START_TIME"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/lightgray" />
 
     <TextView
         android:id="@+id/TL_leftTimeTextView"
@@ -35,6 +38,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="LEFT_TIME"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/gray" />
 
 </RelativeLayout>
