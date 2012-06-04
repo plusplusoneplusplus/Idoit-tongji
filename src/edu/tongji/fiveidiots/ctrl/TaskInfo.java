@@ -4,6 +4,7 @@
  */
 
 package edu.tongji.fiveidiots.ctrl;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
  * void ImportTag(ArrayList<String> tag) 将tag数组中内容复制给任务中的标签
  * ArrayList<String> ExportTag() 导出任务中标签的内容
  * void addTag(String atag) 新增一个tag
- * void deleteTag(int id) 删除一个tag
+ * void deleteTag(long id) 删除一个tag
  * Boolean searchTag(String str) 搜索一个tag如果存在，返回true
  */
 public class TaskInfo {
@@ -106,10 +107,16 @@ public class TaskInfo {
 		this.name = name;
 	}
 	
-	public TaskInfo(String name,Date starttime,int way){
+	public TaskInfo(long id,String name) {
+		this.id = id;
+		this.name = name;
+	}
+	
+	public TaskInfo(String name,Date starttime,int way,int status){
 		this.name = name;
 		this.startTime = starttime;
 		this.way = way;
+		this.status = status;
 	}
 	
 	public TaskInfo(String name,ArrayList<String> tag){
@@ -117,16 +124,24 @@ public class TaskInfo {
 		this.tags = tag;
 	}
 	
-	public TaskInfo(String name,Date deadline,int pri,int usedtime,int totaltime){
+	public TaskInfo(String name,Date deadline,int pri,int usedtime,int totaltime,int status){
 		this.name = name;
 		this.deadline = deadline;
 		this.priority = pri;
 		this.usedtime = usedtime;
 		this.totaltime = totaltime;
+		this.status = status;
+	}
+	
+	public TaskInfo(int id,String name,int interrupt,int usedtime){
+		this.id = id;
+		this.name = name;
+		this.interrupt = interrupt;
+		this.usedtime = usedtime;
 	}
 
 	
-	public TaskInfo(int id,String name,String addr,String hint,ArrayList<String> tag,Date starttime,Date deadline,Date alarm,int way,int pri, int pre_id,int next_id, int usedtime, int totaltime,int interrupt, int status){
+	public TaskInfo(long id,String name,String addr,String hint,ArrayList<String> tag,Date starttime,Date deadline,Date alarm,int way,int pri, int pre_id,int next_id, int usedtime, int totaltime,int interrupt, int status){
 		this.id = id;
 		this.name = name;
 		this.address = addr;
@@ -263,7 +278,7 @@ public class TaskInfo {
 	public void addTag(String atag){
 		tags.add(atag);
 	}
-	public void deleteTag(int id){
+	public void deleteTag(long id){
 		tags.remove(id);
 	}
 

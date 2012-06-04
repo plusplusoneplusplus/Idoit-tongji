@@ -2,6 +2,7 @@
  * Author: Qrc
  */
 package edu.tongji.fiveidiots.ctrl;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,9 +15,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
-	private static final String DB_NAME = "TaskInfo_db";
+	private static final String DB_NAME = "p_db";
 	private static final int DB_VERSION = 1;
-	private static final String TABLE_NAME = "TaskInfo";
+	private static final String TABLE_NAME = "p";
 	private static final String ID = "id";
 	private static final String NAME = "name";
 	private static final String HINT = "hint";
@@ -47,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		System.out.println("create a Database");
 		
 		String sql = "CREATE TABLE " + TABLE_NAME + " (" 
-				+ ID + " int, " + NAME + " ntext, " + ADDRESS + " ntext, " 
+				+ ID + " long, " + NAME + " ntext, " + ADDRESS + " ntext, " 
 				+ HINT + " ntext, " + TAG + " ntext, " + STARTTIME + " int, " 
 				+ DEADLINE + " int, " + ALARM + " int, " + WAY + " int, " + PRIORITY + " int, " 
 				+ PREID + " int, " + NEXTID + " int, " + USEDTIME + " int, " + TOTALTIME + " int, " 
@@ -65,24 +66,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public ContentValues seperateTask(TaskInfo aTask){
 		long id,  starttime, deadline, alarm;
 		String  tag; 
+		System.out.println(4);
 		id = aTask.getId();
 		Date curDate = new Date();
 		if (id == -1) id = curDate.getTime();
+		System.out.println(3);
 		ArrayList<String> tagArrayList = aTask.ExportTags();
 		if (tagArrayList == null || tagArrayList.size() == 0) tag = null;
-		else tag = tagArrayList.get(0);
-		for ( int i = 1; i < tagArrayList.size(); ++ i){
-			tag = tag + " " + tagArrayList.get(i);
+		else{
+			tag = tagArrayList.get(0);
+			for ( int i = 1; i < tagArrayList.size(); ++ i){
+				tag = tag + " " + tagArrayList.get(i);
+			}
 		}
+		System.out.println(2);
 		Date start = aTask.getStartTime();
 		Date dead = aTask.getDeadline();
 		Date alarmDate = aTask.getAlarm();
-		if (start != null ) starttime = start.getYear() << 20 + start.getMonth() << 16 + start.getDate() << 11 + start.getHours() << 6 + start.getMinutes();
+		if (start != null ) starttime = (start.getYear() << 20) + (start.getMonth() << 16) + (start.getDate() << 11) + (start.getHours() << 6) + start.getMinutes();
 		else starttime = -1;
-		if (dead != null) deadline = dead.getYear() << 20 + dead.getMonth() << 16 + dead.getDate() << 11 + dead.getHours() << 6 + dead.getMinutes();
+		//if (start != null) System.out.println(start.getYear() + " " + start.getMonth() + " " + start.getDate() + " ");
+		if (dead != null) deadline = (dead.getYear() << 20) + (dead.getMonth() << 16) + (dead.getDate() << 11) + (dead.getHours() << 6) + dead.getMinutes();
 		else deadline = -1;
-		if (alarmDate != null) alarm = alarmDate.getYear() << 20 + alarmDate.getMonth() << 16 + alarmDate.getDate() << 11 + alarmDate.getHours() << 6 + alarmDate.getMinutes();
+		if (alarmDate != null) alarm = (alarmDate.getYear() << 20) + (alarmDate.getMonth() << 16) + (alarmDate.getDate() << 11) + (alarmDate.getHours() << 6) + alarmDate.getMinutes();
 		else alarm = -1;
+		System.out.println(1);
 		ContentValues tcv = new ContentValues();
 		tcv.put(ID, id);
 		tcv.put(NAME, aTask.getName());
@@ -118,7 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 	
-	public void update(int id,TaskInfo aTask) {
+	public void update(long id,TaskInfo aTask) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		String[] whereValue = {String.valueOf(id)};
 		ContentValues cv = seperateTask(aTask);
@@ -164,14 +172,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 		
-		TaskInfo tempTaskInfo = new TaskInfo(cursor.getInt(0) , cursor.getString(1) , cursor.getString(2) , cursor.getString(3)
+		TaskInfo tempTaskInfo = new TaskInfo(cursor.getLong(0) , cursor.getString(1) , cursor.getString(2) , cursor.getString(3)
 				, tag , starttime , deadline , alarm , cursor.getInt(8)
 				 , cursor.getInt(9) , cursor.getInt(10) , cursor.getInt(11) , cursor.getInt(12) , cursor.getInt(13)
 				  , cursor.getInt(14) , cursor.getInt(15));
 		return tempTaskInfo;
 	}
 	
-	public TaskInfo showinfo(int id){
+	public TaskInfo showinfo(long id){
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		String[] whereValue = {String.valueOf(id)};
@@ -204,7 +212,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		System.out.println(cursor.getCount());
 		
 		for (int i = 0; i < cursor.getCount(); i++) {
-			System.out.println(cursor.getInt(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3)
+			System.out.println(cursor.getLong(0) + " " + cursor.getString(1) + " " + cursor.getString(2) + " " + cursor.getString(3)
 			+ " " + cursor.getString(4) + " " + cursor.getInt(5) + " " + cursor.getInt(6) + " " + cursor.getInt(7) + " " + cursor.getInt(8)
 			 + " " + cursor.getInt(9) + " " + cursor.getInt(10) + " " + cursor.getInt(11) + " " + cursor.getInt(12) + " " + cursor.getInt(13)
 			  + " " + cursor.getInt(14) + " " + cursor.getInt(15));
