@@ -16,7 +16,8 @@ public class IDoItActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.idoit);
+        
 
         ActivityUtil.startNewActivity(this, OverviewTaskListActivity.class, 1000L, true);
     }
