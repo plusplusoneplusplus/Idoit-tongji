@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ctrl.PeriodInfo;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.Settings;
@@ -31,7 +32,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -247,6 +247,11 @@ public class TaskDetailViewHelper {
 				sunday.setEnabled(isChecked);
 			}
 		});
+		
+		//=====根据数据先恢复现场=====
+		final PeriodInfo info = new PeriodInfo();
+		info.setKey(task.getWay());
+		//TODO
 
 		//=====确认按钮，设置周期信息=====
 		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
