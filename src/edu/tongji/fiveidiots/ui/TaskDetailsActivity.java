@@ -11,6 +11,9 @@ import greendroid.widget.PageIndicator;
 import greendroid.widget.PagedAdapter;
 import greendroid.widget.PagedView;
 import greendroid.widget.PagedView.OnPagedViewChangeListener;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -165,16 +168,32 @@ public class TaskDetailsActivity extends GDActivity {
 			return true;
 		}
 		case R.id.detail_action_bar_delete: {
-			TaskInfo task = viewHelper.getTask();
+			final TaskInfo task = viewHelper.getTask();
 			if (task == null || task.getId() == -1) {
 				Toast.makeText(this, "此任务尚未建立，无法删除！", Toast.LENGTH_SHORT).show();
 				return true;
 			}
 			
-			TaskController controller = new TaskController(this);
-			controller.RemoveTask(task.getId());
-			Toast.makeText(this, "正在删除", Toast.LENGTH_SHORT).show();
-			this.finish();
+			AlertDialog.Builder builder = new Builder(this);
+			builder.setTitle("警告");
+			builder.setMessage("确认要删除吗？");
+			builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					TaskController controller = new TaskController(TaskDetailsActivity.this);
+					controller.RemoveTask(task.getId());
+					Toast.makeText(TaskDetailsActivity.this, "正在删除", Toast.LENGTH_SHORT).show();
+					finish();
+				}
+			});
+			builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			builder.create().show();
 			return true;
 		}
 
