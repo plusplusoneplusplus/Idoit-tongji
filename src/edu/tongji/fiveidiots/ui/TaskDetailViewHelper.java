@@ -72,10 +72,10 @@ public class TaskDetailViewHelper {
 		this.task.setDeadline(date);
 		this.task.setDeadline(new Date(new Date().getTime() - 10000));
 		this.task.setStartTime(new Date());
-		
 		this.previousTask = TestingHelper.getRandomTask();
 		this.previousTask.setName("PREV: " + this.previousTask.getName());
 		this.followingTask = null;
+		//=====测试代码结束=====
 	}
 
 	//=====第一页=====
@@ -140,7 +140,7 @@ public class TaskDetailViewHelper {
 		this.refreshTaskName();
 		this.refreshTaskMemo();
 		/*
-		 * name和memo的edittex无需额外操作，只需在总结task的时候toString一下就好了
+		 * name和memo的edittex无需额外操作，只需在总结task的时候toString检查一下就好了
 		 */
 		
 		//=====任务时间相关信息：周期、开始、截止=====
@@ -201,7 +201,7 @@ public class TaskDetailViewHelper {
 	/**
 	 * 显示设置重复任务信息的dialog
 	 */
-	private void showSetPeriodicDialog() {	//TODO 未测试
+	private void showSetPeriodicDialog() {
 		//=====生成、初始化builder=====
 		AlertDialog.Builder builder = new Builder(context);
 		builder.setTitle("设置" + context.getString(R.string.Detail_period_intro_text));
@@ -287,6 +287,10 @@ public class TaskDetailViewHelper {
 						return;
 					}
 					Integer interval = Integer.parseInt(numberString);
+					if (interval <= 0) {
+						Toast.makeText(context, "小于等于0的周期是没有意义的！", Toast.LENGTH_SHORT).show();
+						return;
+					}
 					info.setPeriodByDay(interval);
 				}
 				else {
@@ -732,7 +736,7 @@ public class TaskDetailViewHelper {
 	/**
 	 * 刷新周期信息
 	 */
-	private void refreshPeriodicInfo() {
+	private void refreshPeriodicInfo() {	//TODO info有bug，传入1，传出128
 		PeriodInfo info = task.getPeriodInfo();
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
@@ -750,29 +754,29 @@ public class TaskDetailViewHelper {
 			Map<Integer, Boolean> map = info.getCheckedMapByWeek();
 			ArrayList<String> list = new ArrayList<String>();
 			if (map.get(1)) {
-				list.add("周一");
+				list.add("一");
 			}
 			if (map.get(2)) {
-				list.add("周二");
+				list.add("二");
 			}
 			if (map.get(3)) {
-				list.add("周三");
+				list.add("三");
 			}
 			if (map.get(4)) {
-				list.add("周四");
+				list.add("四");
 			}
 			if (map.get(5)) {
-				list.add("周五");
+				list.add("五");
 			}
 			if (map.get(6)) {
-				list.add("周六");
+				list.add("六");
 			}
 			if (map.get(7)) {
-				list.add("周日");
+				list.add("日");
 			}
-			String message = list.get(0);
+			String message = "周" + list.get(0);
 			for (int i = 1; i < list.size(); i++) {
-				message += list.get(1);
+				message += (", " + list.get(i));
 			}
 			periodicInfoText.setText(message);
 			break;
@@ -846,27 +850,28 @@ public class TaskDetailViewHelper {
 	 * 刷新优先级
 	 */
 	private void refreshPriority() {
-		//TODO 等后台的priority的类型定好（enum || static final int）
 		switch (task.getPriority()) {
-		case 0:
-			//HIGH
+		case TaskInfo.PRIORITY_HIGH:
 			priorityText.setTextColor(context.getResources().getColor(R.color.high_priority));
 			priorityText.setText(R.string.Detail_high_priority_text);
 			break;
-		case 1:
-			//MIDDLE
+
+		case TaskInfo.PRIORITY_MIDDLE:
 			priorityText.setTextColor(context.getResources().getColor(R.color.mid_priority));
 			priorityText.setText(R.string.Detail_middle_priority_text);
 			break;
-		case 2:
-			//LOW
+		
+		case TaskInfo.PRIORITY_LOW:
 			priorityText.setTextColor(context.getResources().getColor(R.color.low_priority));
 			priorityText.setText(R.string.Detail_low_priority_text);
 			break;
-
-		default:
+		
+		case TaskInfo.PRIORITY_UNSET:
 			priorityText.setTextColor(context.getResources().getColor(R.color.grey));
 			priorityText.setText(R.string.Detail_unset);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -947,6 +952,7 @@ public class TaskDetailViewHelper {
 		this.refreshUsedTime();
 		this.refreshTotalTime();
 		this.refreshInterrupt();
+		this.initProgressPartsUI();
 
 		return view;
 	}
@@ -999,6 +1005,10 @@ public class TaskDetailViewHelper {
 			}
 		});
 	}
+	
+	private void initProgressPartsUI() {
+		//TODO
+	}
 
 	/**
 	 * 刷新任务状态
@@ -1040,7 +1050,7 @@ public class TaskDetailViewHelper {
 	 */
 	private void refreshUsedTime() {
 		int minutes = task.getUsedTime();
-		if (minutes == -1) {
+		if (minutes == 0) {
 			usedTimeText.setTextColor(context.getResources().getColor(R.color.grey));
 			usedTimeText.setText(R.string.Detail_none);
 		}
@@ -1063,7 +1073,6 @@ public class TaskDetailViewHelper {
 	 * 刷新预计总时间
 	 */
 	private void refreshTotalTime() {
-		//TODO 等变量更新，改这里
 		int minutes = task.getTotalTime();
 		if (minutes == -1) {
 			totalTimeText.setTextColor(context.getResources().getColor(R.color.grey));
