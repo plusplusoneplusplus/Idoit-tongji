@@ -724,16 +724,30 @@ public class TaskDetailViewHelper {
 			startTimeText.setText(R.string.Detail_none);
 		}
 		else {
-			if (new Date().getTime() >= startTime.getTime()) {
-				//=====超期了，用红色=====
-				startTimeText.setTextColor(context.getResources().getColor(R.color.red));				
+			if (TimeUtil.isFullDay(startTime)) {
+				Date tempDate = new Date();
+				Date currentDate = new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
+				if (currentDate.getTime() >= startTime.getTime()) {
+					//=====全天任务超期了，用红色=====
+					startTimeText.setTextColor(context.getResources().getColor(R.color.red));
+				}
+				else {
+					//=====全天任务未超期，用蓝色=====
+					startTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+				}
+				startTimeText.setText(TimeUtil.parseDate(startTime));				
 			}
 			else {
-				//=====否则用蓝色=====
-				startTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+				if (new Date().getTime() >= startTime.getTime()) {
+					//=====非全天，也超期了，用红色=====
+					startTimeText.setTextColor(context.getResources().getColor(R.color.red));				
+				}
+				else {
+					//=====否则用蓝色=====
+					startTimeText.setTextColor(context.getResources().getColor(R.color.blue));
+				}
+				startTimeText.setText(TimeUtil.parseDateTime(startTime));
 			}
-			startTimeText.setText(TimeUtil.isFullDay(startTime) ? TimeUtil
-					.parseDate(startTime) : TimeUtil.parseDateTime(startTime));
 		}
 	}
 	
