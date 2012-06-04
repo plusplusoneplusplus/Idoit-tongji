@@ -40,10 +40,6 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	
 	//home键（左上角）
 	private ImageButton mHomeButton;
-
-	
-	//关于对话框
-	private Dialog mAboutDialog;
 	
 	/**
 	 * 存储grid上 postion-resID键值对 数组
@@ -62,9 +58,6 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 
 		mHomeButton = (ImageButton)getActionBar().getHomeButton();
 		mHomeButton.setImageResource(R.drawable.ic_grid);
-		
-		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
-				.setMessage(R.string.about_dialog_content).create();
 
 	}
 	
@@ -134,22 +127,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 
 		@Override
 		public void onQuickActionClicked(QuickActionWidget widget, int position) {
-			switch(mGridMoreArray.get(position))
-			{
-			case R.string.analysis:
-				break;
-			case R.string.settings:
-				ActivityUtil.startNewActivity(OverviewActionBarActivity.this, SettingsActivity.class, 0L, false);
-				break;
-			case R.string.about:
-				mAboutDialog.show();
-				break;
-			case R.string.exit:
-				OverviewActionBarActivity.this.finish();
-				break;
-			default:
-				break;
-			}
+			handleQuickActionItem(mGridMoreArray.get(position));
 		}
 		
 	};
@@ -159,25 +137,17 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		
 		@Override
 		public void onQuickActionClicked(QuickActionWidget widget, int position) {
-			switch(mGridTimeLineArray.get(position))
-			{
-			case R.string.today:
-				Toast.makeText(OverviewActionBarActivity.this, "today", Toast.LENGTH_SHORT).show();
-				break;
-			case R.string.future:
-				break;
-			case R.string.periodic:
-				break;
-			case R.string.pool:
-				Toast.makeText(OverviewActionBarActivity.this, "pool", Toast.LENGTH_SHORT).show();
-				break;
-			case R.string.all:
-				break;
-			default:
-				break;
-			}
+			handleQuickActionItem(mGridTimeLineArray.get(position));
 		}
 	};
+	
+	
+	/**
+	 * 抽象方法，实体activity来实现
+	 * 主要处理quickaction按下时的操作
+	 * @param stringId 表示该quickactionitem的名称字符串
+	 */
+	protected abstract void handleQuickActionItem(int stringId);
 	
 	//ActionBar上按钮的Listener
 	@Override
