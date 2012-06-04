@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TimeUtil;
 import edu.tongji.fiveidiots.util.Settings.TimerTempSettings;
@@ -18,7 +19,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 /**
  * 番茄钟的Service，运行在后台
@@ -166,11 +166,6 @@ public class PomotimerService extends Service {
 		this.releaseTimer();
 		this.totalTime = total;
 		this.remainTime = remain;
-
-		//=====TODO 仅为测试用
-		//this.remainTime = 10;
-		this.remainTime = 20;
-		//=====END
 		
 		this.countingTimerTask = new TimerTask() {
 			
@@ -183,6 +178,9 @@ public class PomotimerService extends Service {
 					String str = "此次番茄周期结束！";
 					switch(currentSection) {
 					case SECTION_POMO:
+						//=====通知一个task完成了此次番茄周期=====
+						TaskController controller = new TaskController(PomotimerService.this);
+						controller.FinishCycle(taskID, 0, (int) totalTime / 60);
 						str = "此次番茄周期结束！";
 						break;
 					case SECTION_SHORTBREAK:
@@ -405,8 +403,14 @@ public class PomotimerService extends Service {
 		 * 因为可能有延迟，需要重新check一遍
 		 */
 		public void notifyInterrupted() {
-			// TODO 告诉XXX这个taskID的任务中断了！
-			//taskID
+			if (taskID == -1) {
+				//=====是新任务或者没有对应任务，直接return=====
+				return;
+			}
+
+			TaskController controller = new TaskController(PomotimerService.this);
+			int pastTime = (int)(totalTime - remainTime) / 60;
+			controller.InterruptTask(taskID, pastTime);
 		}
 		
 		/**

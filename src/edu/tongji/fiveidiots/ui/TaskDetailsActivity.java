@@ -3,7 +3,6 @@ package edu.tongji.fiveidiots.ui;
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
-import edu.tongji.fiveidiots.util.TestingHelper;
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBar.Type;
 import greendroid.widget.ActionBarItem;
