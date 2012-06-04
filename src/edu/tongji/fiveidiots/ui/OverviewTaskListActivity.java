@@ -252,6 +252,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public void fillData(List<TaskInfo> taskInfos) {
 			this.tasks.clear();
 			this.tasks.addAll(taskInfos);
+			this.selectedPos = NOT_SELECTED;
 		}
 		
 		/**
@@ -442,8 +443,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			else {
 				if (position <= selectedPos) {
 					//=====要展示的是selected的之前的部分，直接展示brief即可=====
-					TaskInfo task = tasks.get(position);
-					convertView = this.getBriefView(task);
+					try {
+						TaskInfo task = tasks.get(position);
+						convertView = this.getBriefView(task);						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 				else if (position == selectedPos+1) {
 					//=====就是你了！是extended information=====

@@ -183,6 +183,9 @@ public class PomotimerService extends Service {
 					String str = "此次番茄周期结束！";
 					switch(currentSection) {
 					case SECTION_POMO:
+						//=====通知一个task完成了此次番茄周期=====
+						TaskController controller = new TaskController(PomotimerService.this);
+						controller.FinishCycle(taskID, 0, (int) totalTime / 60);
 						str = "此次番茄周期结束！";
 						break;
 					case SECTION_SHORTBREAK:
