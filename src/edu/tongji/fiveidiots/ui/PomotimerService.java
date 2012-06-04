@@ -81,7 +81,12 @@ public class PomotimerService extends Service {
 
 	@Override
 	public void onDestroy() {
-		this.saveIntoSettings();
+		/**
+		 * 只有在运行番茄时间是，才将计时器各项值写入sharepreference
+		 */
+		if (this.currentSection == SECTION_POMO) {
+			this.saveIntoSettings();
+		}
 
 		this.releaseTimer();
 		this.cancelNotification();
