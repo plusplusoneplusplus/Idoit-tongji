@@ -416,6 +416,14 @@ public class PomotimerService extends Service {
 			handler = aHandler;
 			initState();
 		}
+		
+		/**
+		 * 获取当前阶段
+		 * PS:真不想写这个api，有待重构
+		 */
+		public int getCurrentSection() {
+			return currentSection;
+		}
 	}
 
 }
