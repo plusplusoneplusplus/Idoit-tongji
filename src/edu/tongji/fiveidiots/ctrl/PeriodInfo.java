@@ -1,19 +1,36 @@
 package edu.tongji.fiveidiots.ctrl;
-
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 一切只为处理那一个传说中的way变量——周期信息
- * @author qrc @author Andriy
+ * @author Qrc @author Andriy
+ * 
+ * 读取任务周期信息：
+ * 1. 先通过public int getPeriodType()得到任务的类型
+ * 2. 根据不同类型分别调用：int getIntervalByDay() 或者  HashMap<Integer, Boolean> getCheckedListByWeek()
+ * 
+ * 存储任务周期信息：
+ * 若为非周期任务，调用：void setPeriodNone()
+ * 若为隔日循环任务，调用：void setPeriodByDay(int interval)
+ * 若为每周执行任务，调用：void setPeriodByWeek(HashMap<Integer, Boolean> map)
  */
 public class PeriodInfo {
 
 	/**
-	 * 所有信息被压缩到每一位，存储在这个int里
+	 * 周期类型，_NONE, _BY_DAY, _BY_WEEK
 	 */
-	private int key;
-	
+	private int type;
+
+	/**
+	 * 当PERIOD_BY_DAY的时候，每多少天
+	 */
+	private int interval;
+
+	/**
+	 * 当PERIOD_BY_WEEK的时候，每周的哪几天
+	 */
+	private HashMap<Integer, Boolean> map;
+
 	/**
 	 * 没有重复
 	 */
@@ -27,29 +44,30 @@ public class PeriodInfo {
 	 */
 	public static final int PERIOD_BY_WEEK = 2;
 	
-	/**
-	 * 从外界设置这个key，比如从数据库读出的时候
-	 */
-	public void setKey(int aKey) {
-		this.key = aKey;
+
+	public PeriodInfo (int way) {
+		type = way >> 7;
+		map = new HashMap<Integer, Boolean>(7);
+		if (type == PERIOD_BY_DAY){
+			interval = way - type;
+		}
+		if (type == PERIOD_BY_WEEK){
+			for ( int i = 1; i <= 7; ++ i){
+				if (way % 2 == 1) map.put(i, true);
+				else map.put(i, false);
+				way = way >> 1;
+			}
+		}
 	}
-	
-	/**
-	 * 将所有信息整合成一个int，在存入数据库的时候可以很方便、很省空间
-	 */
-	public int getKey() {
-		return this.key;
-	}
-	
+
 	/**
 	 * 有没有重复、有则是通过每隔几天还是每周周几
 	 * @return PERIOD_NONE, PERIOD_BY_DAY, PERIOD_BY_WEEK
 	 */
 	public int getPeriodType() {
-		//TODO 填完这里
-		return PERIOD_NONE;
+		return type;
 	}
-	
+
 	/**
 	 * 在PERIOD_BY_DAY模式下，返回其interval，否则扔个异常吧
 	 * @return
@@ -58,11 +76,10 @@ public class PeriodInfo {
 		if (this.getPeriodType() != PERIOD_BY_DAY) {
 			throw new IllegalStateException("应该先判断周期类型，如果不是BY_DAY就别调这里了");
 		}
-		
-		//TODO 填完这里
-		return 0;
+
+		return interval;
 	}
-	
+
 	/**
 	 * 在PERIOD_BY_WEEK模式下，返回一个Map，1->7分别对应周一到周日，true就是要重复
 	 * @return
@@ -71,41 +88,43 @@ public class PeriodInfo {
 		if (this.getPeriodType() != PERIOD_BY_WEEK) {
 			throw new IllegalStateException("应该先判断周期类型，如果不是BY_WEEK就别调这里了");
 		}
-		
-		HashMap<Integer, Boolean> map = new HashMap<Integer, Boolean>(7);
 
-		//TODO 改完这里
-		map.put(1, true);
-		map.put(2, true);
-		map.put(3, true);
-		map.put(4, true);
-		map.put(5, true);
-		map.put(6, true);
-		map.put(7, true);
-		
 		return map;
 	}
-	
+
 	/**
 	 * 设置为BY_DAY模式，并设置其interval
 	 * @param interval
 	 */
 	public void setPeriodByDay(int interval) {
-		//TODO 填满这里
+		this.interval = interval;
+		type = PERIOD_BY_DAY;
 	}
-	
+
 	/**
 	 * 设置为BY_WEEK模式，根据传入的<周几, 要不要>的map，其中Integer从
 	 * @param map 其key，Integer从1->7
 	 */
-	public void setPeriodByWeek(Map<Integer, Boolean> map) {
-		//TODO 填满这里
+	public void setPeriodByWeek(HashMap<Integer, Boolean> map) {
+		this.map = map;
+		type = PERIOD_BY_WEEK;
 	}
-	
+
 	/**
 	 * 设置为没有周期、没有重复
 	 */
 	public void setPeriodNone() {
-		//TODO  填满这里
+		type = PERIOD_NONE;
+	}
+	
+	public int TranslateKey(){
+		int way = type << 7;
+		if (type == PERIOD_BY_DAY) way += interval;
+		if (type == PERIOD_BY_WEEK){
+			for ( int i = 1; i <= 7; ++ i){
+				if (map.get(i)) way += 1 << (i-1);
+			}
+		}
+		return way;
 	}
 }

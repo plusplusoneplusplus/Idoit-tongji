@@ -72,7 +72,7 @@ public class TaskDetailViewHelper {
 		Date date = new Date(2012,12,5);
 		this.task.setDeadline(date);
 		this.task.setDeadline(new Date(new Date().getTime() - 10000));
-		this.task.setStarttime(new Date());
+		this.task.setStartTime(new Date());
 //		this.task.setUnfinishedCycle(60);
 		this.task.setFinishedCycle(101);
 		
@@ -364,7 +364,7 @@ public class TaskDetailViewHelper {
 		});
 		
 		//=====恢复时间到dialog的UI上，如果有的话=====
-		Date previousDate = isStartTime ? task.getStarttime() : task.getDeadline();
+		Date previousDate = isStartTime ? task.getStartTime() : task.getDeadline();
 		if (previousDate != null) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(previousDate);
@@ -404,7 +404,7 @@ public class TaskDetailViewHelper {
 
 				//=====设置结果=====
 				if (isStartTime) {
-					task.setStarttime(calendar.getTime());
+					task.setStartTime(calendar.getTime());
 					refreshStartTime();
 				}
 				else {
@@ -420,7 +420,7 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (isStartTime) {
-					task.setStarttime(null);
+					task.setStartTime(null);
 					refreshStartTime();
 				}
 				else {
@@ -476,7 +476,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				if (task.getStarttime() == null) {
+				if (task.getStartTime() == null) {
 					Toast.makeText(context, "先设置开始时间才能设置提醒", Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -574,7 +574,7 @@ public class TaskDetailViewHelper {
 				StringTokenizer tokenizer = new StringTokenizer(text, " ");
 				while (tokenizer.hasMoreTokens()) {
 					String s = tokenizer.nextToken();
-					if (!task.ExportTag().contains(s)) {
+					if (!task.ExportTags().contains(s)) {
 						task.addTag(s);
 					}
 				}
@@ -599,7 +599,7 @@ public class TaskDetailViewHelper {
 	 * @author Andriy
 	 */
 	private class SetTagsAdapter extends BaseAdapter {
-		private ArrayList<String> tags = task.ExportTag();
+		private ArrayList<String> tags = task.ExportTags();
 
 		@Override
 		public int getCount() {
@@ -695,7 +695,7 @@ public class TaskDetailViewHelper {
 
 				//=====向前推number分钟=====
 				Integer number = Integer.parseInt(numberString);
-				task.setAlarm(new Date(task.getStarttime().getTime() - number * 60 * 1000));
+				task.setAlarm(new Date(task.getStartTime().getTime() - number * 60 * 1000));
 				refreshAlarm();
 			}
 		});
@@ -791,7 +791,7 @@ public class TaskDetailViewHelper {
 	 * 刷新开始时间
 	 */
 	private void refreshStartTime() {
-		Date startTime = task.getStarttime();
+		Date startTime = task.getStartTime();
 		if (startTime == null) {
 			startTimeText.setTextColor(context.getResources().getColor(R.color.grey));
 			startTimeText.setText(R.string.Detail_none);
@@ -880,7 +880,7 @@ public class TaskDetailViewHelper {
 	 * 刷新标签
 	 */
 	private void refreshTags() {
-		ArrayList<String> tags = task.ExportTag();
+		ArrayList<String> tags = task.ExportTags();
 		if (tags == null || tags.isEmpty()) {
 			tagsText.setTextColor(context.getResources().getColor(R.color.grey));
 			tagsText.setText(R.string.Detail_none);
