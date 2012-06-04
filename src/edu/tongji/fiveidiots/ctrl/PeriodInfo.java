@@ -67,7 +67,7 @@ public class PeriodInfo {
 	 * 在PERIOD_BY_WEEK模式下，返回一个Map，1->7分别对应周一到周日，true就是要重复
 	 * @return
 	 */
-	public HashMap<Integer, Boolean> getCheckedListByWeek() {
+	public HashMap<Integer, Boolean> getCheckedMapByWeek() {
 		if (this.getPeriodType() != PERIOD_BY_WEEK) {
 			throw new IllegalStateException("应该先判断周期类型，如果不是BY_WEEK就别调这里了");
 		}

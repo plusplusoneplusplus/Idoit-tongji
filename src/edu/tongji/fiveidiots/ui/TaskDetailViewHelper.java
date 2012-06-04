@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -263,7 +264,7 @@ public class TaskDetailViewHelper {
 			break;
 		case PeriodInfo.PERIOD_BY_WEEK:
 			byWeekButton.setChecked(true);
-			Map<Integer, Boolean> map = info.getCheckedListByWeek();
+			Map<Integer, Boolean> map = info.getCheckedMapByWeek();
 			monday.setChecked(map.get(1));
 			tuesday.setChecked(map.get(2));
 			wednesday.setChecked(map.get(3));
@@ -302,6 +303,10 @@ public class TaskDetailViewHelper {
 					hashMap.put(5, friday.isChecked());
 					hashMap.put(6, saturday.isChecked());
 					hashMap.put(7, sunday.isChecked());
+					if (!hashMap.containsValue(true)) {
+						//=====没有设置一个有效的，quit=====
+						return;
+					}
 
 					info.setPeriodByWeek(hashMap);
 				}
@@ -732,8 +737,54 @@ public class TaskDetailViewHelper {
 	 * 刷新周期信息
 	 */
 	private void refreshPeriodicInfo() {
-		//TODO 周期信息如何显示
-		int periodic = task.getWay();
+		PeriodInfo info = new PeriodInfo();
+		info.setKey(task.getWay());
+		switch (info.getPeriodType()) {
+		case PeriodInfo.PERIOD_NONE:
+			periodicInfoText.setTextColor(context.getResources().getColor(R.color.grey));
+			periodicInfoText.setText(context.getString(R.string.Detail_none));
+			break;
+
+		case PeriodInfo.PERIOD_BY_DAY:
+			periodicInfoText.setTextColor(context.getResources().getColor(R.color.blue));
+			periodicInfoText.setText("每" + info.getIntervalByDay() + "天");
+			break;
+
+		case PeriodInfo.PERIOD_BY_WEEK:
+			periodicInfoText.setTextColor(context.getResources().getColor(R.color.blue));
+			Map<Integer, Boolean> map = info.getCheckedMapByWeek();
+			ArrayList<String> list = new ArrayList<String>();
+			if (map.get(1)) {
+				list.add("周一");
+			}
+			if (map.get(2)) {
+				list.add("周二");
+			}
+			if (map.get(3)) {
+				list.add("周三");
+			}
+			if (map.get(4)) {
+				list.add("周四");
+			}
+			if (map.get(5)) {
+				list.add("周五");
+			}
+			if (map.get(6)) {
+				list.add("周六");
+			}
+			if (map.get(7)) {
+				list.add("周日");
+			}
+			String message = list.get(0);
+			for (int i = 1; i < list.size(); i++) {
+				message += list.get(1);
+			}
+			periodicInfoText.setText(message);
+			break;
+
+		default:
+			break;
+		}
 	}
 	
 	/**
