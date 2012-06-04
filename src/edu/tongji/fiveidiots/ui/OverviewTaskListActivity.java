@@ -31,7 +31,6 @@ import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.Settings;
-import edu.tongji.fiveidiots.util.TestingHelper;
 import edu.tongji.fiveidiots.util.TimeUtil;
 
 /**
@@ -78,17 +77,9 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
 		
-		
-        Button testButton = (Button) findViewById(R.id.testButton);
-        testButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//=====用于测试=====
-				adapter.foldAll();
-				resetTaskList();
-			}
-		});
+		//=====初始化类型，刷新列表=====
+		currentTaskSheetType = TaskSheetType.TODAY;
+		resetTaskList();
 	}
 
 	/**
@@ -462,16 +453,28 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		{
 		//左侧，timeline action bar
 		case R.string.today:
-			Toast.makeText(OverviewTaskListActivity.this, "today", Toast.LENGTH_SHORT).show();
+			currentTaskSheetType = TaskSheetType.TODAY;
+			resetTaskList();
 			break;
+
 		case R.string.future:
+			currentTaskSheetType = TaskSheetType.FUTURE;
+			resetTaskList();
 			break;
+
 		case R.string.periodic:
+			currentTaskSheetType = TaskSheetType.PERIODIC;
+			resetTaskList();
 			break;
+
 		case R.string.pool:
-			Toast.makeText(OverviewTaskListActivity.this, "pool", Toast.LENGTH_SHORT).show();
+			currentTaskSheetType = TaskSheetType.POOL;
+			resetTaskList();
 			break;
+
 		case R.string.all:
+			currentTaskSheetType = TaskSheetType.ALL;
+			resetTaskList();
 			break;
 			
 		//右侧，More action bar
