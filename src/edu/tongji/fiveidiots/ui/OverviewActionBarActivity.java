@@ -22,6 +22,7 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -37,12 +38,9 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	private QuickActionGrid mGridMore;
 	private QuickActionGrid mGridTimeLine;
 	
-<<<<<<< HEAD
 	//home键（左上角）
-	private View mHomeButton;
-=======
 	private ImageButton mHomeButton;
->>>>>>> 35407d2a3948d0082a7dc78294053fac77f34779
+
 	
 	//关于对话框
 	private Dialog mAboutDialog;
@@ -62,13 +60,11 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		prepareQuickActionGrid();
 
 
-		mHomeButton = getActionBar().getHomeButton();
+		mHomeButton = (ImageButton)getActionBar().getHomeButton();
 		mHomeButton.setImageResource(R.drawable.ic_grid);
 		
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
-
-		mHomeButton = (ImageButton) getActionBar().getHomeButton();
 
 	}
 	

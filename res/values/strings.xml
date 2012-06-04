@@ -54,13 +54,10 @@
     <string name="Detail_none">无</string>
     <string name="Detail_unset">未设置</string>
     <string name="Dialog_neutral_text">清除</string>
-<<<<<<< HEAD
     <string name="about_dialog_title">About iDoIt</string>
     <string name="about_dialog_content">By 5 idiots from TJU</string>
-=======
     <string name="Detail_state_normal">普通</string>
     <string name="Detail_state_finished">已完成</string>
     <string name="Detail_state_deleted">已删除</string>
->>>>>>> 35407d2a3948d0082a7dc78294053fac77f34779
 
 </resources>
