@@ -72,6 +72,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			@Override
 			public void onClick(View v) {
 				//=====用于测试=====
+				adapter.foldAll();
 				resetTaskList();
 			}
 		});
@@ -90,6 +91,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	protected void tagListItemClick(String tag) {
+		adapter.foldAll();
+		
 		this.adapter.fillData(new TaskController(this).SearchTag(tag));
 		this.taskListView.setAdapter(this.adapter);
 		this.taskListView.setOnItemClickListener(this.adapter);
@@ -197,6 +200,14 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public void fillData(List<TaskInfo> taskInfos) {
 			this.tasks.clear();
 			this.tasks.addAll(taskInfos);
+		}
+		
+		/**
+		 * 折叠所有的东西
+		 */
+		public void foldAll() {
+			this.selectedPos = NOT_SELECTED;
+			notifyDataSetChanged();
 		}
 		
 		// ===为什么选-2呢，因为后头有一个用（selectedPos+1）来比较，如果是-1，则[0]会中枪===
