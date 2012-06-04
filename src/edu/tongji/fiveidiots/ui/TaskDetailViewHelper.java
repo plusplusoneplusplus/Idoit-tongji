@@ -364,6 +364,11 @@ public class TaskDetailViewHelper {
 				timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
 			}
 		}
+		else {
+			Calendar calendar = new GregorianCalendar();
+			timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+			timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+		}
 
 		//=====确认按钮做什么=====
 		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
