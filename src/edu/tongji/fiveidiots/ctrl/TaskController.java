@@ -5,6 +5,7 @@
 
 package edu.tongji.fiveidiots.ctrl;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import android.content.Context;
@@ -33,7 +34,9 @@ import android.database.sqlite.SQLiteDatabase;
 public class TaskController {
 	static int month [] = {31,28,31,30,31,30,31,31,30,31,30,31,100};
 	private TaskInfo tempTask;
-	static int oneclock = 25;
+	private int aFac = 75;
+	private int bFac = 25;
+	int [] count = new int [150];
 	private Context context;
 	
 	public TaskController(Context context){
@@ -112,40 +115,104 @@ public class TaskController {
 	public long calculateTime(Date cur,Date des){
 		long ans = 0;
 		ans = (des.getTime() - cur.getTime()) / 60000;
-		return ans;
+		System.out.println("111:" + des.getYear() + " " + des.getMonth() + " " + des.getDate() + " " + des.getHours() + " " + des.getMinutes());
+		System.out.println("222:" + cur.getYear() + " " + cur.getMonth() + " " + cur.getDate() + " " + cur.getHours() + " " + cur.getMinutes());
+		return (ans+1);
 	}
 
 	public TaskInfo Suggest(Date cur,int cycletime){
 		ArrayList<TaskInfo> totalContainer = ShowTaskList();
-		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
-		tempContainer.clear();
-		double minfac = 10000.0;
+		//ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
+		//tempContainer.clear();
+		double minfac = 10000000.0;
+		int shengshi = 1000000;
 		int minpri = 10000;
 		TaskInfo ansFac = null;
 		TaskInfo ansPri = null;
 		for ( int i = 0; i < totalContainer.size(); ++ i){
+			
 			tempTask = totalContainer.get(i);
 			if (tempTask.getStatus() == 0 && tempTask.getDeadline() != null && tempTask.getTotalTime() != -1 && tempTask.getUsedTime() != -1 && tempTask.getPriority() != -1){
+				
 				long num = calculateTime(cur,tempTask.getDeadline());
-				long timeleft = tempTask.getTotalTime() - tempTask.getUsedTime() + cycletime - num;
-				if (timeleft < 0){
+				System.out.println("xixi:" + num);
+				long timeleft = num - (tempTask.getTotalTime() - tempTask.getUsedTime());
+				System.out.println(i);
+				if (timeleft < cycletime){
 					if (tempTask.getPriority() < minpri){
+						System.out.println("yes");
 						ansPri = tempTask;
 						minpri = tempTask.getPriority();
+						shengshi = tempTask.getTotalTime() - tempTask.getUsedTime();						
+					}
+					else
+					if (tempTask.getPriority() == minpri && tempTask.getTotalTime() - tempTask.getUsedTime() < shengshi){
+						System.out.println("no");
+						shengshi = tempTask.getTotalTime() - tempTask.getUsedTime();
+						ansPri = tempTask;
 					}
 				}
-				else if (tempTask.getPriority() * 0.75 + (timeleft / cycletime) * 0.25 < minfac){
+				else if (tempTask.getPriority() * aFac + (int)(timeleft / (long)cycletime) * bFac < minfac){
+					System.out.println("xixi");
 					ansFac = tempTask;
-					minfac = tempTask.getPriority() * 0.75 + (timeleft / cycletime) * 0.25;
+					minfac = tempTask.getPriority() * aFac + (timeleft / cycletime) * bFac;
 				}
+				//int aa = tempTask.getPriority() * aFac + (int)(timeleft / (long)cycletime) * bFac;
+				//System.out.println("go:" + tempTask.getPriority() + " " + timeleft + " " + cycletime);
 			}
 		}
+		System.out.println("haha");
 		if (minpri < 10000){
 			return ansPri;
 		}
 		else
 		{
 			return ansFac;
+		}
+	}
+	
+	public void Change(long id,int time){
+		for ( int i = 0; i <= 100; ++ i){
+			count[i] = 0;
+		}
+		ArrayList<TaskInfo> totalContainer = ShowTaskList();
+		TaskInfo tttInfo = ShowTaskInfo(id);
+		if (time == 0 || tttInfo.getStatus() != 0 || tttInfo.getDeadline() == null || tttInfo.getTotalTime() == -1 || tttInfo.getUsedTime() == -1 || tttInfo.getPriority() == -1){
+			return;
+		}
+		System.out.println("getget");
+		long num = calculateTime(new Date(),tttInfo.getDeadline());
+		long timeleft = num - (tttInfo.getTotalTime() - tttInfo.getUsedTime());
+		System.out.println("1not finished");
+		if (timeleft < 0) timeleft = 0;
+		System.out.println("2not finished");
+		int fb = (int)(timeleft / (long)time);
+		System.out.println("3not finished");
+		int fa = tttInfo.getPriority();
+		System.out.println("4not finished");
+		for ( int i = 0; i < totalContainer.size(); ++ i){
+			tempTask = totalContainer.get(i);
+			if (tempTask.getId() != id && tempTask.getStatus() == 0 && tempTask.getDeadline() != null && tempTask.getTotalTime() != -1 && tempTask.getUsedTime() != -1 && tempTask.getPriority() != -1){
+				System.out.println(i);
+				num = calculateTime(new Date(),tempTask.getDeadline());
+				num += time;
+				timeleft = num - (tempTask.getTotalTime() - tempTask.getUsedTime());
+				if (timeleft < 0) timeleft = 0;
+				for ( int j = 0; j <= 100; ++ j){
+					if (j * tempTask.getPriority() + (int)(timeleft / (long)time) * (100-j) > j * fa + (100-j) * fb){
+						++ count[j];
+					}
+				}
+			}
+		}
+		System.out.println("get finished");
+		int dada = 0;
+		for ( int i = 100; i >= 0; -- i){
+			if (count[i] > dada){
+				dada = count[i];
+				aFac = i;
+				bFac = 100 - i;
+			}
 		}
 	}
 
@@ -156,6 +223,7 @@ public class TaskController {
 		t.setUsedTime(t.getUsedTime() + time);
 		System.out.println(t.getInterrupt() + " " + t.getUsedTime());
 		ModifyTaskInfo(id,t);
+		Change(id,time);
 		System.out.println("gogogogogo");
 	}
 	
