@@ -29,6 +29,7 @@ import android.content.Context;
  * TaskInfo Suggest(Date cur,int cycletime) 根据现在的时间和下一个蕃茄钟的时间长度给出下一个任务的建议
  * void FinishCycle(long id,int interrupt,int time) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期的时间
  * void InterruptTask(long id,int time) 任务未完成而发生中断，必须调用该函数，传入任务id和已经花费的时间
+ * void GetPool()
  */
 public class TaskController {
 	static int month [] = {31,28,31,30,31,30,31,31,30,31,30,31,100};
@@ -67,6 +68,13 @@ public class TaskController {
 	public ArrayList<TaskInfo> ShowTaskList(){
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		return dbHelper.query(null,null);
+	}
+	
+	public ArrayList<TaskInfo> GetPool(){
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		String where = "starttime = ? AND status = ?";
+		String[] whereValue = {String.valueOf(-1),String.valueOf(0)};
+		return dbHelper.query(where,whereValue);
 	}
 	
 	public ArrayList<TaskInfo> GetTodayTask(Date cur){
