@@ -1,6 +1,7 @@
 package edu.tongji.fiveidiots.ui;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TestingHelper;
+import edu.tongji.fiveidiots.util.TimeUtil;
 
 /**
  * 主要负责管理tasks的显示和业务逻辑控制
@@ -287,9 +289,26 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			TextView startTimeTextView = (TextView) view.findViewById(R.id.TL_startTimeTextView);
 			TextView leftTimeTextView = (TextView) view.findViewById(R.id.TL_leftTimeTextView);
 
+			//task_name
 			taskNameTextView.setText(task.getName());
-			startTimeTextView.setText(task.getStartTime() + "");
-			leftTimeTextView.setText(task.getDeadline() + "");				
+			//start time
+			Date startTime = task.getStartTime();
+			if (startTime != null) {
+				startTimeTextView.setText(TimeUtil.isFullDay(startTime) ? TimeUtil	.parseDate(startTime) : TimeUtil
+								.parseDateTime(startTime));
+			}
+			else {
+				startTimeTextView.setText("");
+			}
+			//deadline
+			Date deadline = task.getDeadline();
+			if (deadline != null) {
+				leftTimeTextView.setText(TimeUtil.isFullDay(deadline) ? TimeUtil.parseDate(deadline) : TimeUtil
+								.parseDateTime(deadline));
+			}
+			else {
+				leftTimeTextView.setText("");
+			}
 
 			return view;
 		}
