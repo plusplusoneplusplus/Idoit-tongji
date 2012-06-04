@@ -119,5 +119,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		return tasks;
 	}
 	
+	public void markDeleted(TaskInfo task) {
+		task.markDeleted(getWritableDatabase());
+	}
 	
+	public void markDeleted(TaskInfo tasks[]) {
+		for (TaskInfo task : tasks) {
+			task.markDeleted(getWritableDatabase());
+		}
+	}
 }
