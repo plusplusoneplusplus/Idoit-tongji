@@ -25,7 +25,7 @@ import android.content.Context;
  * ArrayList<TaskInfo> GetPeriodicTask() 返回周期性任务列表
  * ArrayList<TaskInfo> GetFinishedTask() 返回已经完成的任务列表
  * ArrayList<TaskInfo> SearchTag(String str) 根据某个标签，返回拥有该标签的任务
- * TaskInfo Suggest(Date cur) 根据现在的时间给出下一个任务的建议
+ * TaskInfo Suggest(Date cur,int cycletime) 根据现在的时间和下一个蕃茄钟的时间长度给出下一个任务的建议
  * void FinishCycle(int id,int interrupt,int time) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期的时间
  * void InterruptTask(int id,int time) 任务未完成而发生中断，必须调用该函数，传入任务id和已经花费的时间
  */
@@ -115,8 +115,8 @@ public class TaskController {
 		ans = (des.getTime() - cur.getTime()) / 60000;
 		return ans;
 	}
-	
-	public TaskInfo Suggest(Date cur){
+
+	public TaskInfo Suggest(Date cur,int cycletime){
 		ArrayList<TaskInfo> totalContainer = ShowTaskList();
 		ArrayList<TaskInfo> tempContainer = new ArrayList<TaskInfo>();
 		tempContainer.clear();
@@ -126,18 +126,18 @@ public class TaskController {
 		TaskInfo ansPri = null;
 		for ( int i = 0; i < totalContainer.size(); ++ i){
 			tempTask = totalContainer.get(i);
-			if (tempTask.getStatus() == 0){
+			if (tempTask.getStatus() == 0 && tempTask.getDeadline() != null && tempTask.getTotalTime() != -1 && tempTask.getUsedTime() != -1 && tempTask.getPriority() != -1){
 				long num = calculateTime(cur,tempTask.getDeadline());
-				long cycleleft = num / oneclock - (tempTask.getTotalTime()-tempTask.getUsedTime());
-				if (cycleleft <= 0){
+				long timeleft = tempTask.getTotalTime() - tempTask.getUsedTime() + cycletime - num;
+				if (timeleft < 0){
 					if (tempTask.getPriority() < minpri){
 						ansPri = tempTask;
 						minpri = tempTask.getPriority();
 					}
 				}
-				else if (tempTask.getPriority() * 0.75 + cycleleft * 0.25 < minfac){
+				else if (tempTask.getPriority() * 0.75 + (timeleft / cycletime) * 0.25 < minfac){
 					ansFac = tempTask;
-					minfac = tempTask.getPriority() * 0.75 + cycleleft * 0.25;
+					minfac = tempTask.getPriority() * 0.75 + (timeleft / cycletime) * 0.25;
 				}
 			}
 		}
