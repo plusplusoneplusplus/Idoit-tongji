@@ -91,11 +91,12 @@ public class TaskInfo {
 		this.next_id = next_id;
 	}
 	
-	public int getWay() {
-		return way;
+	public PeriodInfo getWay() {
+		PeriodInfo p = new PeriodInfo(way);
+		return p;
 	}
-	public void setWay(int way) {
-		this.way = way;
+	public void setWay(PeriodInfo p) {
+		this.way = p.TranslateKey();
 	}
 	public int getInterrupt() {
 		return interrupt;
