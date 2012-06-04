@@ -54,19 +54,16 @@ public class TaskDetailViewHelper {
 	/**
 	 * 此任务的前驱任务
 	 */
-	private TaskInfo previousTask;
+	private TaskInfo previousTask = null;
 	/**
 	 * 此任务的后续任务
 	 */
-	private TaskInfo followingTask;
+	private TaskInfo followingTask = null;
 
 	private final Context context;
 	public TaskDetailViewHelper(Context aContext, TaskInfo aTask) {
 		this.context = aContext;
 		this.task = aTask;
-		
-		//=====TODO 测试中=====
-		//=====测试代码结束=====
 	}
 
 	//=====第一页=====
@@ -888,7 +885,7 @@ public class TaskDetailViewHelper {
 			tagsText.setText(R.string.Detail_unset);
 		}
 		else {
-			tagsText.setTextColor(context.getResources().getColor(R.color.black));			
+			tagsText.setTextColor(context.getResources().getColor(R.color.blue));			
 			String message = tags.get(0);
 			for (int i = 1; i < tags.size(); i++) {
 				message += (", " + tags.get(i));
@@ -938,7 +935,13 @@ public class TaskDetailViewHelper {
 		//=====任务当前状态=====
 		stateText = (TextView) view.findViewById(R.id.taskStateTextView);
 		this.refreshState();
-		this.initTaskStatePartsUI();
+		stateText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showSetStateDialog();
+			}
+		});
 		
 		//=====任务先后顺序=====
 		previousTaskText = (TextView) view.findViewById(R.id.taskPreviousTextView);
@@ -963,19 +966,6 @@ public class TaskDetailViewHelper {
 		});
 
 		return view;
-	}
-
-	/**
-	 *  初始化任务状态部分的UI
-	 */
-	private void initTaskStatePartsUI() {
-		stateText.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//TODO
-			}
-		});
 	}
 	
 	/**
@@ -1133,6 +1123,10 @@ public class TaskDetailViewHelper {
 		dialog.show();
 	}
 	
+	/**
+	 * 用来在dialog中选取前驱或者后续任务时显示task的adpater
+	 * @author Andriy
+	 */
 	private class SequenceTaskAdapter extends BaseAdapter {
 
 		private List<TaskInfo> theTasks;
@@ -1164,14 +1158,87 @@ public class TaskDetailViewHelper {
 			
 			return convertView;
 		}
-		
 	}
 
+	/**
+	 * 显示设置任务状态的dialog
+	 */
+	private void showSetStateDialog() {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_state_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_state, null);
+		builder.setView(view);
+		
+		final RadioButton normalButton = (RadioButton) view.findViewById(R.id.dialog_set_state_normalButton);
+		final RadioButton finishedButton = (RadioButton) view.findViewById(R.id.dialog_set_state_finishedButton);
+		final RadioButton deletedButton = (RadioButton) view.findViewById(R.id.dialog_set_state_deletedButton);
+		
+		//=====恢复现场=====
+		switch (task.getStatus()) {
+		case TaskInfo.STATUS_NORMAL:
+			normalButton.setChecked(true);
+			break;
+		case TaskInfo.STATUS_FINISHED:
+			finishedButton.setChecked(true);
+			break;
+		case TaskInfo.STATUS_DELETED:
+			deletedButton.setChecked(true);
+			break;
+
+		default:
+			break;
+		}
+
+		//=====确认按钮做啥子=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (normalButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_NORMAL);
+				}
+				else if (finishedButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_FINISHED);
+				}
+				else if (deletedButton.isChecked()) {
+					task.setStatus(TaskInfo.STATUS_DELETED);
+				}
+				refreshState();
+			}
+		});
+		
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
+	}
+	
 	/**
 	 * 刷新任务状态
 	 */
 	private void refreshState() {
-		//TODO
+		switch (task.getStatus()) {
+		case TaskInfo.STATUS_NORMAL:
+			stateText.setTextColor(context.getResources().getColor(R.color.blue));
+			stateText.setText(R.string.Detail_state_normal);
+			break;
+
+		case TaskInfo.STATUS_FINISHED:
+			stateText.setTextColor(context.getResources().getColor(R.color.green));
+			stateText.setText(R.string.Detail_state_finished);
+			break;
+
+		case TaskInfo.STATUS_DELETED:
+			stateText.setTextColor(context.getResources().getColor(R.color.black));
+			stateText.setText(R.string.Detail_state_deleted);
+			break;
+
+		default:
+			break;
+		}
 	}
 	
 	/**
