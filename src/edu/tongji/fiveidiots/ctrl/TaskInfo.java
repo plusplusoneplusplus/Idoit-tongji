@@ -147,7 +147,7 @@ public class TaskInfo {
 		this.totaltime = totaltime;
 	}
 
-	public void setNextTaskId(int nextTaskId) {
+	public void setNextTaskId(long nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
 	

@@ -5,28 +5,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.PeriodInfo;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
-import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TestingHelper;
 import edu.tongji.fiveidiots.util.TimeUtil;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -500,19 +500,21 @@ public class TaskDetailViewHelper {
 		final RadioButton noneButton = (RadioButton) view.findViewById(R.id.dialog_set_priority_none);
 		
 		//=====根据已有参数先恢复UI=====
-		switch (task.getPriority()) {	//TODO priority修改之后改这里
-		case 0:
+		switch (task.getPriority()) {
+		case TaskInfo.PRIORITY_HIGH:
 			highButton.setChecked(true);
 			break;
-		case 1:
+		case TaskInfo.PRIORITY_MIDDLE:
 			middleButton.setChecked(true);
 			break;
-		case 2:
+		case TaskInfo.PRIORITY_LOW:
 			lowButton.setChecked(true);
+			break;
+		case TaskInfo.PRIORITY_UNSET:
+			noneButton.setChecked(true);
 			break;
 
 		default:
-			noneButton.setChecked(true);
 			break;
 		}
 		
@@ -521,18 +523,17 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				//TODO 当后台定了以后改这里
 				if (highButton.isChecked()) {
-					task.setPriority(0);
+					task.setPriority(TaskInfo.PRIORITY_HIGH);
 				}
 				else if (middleButton.isChecked()) {
-					task.setPriority(1);
+					task.setPriority(TaskInfo.PRIORITY_MIDDLE);
 				}
 				else if (lowButton.isChecked()) {
-					task.setPriority(2);
+					task.setPriority(TaskInfo.PRIORITY_LOW);
 				}
 				else if (noneButton.isChecked()) {
-					task.setPriority(-1);
+					task.setPriority(TaskInfo.PRIORITY_UNSET);
 				}
 				refreshPriority();
 			}
@@ -736,7 +737,7 @@ public class TaskDetailViewHelper {
 	/**
 	 * 刷新周期信息
 	 */
-	private void refreshPeriodicInfo() {	//TODO info有bug，传入1，传出128
+	private void refreshPeriodicInfo() {
 		PeriodInfo info = task.getPeriodInfo();
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
@@ -972,7 +973,6 @@ public class TaskDetailViewHelper {
 			@Override
 			public void onClick(View v) {
 				//TODO
-				
 			}
 		});
 	}
@@ -986,13 +986,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				if (previousTask == null || !(context instanceof Activity)) {
-					return;
-				}
-				
-				Bundle bundle = new Bundle();
-				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, previousTask.getId());
-				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);					
+				showSetSequenceTaskDialog(true);
 			}
 		});
 		
@@ -1001,13 +995,7 @@ public class TaskDetailViewHelper {
 			
 			@Override
 			public void onClick(View v) {
-				if (followingTask == null || !(context instanceof Activity)) {
-					return;
-				}
-				
-				Bundle bundle = new Bundle();
-				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, followingTask.getId());
-				ActivityUtil.startActivityWithBundle((Activity)context, TaskDetailsActivity.class, 0, false, bundle);
+				showSetSequenceTaskDialog(false);
 			}
 		});
 	}
@@ -1077,6 +1065,105 @@ public class TaskDetailViewHelper {
 			}
 		});
 		builder.create().show();
+	}
+	
+	/**
+	 * 显示设置前驱任务还是后续任务的dialog
+	 * @param isPreviousTask true代表设置前驱任务，false代表后续任务
+	 */
+	private void showSetSequenceTaskDialog(final boolean isPreviousTask) {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(isPreviousTask ? R.string.Detail_previous_intro_text
+								: R.string.Detail_following_intro_text));
+		ListView listView = new ListView(context);
+		builder.setView(listView);
+
+		//TODO 调用真正数据库里的数据而不是random
+		final SequenceTaskAdapter adapter = new SequenceTaskAdapter(TestingHelper.getRandomTaskList());
+		listView.setAdapter(adapter);
+
+		//=====neutral button，清除=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (isPreviousTask) {
+					task.setPrevTaskId(-1);
+					previousTask = null;
+					refreshPrevious();
+				}
+				else {
+					task.setNextTaskId(-1);
+					followingTask = null;
+					refreshFollowing();
+				}
+			}
+		});
+		
+		//=====取消，直接退出=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		//=====选中某个item之后的动作=====
+		final AlertDialog dialog = builder.create();
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				TaskInfo taskInfo = adapter.getItem(position);
+				if (isPreviousTask) {
+					task.setPrevTaskId(taskInfo.getId());
+					previousTask = taskInfo;
+					refreshPrevious();
+				}
+				else {
+					task.setNextTaskId(taskInfo.getId());
+					followingTask = taskInfo;
+					refreshFollowing();
+				}
+				dialog.cancel();
+			}
+		});
+		dialog.show();
+	}
+	
+	private class SequenceTaskAdapter extends BaseAdapter {
+
+		private List<TaskInfo> theTasks;
+		public SequenceTaskAdapter(List<TaskInfo> tasks) {
+			this.theTasks = tasks;
+		}
+		
+		@Override
+		public int getCount() {
+			return theTasks.size();
+		}
+
+		@Override
+		public TaskInfo getItem(int position) {
+			return theTasks.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			convertView = LayoutInflater.from(context).inflate(R.layout.dialog_set_sequence_task_item, null);
+
+			TextView textView = (TextView) convertView.findViewById(R.id.dialog_set_sequence_task_nameTextView);
+			textView.setText(this.getItem(position).getName());
+			
+			return convertView;
+		}
+		
 	}
 
 	/**
