@@ -27,7 +27,7 @@ import android.R.integer;
 public class TaskInfo {
 	private int pri,pre_id,next_id,usedtime,totaltime,way,interrupt,id; //浼樺厛绾э紝鍓嶉┍浠诲姟ID锛屽悗缁D锛屽凡缁忓畬鎴愮殑鐣寗鏃堕挓鏁帮紝灏氬緟瀹屾垚鐨勭暘鑼勬椂閽熸暟锛屾槸鍚︿负鍛ㄦ湡浠诲姟锛屼腑鏂釜鏁帮紝浠诲姟ID
 	//way鍙橀噺鐨勮祴鍊硷細闈炲懆鏈熶换鍔★細0  姣忓懆鐗瑰畾鏃ユ墽琛岀殑浠诲姟锛氬叾浜岃繘鍒剁22浣嶆暟鍊间负1锛屽墿涓?1浣嶈褰曠壒瀹氭棩锛屼緥濡傚懆涓?紝鍛ㄤ笁锛屽懆鍥涳紝鍛ㄦ棩瑕佹墽琛岀殑浠诲姟锛氭暟鍊间簩杩涘埗琛ㄧず涓猴細1 000 000 000 001 011 100 111  濡傛灉鏄瘡闅旂壒瀹氭棩鏈熸墽琛岀殑浠诲姟锛屽叾浜岃繘鍒惰〃绀虹殑绗?3锛?2浣嶄负10锛屽墿涓?1浣嶈〃绀虹浉闅旂殑鏃ユ湡銆?
-	private double percent;  //瀹屾垚浠诲姟鐨勭櫨鍒嗘瘮
+	
 	private String name,addr,hint; //浠诲姟鍚嶇О锛屽湴鍧?紝娉ㄩ噴
 	private Date starttime,deadline,alarm;  //浠诲姟寮?鏃堕棿锛屾埅姝㈡椂闂?
 	private ArrayList<String> tag;  //浠诲姟鏍囩浠?
@@ -102,12 +102,6 @@ public class TaskInfo {
 	}
 	public void setInterrupt(int interrupt) {
 		this.interrupt = interrupt;
-	}
-	public double getPercent() {
-		return percent;
-	}
-	public void setPercent(double percent) {
-		this.percent = percent;
 	}
 	public String getName() {
 		return name;

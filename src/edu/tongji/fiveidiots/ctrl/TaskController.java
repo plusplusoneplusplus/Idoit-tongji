@@ -45,15 +45,12 @@ import android.content.Context;
 
 public class TaskController {
 	static int month [] = {31,28,31,30,31,30,31,31,30,31,30,31,100};
-	private ArrayList<TaskInfo> taskContainer;
 	private TaskInfo tempTask;
 	static int oneclock = 25;
 	private Context context;
 	
 	TaskController(Context context){
 		this.context = context;
-		taskContainer = new ArrayList<TaskInfo>();
-		taskContainer.clear();
 	}
 	public void AddTask(TaskInfo aTask){
 		DatabaseHelper dbHelper = new DatabaseHelper(context);		
@@ -141,7 +138,7 @@ public class TaskController {
 		TaskInfo ansFac = null;
 		TaskInfo ansPri = null;
 		for ( int i = 0; i < totalContainer.size(); ++ i){
-			tempTask = taskContainer.get(i);
+			tempTask = totalContainer.get(i);
 			if (tempTask.getStatus() == 0){
 				long num = calculateTime(cur,tempTask.getDeadline());
 				long cycleleft = num / oneclock - (tempTask.gettotaltime()-tempTask.getusedtime());
