@@ -19,17 +19,17 @@ public class PeriodInfo {
 	/**
 	 * 周期类型，_NONE, _BY_DAY, _BY_WEEK
 	 */
-	private int type;
+	private int type = PERIOD_NONE;
 
 	/**
 	 * 当PERIOD_BY_DAY的时候，每多少天
 	 */
-	private int interval;
+	private int interval = -1;
 
 	/**
 	 * 当PERIOD_BY_WEEK的时候，每周的哪几天
 	 */
-	private HashMap<Integer, Boolean> map;
+	private HashMap<Integer, Boolean> map = new HashMap<Integer, Boolean>();
 
 	/**
 	 * 没有重复
@@ -43,7 +43,11 @@ public class PeriodInfo {
 	 * 每周周几的重复
 	 */
 	public static final int PERIOD_BY_WEEK = 2;
-	
+
+	/**
+	 * 默认生成的是PERIOD_NONE
+	 */
+	public PeriodInfo() {}
 
 	public PeriodInfo (int way) {
 		type = way >> 7;

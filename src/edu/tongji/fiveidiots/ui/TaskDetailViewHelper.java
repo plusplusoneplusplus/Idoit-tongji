@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -73,8 +72,6 @@ public class TaskDetailViewHelper {
 		this.task.setDeadline(date);
 		this.task.setDeadline(new Date(new Date().getTime() - 10000));
 		this.task.setStartTime(new Date());
-//		this.task.setUnfinishedCycle(60);
-		this.task.setFinishedCycle(101);
 		
 		this.previousTask = TestingHelper.getRandomTask();
 		this.previousTask.setName("PREV: " + this.previousTask.getName());
@@ -252,8 +249,7 @@ public class TaskDetailViewHelper {
 		});
 		
 		//=====根据数据先恢复现场=====
-		final PeriodInfo info = new PeriodInfo();
-		info.setKey(task.getWay());
+		final PeriodInfo info = task.getPeriodInfo();
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
 			//do nothing
@@ -310,7 +306,7 @@ public class TaskDetailViewHelper {
 
 					info.setPeriodByWeek(hashMap);
 				}
-				task.setWay(info.getKey());
+				task.setPeriodInfo(info);
 				refreshPeriodicInfo();
 			}
 		});
@@ -322,7 +318,7 @@ public class TaskDetailViewHelper {
 			public void onClick(DialogInterface dialog, int which) {
 				PeriodInfo info = new PeriodInfo();
 				info.setPeriodNone();
-				task.setWay(info.getKey());
+				task.setPeriodInfo(info);
 				refreshPeriodicInfo();
 			}
 		});
@@ -737,8 +733,7 @@ public class TaskDetailViewHelper {
 	 * 刷新周期信息
 	 */
 	private void refreshPeriodicInfo() {
-		PeriodInfo info = new PeriodInfo();
-		info.setKey(task.getWay());
+		PeriodInfo info = task.getPeriodInfo();
 		switch (info.getPeriodType()) {
 		case PeriodInfo.PERIOD_NONE:
 			periodicInfoText.setTextColor(context.getResources().getColor(R.color.grey));
@@ -1044,7 +1039,7 @@ public class TaskDetailViewHelper {
 	 * 刷新已用时间
 	 */
 	private void refreshUsedTime() {
-		int minutes = task.getFinishedCycle();
+		int minutes = task.getUsedTime();
 		if (minutes == -1) {
 			usedTimeText.setTextColor(context.getResources().getColor(R.color.grey));
 			usedTimeText.setText(R.string.Detail_none);
@@ -1069,7 +1064,7 @@ public class TaskDetailViewHelper {
 	 */
 	private void refreshTotalTime() {
 		//TODO 等变量更新，改这里
-		int minutes = task.getUnfinishedCycle();
+		int minutes = task.getTotalTime();
 		if (minutes == -1) {
 			totalTimeText.setTextColor(context.getResources().getColor(R.color.grey));
 			totalTimeText.setText(R.string.Detail_unset);
