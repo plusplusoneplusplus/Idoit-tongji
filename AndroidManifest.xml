@@ -29,6 +29,12 @@
         <activity android:name=".ui.TestingActivity" >
         </activity>
 
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            
+        </activity>
+        
         <service
             android:name=".ui.PomotimerService"
             android:exported="false" >
