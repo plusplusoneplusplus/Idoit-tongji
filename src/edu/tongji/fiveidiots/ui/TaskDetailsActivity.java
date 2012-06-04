@@ -227,6 +227,7 @@ public class TaskDetailsActivity extends GDActivity {
         @Override
         public void onPageChanged(PagedView pagedView, int previousPage, int newPage) {
             setActivePage(newPage);
+            viewHelper.getTask();
         }
     };
     
