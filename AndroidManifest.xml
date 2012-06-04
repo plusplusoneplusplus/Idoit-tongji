@@ -42,7 +42,7 @@
 
         <activity
             android:name=".ui.TaskDetailsActivity"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@style/Theme.IDoIt" >
         </activity>
         <activity android:name=".ui.TestingActivity" >
         </activity>
