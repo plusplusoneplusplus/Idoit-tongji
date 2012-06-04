@@ -1,10 +1,14 @@
 package edu.tongji.fiveidiots.ui;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -29,7 +33,8 @@ import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
-import edu.tongji.fiveidiots.util.TestingHelper;
+import edu.tongji.fiveidiots.util.Settings;
+import edu.tongji.fiveidiots.util.TimeUtil;
 
 /**
  * 主要负责管理tasks的显示和业务逻辑控制
@@ -41,6 +46,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	private TaskListAdapter adapter = new TaskListAdapter();
 
+	/**
+	 * 用于startActivityForResult与回来的自动刷新
+	 */
+	private static final int REQUEST_TO_SINGLE_TASK = 100;
+	
 	//关于对话框
 	private Dialog mAboutDialog;
 	
@@ -75,17 +85,17 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
 		
-		
-        Button testButton = (Button) findViewById(R.id.testButton);
-        testButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//=====用于测试=====
-				adapter.foldAll();
-				resetTaskList();
-			}
-		});
+		//=====初始化类型，以待后来刷新列表=====
+		currentTaskSheetType = TaskSheetType.TODAY;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		//=====每当resume的时候，重获一次数据=====
+		//后期可能要异步，不然卡UI
+		resetTaskList();
 	}
 
 	/**
@@ -113,30 +123,31 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 * 刷新任务list的listview
 	 */
 	private void resetTaskList() {
+		TaskController controller = new TaskController(this);
 		switch (currentTaskSheetType) {
 		case POOL:
-			//TODO 得到所有收集池里的任务
+			//=====得到所有收集池里的任务===== TODO
 			this.adapter.fillData(new ArrayList<TaskInfo>());
 			break;
 
 		case TODAY:
-			//TODO 得到所有今日任务
-			this.adapter.fillData(TestingHelper.getRandomTaskList());
+			//=====得到所有今日任务=====
+			this.adapter.fillData(controller.GetTodayTask(new Date()));
 			break;
 
 		case FUTURE:
-			//TODO 得到所有未来任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有未来任务=====
+			this.adapter.fillData(controller.GetFutureTask(new Date()));
 			break;
 
 		case PERIODIC:
-			//TODO 得到所有周期性任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有周期性任务=====
+			this.adapter.fillData(controller.GetPeriodicTask());
 			break;
 
 		case ALL:
-			//TODO 得到所有所有任务
-			this.adapter.fillData(new ArrayList<TaskInfo>());
+			//=====得到所有所有任务=====
+			this.adapter.fillData(controller.ShowTaskList());
 			break;
 
 		default:
@@ -168,20 +179,41 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		boolean handleFinished;
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//=====进入TaskDetailActivity，带着task_id=====
+			Intent intent = new Intent(this, TaskDetailsActivity.class);
 			Bundle bundle = new Bundle();
 			bundle.putLong(TASK_ID_STR, adapter.getItem(info.position).getId());
-			ActivityUtil.startActivityWithBundle(this, TaskDetailsActivity.class, 0, false, bundle);
+			intent.putExtras(bundle);
+			this.startActivityForResult(intent, REQUEST_TO_SINGLE_TASK);
 			handleFinished = true;
 			break;
 
 		case R.id.TL_longclicked_delete:
-			//TODO
-			TaskInfo task = adapter.getItem(info.position);
-			Toast.makeText(this, "you wanna delete " + task.getName() + "?", Toast.LENGTH_SHORT).show();
+			//=====删除某个task，然后刷新表单=====
+			AlertDialog.Builder builder = new Builder(this);
+			builder.setTitle("警告");
+			builder.setMessage("确认要删除吗？");
+			builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					TaskInfo task = adapter.getItem(info.position);
+					Toast.makeText(OverviewTaskListActivity.this, "正在删除", Toast.LENGTH_SHORT).show();
+					TaskController controller = new TaskController(OverviewTaskListActivity.this);
+					controller.RemoveTask(task.getId());
+					resetTaskList();
+				}
+			});
+			builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			builder.create().show();
 			handleFinished = true;
 			break;
 		
@@ -190,6 +222,16 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		}
 		
 		return handleFinished;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_TO_SINGLE_TASK) {
+			//=====进入到详细信息界面了，出来了以后刷新一下=====
+			resetTaskList();
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
@@ -229,6 +271,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		
 		@Override
 		public int getCount() {
+			if (tasks.size() == 0) {
+				//=====一个view——无=====
+				return 1;
+			}
+			
 			if (selectedPos == NOT_SELECTED) {
 				return tasks.size();
 			}
@@ -297,9 +344,27 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			TextView startTimeTextView = (TextView) view.findViewById(R.id.TL_startTimeTextView);
 			TextView leftTimeTextView = (TextView) view.findViewById(R.id.TL_leftTimeTextView);
 
+			//task_name
 			taskNameTextView.setText(task.getName());
-			startTimeTextView.setText(task.getStartTime() + "");
-			leftTimeTextView.setText(task.getDeadline() + "");				
+			//TODO 应该是根据表单不同而显示的，就是有的全天要显示，有的不用（TODAY的不用显示今天全天，FUTURE要显示）
+			//start time
+			Date startTime = task.getStartTime();
+			if (startTime != null) {
+				startTimeTextView.setText(TimeUtil.isFullDay(startTime) ? TimeUtil	.parseDate(startTime) : TimeUtil
+								.parseDateTime(startTime));
+			}
+			else {
+				startTimeTextView.setText("");
+			}
+			//deadline
+			Date deadline = task.getDeadline();
+			if (deadline != null) {
+				leftTimeTextView.setText(TimeUtil.isFullDay(deadline) ? TimeUtil.parseDate(deadline) : TimeUtil
+								.parseDateTime(deadline));
+			}
+			else {
+				leftTimeTextView.setText("");
+			}
 
 			return view;
 		}
@@ -317,8 +382,22 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			Button startButton = (Button) view.findViewById(R.id.TL_startButton);
 			CheckBox finishBox = (CheckBox) view.findViewById(R.id.TL_finishCheckBox);
 			
+			//memo
 			memoTextView.setText(task.getHint());
-			progressTextView.setText("past" + " / " + "total");
+			//past / total
+			int pastMinutes = task.getUsedTime();
+			int totalMinutes = task.getTotalTime();
+			String progressMessage = "";
+			int duration = new Settings(OverviewTaskListActivity.this).getPomotimerDuration();
+			if (pastMinutes > 0) {
+				int cycle = pastMinutes / duration;
+				progressMessage += (cycle + "");
+			}
+			if (totalMinutes != -1) {
+				int cycle = totalMinutes / duration;
+				progressMessage += (" (" + cycle + ") ");
+			}
+			progressTextView.setText(progressMessage);
 			startButton.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -346,7 +425,9 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public View getView(int position, View convertView, ViewGroup parent) {
 			//如果任务集合为空，则不显示任何任务
 			if (tasks.isEmpty()) {
-				return null;
+				TextView textView = new TextView(OverviewTaskListActivity.this);
+				textView.setText("无");
+				return textView;
 			}
 			
 			if (convertView != null) {
@@ -419,16 +500,28 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		{
 		//左侧，timeline action bar
 		case R.string.today:
-			Toast.makeText(OverviewTaskListActivity.this, "today", Toast.LENGTH_SHORT).show();
+			currentTaskSheetType = TaskSheetType.TODAY;
+			resetTaskList();
 			break;
+
 		case R.string.future:
+			currentTaskSheetType = TaskSheetType.FUTURE;
+			resetTaskList();
 			break;
+
 		case R.string.periodic:
+			currentTaskSheetType = TaskSheetType.PERIODIC;
+			resetTaskList();
 			break;
+
 		case R.string.pool:
-			Toast.makeText(OverviewTaskListActivity.this, "pool", Toast.LENGTH_SHORT).show();
+			currentTaskSheetType = TaskSheetType.POOL;
+			resetTaskList();
 			break;
+
 		case R.string.all:
+			currentTaskSheetType = TaskSheetType.ALL;
+			resetTaskList();
 			break;
 			
 		//右侧，More action bar

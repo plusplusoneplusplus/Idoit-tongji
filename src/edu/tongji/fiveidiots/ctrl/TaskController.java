@@ -16,9 +16,9 @@ import android.content.Context;
  * tempTask: 存放临时某个任务详细信息
  * 鏂规硶锛?
  * void AddTask(TaskInfo aTask) 新增Task
- * void RemoveTask(int id) 根据任务id号删除相应任务
- * TaskInfo ShowTaskInfo(int id) 根据任务id号显示相应任务
- * Boolean ModifyTaskInfo(int id,TaskInfo aTask) 根据任务id号修改相应任务
+ * void RemoveTask(long id) 根据任务id号删除相应任务
+ * TaskInfo ShowTaskInfo(long id) 根据任务id号显示相应任务
+ * Boolean ModifyTaskInfo(long id,TaskInfo aTask) 根据任务id号修改相应任务
  * ArrayList<TaskInfo> ShowTaskList() 返回所有任务
  * ArrayList<TaskInfo> GetTodayTask(Date cur) 传入今天的日期，返回今天任务列表
  * ArrayList<TaskInfo> GetFutureTask(Date cur) 传入今天的日期，返回未来任务列表
@@ -26,8 +26,8 @@ import android.content.Context;
  * ArrayList<TaskInfo> GetFinishedTask() 返回已经完成的任务列表
  * ArrayList<TaskInfo> SearchTag(String str) 根据某个标签，返回拥有该标签的任务
  * TaskInfo Suggest(Date cur,int cycletime) 根据现在的时间和下一个蕃茄钟的时间长度给出下一个任务的建议
- * void FinishCycle(int id,int interrupt,int time) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期的时间
- * void InterruptTask(int id,int time) 任务未完成而发生中断，必须调用该函数，传入任务id和已经花费的时间
+ * void FinishCycle(long id,int interrupt,int time) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期的时间
+ * void InterruptTask(long id,int time) 任务未完成而发生中断，必须调用该函数，传入任务id和已经花费的时间
  */
 public class TaskController {
 	static int month [] = {31,28,31,30,31,30,31,31,30,31,30,31,100};
@@ -35,7 +35,6 @@ public class TaskController {
 	static int oneclock = 25;
 	private Context context;
 	
-
 	public TaskController(Context context){
 		this.context = context;
 	}
@@ -43,19 +42,19 @@ public class TaskController {
 		DatabaseHelper dbHelper = new DatabaseHelper(context);		
 		dbHelper.insert(aTask);
 	}
-	public void RemoveTask(int id){
+	public void RemoveTask(long id){
 		String where = "id = ?";
 		String[] whereValue = {String.valueOf(id)};
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		dbHelper.delete(where, whereValue);
 	}
 	
-	public TaskInfo ShowTaskInfo(int id){
+	public TaskInfo ShowTaskInfo(long id){
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		return dbHelper.showinfo(id);
 	}
 	
-	public Boolean ModifyTaskInfo(int id,TaskInfo aTask){
+	public Boolean ModifyTaskInfo(long id,TaskInfo aTask){
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		dbHelper.update(id, aTask);
 		return true;
@@ -67,25 +66,24 @@ public class TaskController {
 	}
 	
 	public ArrayList<TaskInfo> GetTodayTask(Date cur){
-		int prevtime = cur.getYear() << 20 + cur.getMonth() << 16 + cur.getDate() << 11;
-		int nexttime = cur.getYear() << 20 + cur.getMonth() << 16 + (cur.getDate()+1) << 11;
-		String where = "starttime >= ? AND starttime < ?";
-		String[] whereValue = {String.valueOf(prevtime),String.valueOf(nexttime)};
+		int nexttime = (cur.getYear() << 20) + (cur.getMonth() << 16) + ((cur.getDate()+1) << 11);
+		String where = "starttime < ? AND status = ? AND NOT starttime = ?";
+		String[] whereValue = {String.valueOf(nexttime),String.valueOf(0),String.valueOf(-1)};
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		return dbHelper.query(where,whereValue);
 	}
 	
 	public ArrayList<TaskInfo> GetFutureTask(Date cur){
-		int nexttime = cur.getYear() << 20 + cur.getMonth() << 16 + (cur.getDate()+1) << 11;
-		String where = "starttime >= ?";
-		String[] whereValue = {String.valueOf(nexttime)};
+		int nexttime = (cur.getYear() << 20) + (cur.getMonth() << 16) + ((cur.getDate()+1) << 11);
+		String where = "starttime >= ? AND status = ?";
+		String[] whereValue = {String.valueOf(nexttime),String.valueOf(0)};
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		return dbHelper.query(where,whereValue);
 	}
 	
 	public ArrayList<TaskInfo> GetPeriodicTask(){
-		String where = "way > ?";
-		String[] whereValue = {String.valueOf(0)};
+		String where = "way > ? AND status = ?";
+		String[] whereValue = {String.valueOf(0),String.valueOf(0)};
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		return dbHelper.query(where,whereValue);
 	}
@@ -150,14 +148,17 @@ public class TaskController {
 		}
 	}
 
-	public void FinishCycle(int id,int interrupt,int time){
+	public void FinishCycle(long id,int interrupt,int time){
 		TaskInfo t = ShowTaskInfo(id);
+		System.out.println("ok");
 		t.setInterrupt(t.getInterrupt() + interrupt);
 		t.setUsedTime(t.getUsedTime() + time);
+		System.out.println(t.getInterrupt() + " " + t.getUsedTime());
 		ModifyTaskInfo(id,t);
+		System.out.println("gogogogogo");
 	}
 	
-	public void InterruptTask(int id,int time){
+	public void InterruptTask(long id,int time){
 		FinishCycle(id, 1, time);
 	}
 }

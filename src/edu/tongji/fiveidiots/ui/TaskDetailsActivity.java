@@ -1,6 +1,7 @@
 package edu.tongji.fiveidiots.ui;
 
 import edu.tongji.fiveidiots.R;
+import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.TestingHelper;
 import greendroid.app.GDActivity;
@@ -74,18 +75,21 @@ public class TaskDetailsActivity extends GDActivity {
 		}
 		if (bundle != null) {
 			long taskID = bundle.getLong(OverviewTaskListActivity.TASK_ID_STR, -1);
-			//TODO 测试时直接随机生成一个task来用，到时候要新开一个线程异步取data，然后刷新
-			TaskInfo task = TestingHelper.getRandomTask();
-			task.setId(taskID);
-			this.viewHelper = new TaskDetailViewHelper(this, task);
+			if (taskID == -1) {
+				//新建任务
+				TaskInfo task = new TaskInfo("");
+				task.setId(-1);
+				this.viewHelper = new TaskDetailViewHelper(this, task);
+			}
+			else {
+				TaskController controller = new TaskController(this);
+				TaskInfo task = controller.ShowTaskInfo(taskID);
+				this.viewHelper = new TaskDetailViewHelper(this, task);
+			}
 		}
 
 		//=====GDActivity，及搞定action bar上的item=====
-		try {
-	        this.setActionBarContentView(R.layout.taskdetails_paged_view);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        this.setActionBarContentView(R.layout.taskdetails_paged_view);
 		this.addActionBarItem(ActionBarItem.Type.Compose, R.id.detail_action_bar_save);
         this.addActionBarItem(ActionBarItem.Type.Trashcan, R.id.detail_action_bar_delete);
 
@@ -142,9 +146,16 @@ public class TaskDetailsActivity extends GDActivity {
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
     	switch (item.getItemId()) {
 		case R.id.detail_action_bar_save:
-			//TODO 保存当前做的修改
+			//=====保存当前做的修改=====
 			TaskInfo task = viewHelper.getTask();
-			Toast.makeText(this, "to be saved", Toast.LENGTH_SHORT).show();
+			if (task == null || task.getName() == null || task.getName().isEmpty()) {
+				Toast.makeText(this, "要保存，请先输入名称！", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+			Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
+			TaskController controller = new TaskController(this);
+			controller.ModifyTaskInfo(task.getId(), task);
+			this.finish();
 			return true;
 		case R.id.detail_action_bar_delete:
 			//TODO 删除当前task，返回前一个tasklist-overview，而且应该要求它自动刷新
