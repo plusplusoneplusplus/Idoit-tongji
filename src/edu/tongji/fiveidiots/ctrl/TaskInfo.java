@@ -105,8 +105,27 @@ public class TaskInfo {
 	public TaskInfo(String name) {
 		this.name = name;
 	}
+	
+	public TaskInfo(String name,Date starttime,int way){
+		this.name = name;
+		this.startTime = starttime;
+		this.way = way;
+	}
+	
+	public TaskInfo(String name,ArrayList<String> tag){
+		this.name = name;
+		this.tags = tag;
+	}
+	
+	public TaskInfo(String name,Date deadline,int pri,int usedtime,int totaltime){
+		this.name = name;
+		this.deadline = deadline;
+		this.priority = pri;
+		this.usedtime = usedtime;
+		this.totaltime = totaltime;
+	}
 
-	@Deprecated
+	
 	public TaskInfo(int id,String name,String addr,String hint,ArrayList<String> tag,Date starttime,Date deadline,Date alarm,int way,int pri, int pre_id,int next_id, int usedtime, int totaltime,int interrupt, int status){
 		this.id = id;
 		this.name = name;

@@ -65,6 +65,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public ContentValues seperateTask(TaskInfo aTask){
 		long id,  starttime, deadline, alarm;
 		String  tag; 
+		id = aTask.getId();
+		Date curDate = new Date();
+		if (id == -1) id = curDate.getTime();
 		ArrayList<String> tagArrayList = aTask.ExportTags();
 		if (tagArrayList == null || tagArrayList.size() == 0) tag = null;
 		else tag = tagArrayList.get(0);
@@ -81,7 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (alarmDate != null) alarm = alarmDate.getYear() << 20 + alarmDate.getMonth() << 16 + alarmDate.getDate() << 11 + alarmDate.getHours() << 6 + alarmDate.getMinutes();
 		else alarm = -1;
 		ContentValues tcv = new ContentValues();
-		tcv.put(ID, aTask.getId());
+		tcv.put(ID, id);
 		tcv.put(NAME, aTask.getName());
 		tcv.put(ADDRESS, aTask.getAddr());
 		tcv.put(HINT, aTask.getHint());
