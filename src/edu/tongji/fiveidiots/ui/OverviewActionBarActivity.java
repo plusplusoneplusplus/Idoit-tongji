@@ -13,6 +13,8 @@ import greendroid.widget.QuickActionWidget.OnQuickActionClickListener;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -34,7 +36,11 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 	private QuickActionGrid mGridMore;
 	private QuickActionGrid mGridTimeLine;
 	
+	//home键（左上角）
 	private View mHomeButton;
+	
+	//关于对话框
+	private Dialog mAboutDialog;
 	
 	/**
 	 * 存储grid上 postion-resID键值对 数组
@@ -51,6 +57,9 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		prepareQuickActionGrid();
 		
 		mHomeButton = getActionBar().getHomeButton();
+		
+		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
+				.setMessage(R.string.about_dialog_content).create();
 	}
 	
 	//继承重写，设置view
@@ -121,6 +130,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 				ActivityUtil.startNewActivity(OverviewActionBarActivity.this, SettingsActivity.class, 0L, false);
 				break;
 			case R.string.about:
+				mAboutDialog.show();
 				break;
 			case R.string.exit:
 				OverviewActionBarActivity.this.finish();
