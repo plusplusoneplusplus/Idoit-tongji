@@ -60,16 +60,16 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		mySetActionBarContentView();
 		prepareActionBar();
 		prepareQuickActionGrid();
-		
-<<<<<<< HEAD
+
+
 		mHomeButton = getActionBar().getHomeButton();
+		mHomeButton.setImageResource(R.drawable.ic_grid);
 		
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
-=======
+
 		mHomeButton = (ImageButton) getActionBar().getHomeButton();
-		mHomeButton.setImageResource(R.drawable.ic_grid);
->>>>>>> 35407d2a3948d0082a7dc78294053fac77f34779
+
 	}
 	
 	//继承重写，设置view
