@@ -11,6 +11,9 @@ import greendroid.widget.PageIndicator;
 import greendroid.widget.PagedAdapter;
 import greendroid.widget.PagedView;
 import greendroid.widget.PagedView.OnPagedViewChangeListener;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -145,22 +148,54 @@ public class TaskDetailsActivity extends GDActivity {
     @Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
     	switch (item.getItemId()) {
-		case R.id.detail_action_bar_save:
+		case R.id.detail_action_bar_save: {
 			//=====保存当前做的修改=====
 			TaskInfo task = viewHelper.getTask();
 			if (task == null || task.getName() == null || task.getName().isEmpty()) {
 				Toast.makeText(this, "要保存，请先输入名称！", Toast.LENGTH_SHORT).show();
 				return true;
 			}
-			Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
 			TaskController controller = new TaskController(this);
-			controller.ModifyTaskInfo(task.getId(), task);
+			if (task.getId() == -1) {
+				controller.AddTask(task);
+				Toast.makeText(this, "正在添加", Toast.LENGTH_SHORT).show();
+			}
+			else {
+				controller.ModifyTaskInfo(task.getId(), task);				
+				Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
+			}
 			this.finish();
 			return true;
-		case R.id.detail_action_bar_delete:
-			//TODO 删除当前task，返回前一个tasklist-overview，而且应该要求它自动刷新
-			Toast.makeText(this, "to be deleted", Toast.LENGTH_SHORT).show();
+		}
+		case R.id.detail_action_bar_delete: {
+			final TaskInfo task = viewHelper.getTask();
+			if (task == null || task.getId() == -1) {
+				Toast.makeText(this, "此任务尚未建立，无法删除！", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+			
+			AlertDialog.Builder builder = new Builder(this);
+			builder.setTitle("警告");
+			builder.setMessage("确认要删除吗？");
+			builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					TaskController controller = new TaskController(TaskDetailsActivity.this);
+					controller.RemoveTask(task.getId());
+					Toast.makeText(TaskDetailsActivity.this, "正在删除", Toast.LENGTH_SHORT).show();
+					finish();
+				}
+			});
+			builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			builder.create().show();
 			return true;
+		}
 
 		default:
 			return super.onHandleActionBarItemClick(item, position);

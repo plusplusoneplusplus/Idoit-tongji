@@ -106,12 +106,7 @@ public class TaskDetailViewHelper {
 	 * @return 如果修改name为“”，会返回null
 	 */
 	public TaskInfo getTask() {
-		String name = taskNameText.getText().toString();
-		if (name == null || name.isEmpty()) {
-			return null;
-		}
-		
-		this.task.setName(name);
+		this.task.setName(taskNameText.getText().toString());
 		this.task.setHint(taskMemoText.getText().toString());
 		return this.task;
 	}
