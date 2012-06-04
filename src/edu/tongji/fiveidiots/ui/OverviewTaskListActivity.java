@@ -28,6 +28,7 @@ import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ctrl.TaskController;
 import edu.tongji.fiveidiots.ctrl.TaskInfo;
 import edu.tongji.fiveidiots.util.ActivityUtil;
+import edu.tongji.fiveidiots.util.Settings;
 import edu.tongji.fiveidiots.util.TestingHelper;
 import edu.tongji.fiveidiots.util.TimeUtil;
 
@@ -202,6 +203,13 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		public void fillData(List<TaskInfo> taskInfos) {
 			this.tasks.clear();
 			this.tasks.addAll(taskInfos);
+			
+			//TODO testing
+			if (tasks.size() > 0) {
+				TaskInfo task = tasks.get(0);
+				task.setUsedTime(100);
+				task.setTotalTime(200);
+			}
 		}
 		
 		/**
@@ -291,6 +299,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 			//task_name
 			taskNameTextView.setText(task.getName());
+			//TODO 应该是根据表单不同而显示的，就是有的全天要显示，有的不用（TODAY的不用显示今天全天，FUTURE要显示）
 			//start time
 			Date startTime = task.getStartTime();
 			if (startTime != null) {
@@ -326,8 +335,22 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			Button startButton = (Button) view.findViewById(R.id.TL_startButton);
 			CheckBox finishBox = (CheckBox) view.findViewById(R.id.TL_finishCheckBox);
 			
+			//memo
 			memoTextView.setText(task.getHint());
-			progressTextView.setText("past" + " / " + "total");
+			//past / total
+			int pastMinutes = task.getUsedTime();
+			int totalMinutes = task.getTotalTime();
+			String progressMessage = "";
+			int duration = new Settings(OverviewTaskListActivity.this).getPomotimerDuration();
+			if (pastMinutes > 0) {
+				int cycle = pastMinutes / duration;
+				progressMessage += (cycle + "");
+			}
+			if (totalMinutes != -1) {
+				int cycle = totalMinutes / duration;
+				progressMessage += (" (" + cycle + ") ");
+			}
+			progressTextView.setText(progressMessage);
 			startButton.setOnClickListener(new OnClickListener() {
 				
 				@Override
