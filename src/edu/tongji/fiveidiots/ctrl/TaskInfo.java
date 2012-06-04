@@ -28,7 +28,7 @@ public class TaskInfo {
 	private String name,addr,hint; //任务名称，地址，注释
 	private Date starttime,deadline,alarm;  //任务开始时间，截止时间，任务提醒时间
 	private ArrayList<String> tag;  //任务标签们
-	private int status;  //任务状态：1为Finish，2为完成，3为删除，0为正常状态。
+	private int status;  //任务状态：1为Finish，2为删除，0为正常状态。
 	
 	
 
