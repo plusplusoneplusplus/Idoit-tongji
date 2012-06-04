@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -177,7 +179,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		boolean handleFinished;
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//=====进入TaskDetailActivity，带着task_id=====
@@ -190,9 +192,28 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			break;
 
 		case R.id.TL_longclicked_delete:
-			//TODO
-			TaskInfo task = adapter.getItem(info.position);
-			Toast.makeText(this, "you wanna delete " + task.getName() + "?", Toast.LENGTH_SHORT).show();
+			//=====删除某个task，然后刷新表单=====
+			AlertDialog.Builder builder = new Builder(this);
+			builder.setTitle("警告");
+			builder.setMessage("确认要删除吗？");
+			builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					TaskInfo task = adapter.getItem(info.position);
+					Toast.makeText(OverviewTaskListActivity.this, "正在删除", Toast.LENGTH_SHORT).show();
+					TaskController controller = new TaskController(OverviewTaskListActivity.this);
+					controller.RemoveTask(task.getId());
+					resetTaskList();
+				}
+			});
+			builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			builder.create().show();
 			handleFinished = true;
 			break;
 		
