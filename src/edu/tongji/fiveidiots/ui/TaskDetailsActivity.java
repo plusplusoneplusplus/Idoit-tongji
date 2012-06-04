@@ -82,9 +82,8 @@ public class TaskDetailsActivity extends GDActivity {
 				this.viewHelper = new TaskDetailViewHelper(this, task);
 			}
 			else {
-				//展示一个任务 TODO 从后台调一个任务过来！！！！！
-				TaskInfo task = TestingHelper.getRandomTask();
-				task.setId(taskID);
+				TaskController controller = new TaskController(this);
+				TaskInfo task = controller.ShowTaskInfo(taskID);
 				this.viewHelper = new TaskDetailViewHelper(this, task);
 			}
 		}
@@ -155,7 +154,7 @@ public class TaskDetailsActivity extends GDActivity {
 			}
 			Toast.makeText(this, "正在保存", Toast.LENGTH_SHORT).show();
 			TaskController controller = new TaskController(this);
-			controller.AddTask(task);
+			controller.ModifyTaskInfo(task.getId(), task);
 			this.finish();
 			return true;
 		case R.id.detail_action_bar_delete:

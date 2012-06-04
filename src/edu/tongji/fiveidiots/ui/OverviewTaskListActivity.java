@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -43,6 +44,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	private TaskSheetType currentTaskSheetType = TaskSheetType.TODAY;
 	private TaskListAdapter adapter = new TaskListAdapter();
 
+	/**
+	 * 用于startActivityForResult与回来的自动刷新
+	 */
+	private static final int REQUEST_TO_SINGLE_TASK = 100;
+	
 	//关于对话框
 	private Dialog mAboutDialog;
 	
@@ -77,8 +83,16 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		mAboutDialog = new AlertDialog.Builder(this).setTitle(this.getString(R.string.about_dialog_title))
 				.setMessage(R.string.about_dialog_content).create();
 		
-		//=====初始化类型，刷新列表=====
+		//=====初始化类型，以待后来刷新列表=====
 		currentTaskSheetType = TaskSheetType.TODAY;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		//=====每当resume的时候，重获一次数据=====
+		//后期可能要异步，不然卡UI
 		resetTaskList();
 	}
 
@@ -167,9 +181,11 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		switch (item.getItemId()) {
 		case R.id.TL_longclicked_edit:
 			//=====进入TaskDetailActivity，带着task_id=====
+			Intent intent = new Intent(this, TaskDetailsActivity.class);
 			Bundle bundle = new Bundle();
 			bundle.putLong(TASK_ID_STR, adapter.getItem(info.position).getId());
-			ActivityUtil.startActivityWithBundle(this, TaskDetailsActivity.class, 0, false, bundle);
+			intent.putExtras(bundle);
+			this.startActivityForResult(intent, REQUEST_TO_SINGLE_TASK);
 			handleFinished = true;
 			break;
 
@@ -185,6 +201,16 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 		}
 		
 		return handleFinished;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_TO_SINGLE_TASK) {
+			//=====进入到详细信息界面了，出来了以后刷新一下=====
+			resetTaskList();
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
