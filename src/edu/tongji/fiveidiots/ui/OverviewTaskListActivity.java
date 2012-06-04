@@ -112,12 +112,12 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	protected void tagListItemClick(String tag) {
-		adapter.foldAll();
-		
-		this.adapter.fillData(new TaskController(this).SearchTag(tag));
-		this.taskListView.setAdapter(this.adapter);
-		this.taskListView.setOnItemClickListener(this.adapter);
-		this.registerForContextMenu(this.taskListView);
+//		adapter.foldAll();
+//		
+//		this.adapter.fillData(new TaskController(this).SearchTag(tag));
+//		this.taskListView.setAdapter(this.adapter);
+//		this.taskListView.setOnItemClickListener(this.adapter);
+//		this.registerForContextMenu(this.taskListView);
 	}
 
 	/**
