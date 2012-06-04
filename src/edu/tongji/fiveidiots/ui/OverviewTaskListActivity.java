@@ -531,6 +531,16 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			
 		//右侧，More action bar
 		case R.string.recommend:
+			Bundle bundle = new Bundle();
+			TaskInfo task = new TaskController(this).Suggest(new Date(), new Settings(this).getPomotimerDuration());
+			if (task == null) {
+				Toast.makeText(this, "暂无推荐任务", Toast.LENGTH_SHORT).show();
+			}
+			else {
+				bundle.putLong(TASK_ID_STR, task.getId());
+				bundle.putString(TASK_NAME_STR, task.getName());
+				ActivityUtil.startActivityWithBundle(OverviewTaskListActivity.this, PomotimerActivity.class, 0, false, bundle);
+			}
 			break;
 		case R.string.settings:
 			ActivityUtil.startNewActivity(OverviewTaskListActivity.this, SettingsActivity.class, 0L, false);
