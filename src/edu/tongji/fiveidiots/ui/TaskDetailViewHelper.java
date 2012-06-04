@@ -952,7 +952,13 @@ public class TaskDetailViewHelper {
 		this.refreshUsedTime();
 		this.refreshTotalTime();
 		this.refreshInterrupt();
-		this.initProgressPartsUI();
+		totalTimeText.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				showSetTotalTimeDialog();
+			}
+		});
 
 		return view;
 	}
@@ -1006,8 +1012,71 @@ public class TaskDetailViewHelper {
 		});
 	}
 	
-	private void initProgressPartsUI() {
-		//TODO
+	/**
+	 * 显示设置预期总时间的dialog
+	 */
+	private void showSetTotalTimeDialog() {
+		//=====生成初始化builder及界面=====
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("设置" + context.getString(R.string.Detail_totaltime_intro_text));
+		View view = LayoutInflater.from(context).inflate(R.layout.dialog_set_total_time, null);
+		builder.setView(view);
+		final EditText hourText = (EditText) view.findViewById(R.id.dialog_set_total_time_hourEditText);
+		final EditText minuteText = (EditText) view.findViewById(R.id.dialog_set_total_time_minuteEditText);
+		
+		//=====恢复现场=====
+		if (task.getTotalTime() != -1) {
+			int hour = task.getTotalTime() / 60;
+			int minute = task.getTotalTime() % 60;
+			hourText.setText(hour + "");
+			minuteText.setText(minute + "");
+		}
+
+		//=====确认按钮做什么=====
+		builder.setPositiveButton(R.string.Dialog_confirm_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String hourString = hourText.getText().toString();
+				String minuteString = minuteText.getText().toString();
+				if (hourString.isEmpty() && minuteString.isEmpty()) {
+					//=====两个都是空的，就认为是清空吧=====
+					task.setTotalTime(-1);
+				}
+				else {
+					int minutes = 0;
+					if (!hourString.isEmpty()) {
+						Integer hour = Integer.parseInt(hourText.getText().toString());
+						minutes += hour * 60;
+					}
+					if (!minuteString.isEmpty()) {
+						Integer minute = Integer.parseInt(minuteText.getText().toString());
+						minutes += minute;
+					}
+					task.setTotalTime(minutes);					
+				}
+				refreshTotalTime();
+			}
+		});
+		
+		//=====neutral button，清空=====
+		builder.setNeutralButton(R.string.Dialog_neutral_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				task.setTotalTime(-1);
+				refreshTotalTime();
+			}
+		});
+		
+		//=====取消按钮，直接退出=====
+		builder.setNegativeButton(R.string.Dialog_cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.create().show();
 	}
 
 	/**
