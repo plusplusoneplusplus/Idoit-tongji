@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -96,6 +97,7 @@ public abstract class OverviewTagListActivity extends OverviewActionBarActivity 
 		}
 		
 	}
+
 
 	/**
 	 * 抽象方法，继承后实现

@@ -58,7 +58,8 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 
 		mHomeButton = (ImageButton)getActionBar().getHomeButton();
 		mHomeButton.setImageResource(R.drawable.ic_grid);
-
+		
+		
 	}
 	
 	//继承重写，设置view
@@ -84,7 +85,7 @@ public abstract class OverviewActionBarActivity extends GDActivity{
 		//设置“更多操作”按钮
 		mGridMore = new QuickActionGrid(this);
 		QuickActionHelper quickActionHelper = new QuickActionHelper(mGridMoreArray, mGridMore);
-		quickActionHelper.addQuickAction(R.drawable.ic_analysis, R.string.analysis);
+		quickActionHelper.addQuickAction(R.drawable.ic_analysis, R.string.recommend);
 		quickActionHelper.addQuickAction(R.drawable.ic_settings, R.string.settings);
 		quickActionHelper.addQuickAction(R.drawable.ic_info, R.string.about);
 		quickActionHelper.addQuickAction(R.drawable.ic_exit, R.string.exit);
