@@ -90,7 +90,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 	 */
 	@Override
 	protected void tagListItemClick(String tag) {
-		this.adapter.fillData(new TaskController().getTaskListWithTag(tag));
+		//TODO To 万兄
+//		this.adapter.fillData(new TaskController(this).getTaskListWithTag(tag));
 		this.taskListView.setAdapter(this.adapter);
 		this.taskListView.setOnItemClickListener(this.adapter);
 		this.registerForContextMenu(this.taskListView);
@@ -277,7 +278,7 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 			TextView leftTimeTextView = (TextView) view.findViewById(R.id.TL_leftTimeTextView);
 
 			taskNameTextView.setText(task.getName());
-			startTimeTextView.setText(task.getStarttime() + "");
+			startTimeTextView.setText(task.getStartTime() + "");
 			leftTimeTextView.setText(task.getDeadline() + "");				
 
 			return view;

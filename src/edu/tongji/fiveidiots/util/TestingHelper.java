@@ -20,14 +20,12 @@ public class TestingHelper {
 	 * 测试用， @return 一个随机生成的TaskInfo
 	 */
 	public static TaskInfo getRandomTask() {
-		TaskInfo info = new TaskInfo();
+		TaskInfo info = new TaskInfo("name: " + getRandomString(5));
 		info.setId(randomID);
 		info.setAddr("addr: " + getRandomString(5));
 		info.setDeadline(null);
-		info.SetExpire();
 		info.setHint("hint: " + getRandomString(5));
 		info.setInterrupt(0);
-		info.setName("name: " + getRandomString(5));
 		info.setPriority(random.nextInt(3));
 
 		randomID++;
