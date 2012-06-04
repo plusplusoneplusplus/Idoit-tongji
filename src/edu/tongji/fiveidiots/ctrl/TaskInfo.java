@@ -12,26 +12,23 @@ import android.R.integer;
 
 
 /*
- * TaskInfo璁板綍姣忎釜浠诲姟璇︾粏淇℃伅
- * 鎴愬憳锛氳涓嬮潰娉ㄩ噴
- * 鏂规硶锛氳绫讳腑鏂规硶涓嶅澶栭儴寮?斁锛屼粎渚汿askController绫昏皟鐢?
- * void copy(TaskInfo aTask) 澶嶅埗aTask鐨勪换鍔′俊鎭?
- * void ImportTag(ArrayList<String> tag) 灏唗ag鏁扮粍涓唴瀹瑰鍒剁粰浠诲姟涓殑鏍囩
- * ArrayList<String> ExportTag() 瀵煎嚭浠诲姟涓爣绛剧殑鍐呭
- * void addTag(String atag) 鏂板涓?釜tag
- * void deleteTag(int id) 鍒犻櫎涓?釜tag
- * Boolean searchTag(String str) 鎼滅储涓?釜tag濡傛灉瀛樺湪锛岃繑鍥瀟rue
- * void FinishCycle(int interrupt,double percent,Date cur) 璇ヤ换鍔″畬鎴愪竴涓晝鑼勯挓锛岃皟鐢ㄤ竴娆¤鍑芥暟
- * 
+ * TaskInfo记录每个任务详细信息
+ * 成员：见下面注释
+ * 注意：所有的set,add,import相关函数只是修改了TaskInfo的内容，不会存入数据库，必须调用TaskController里面的ModifyTask函数将TaskInfo的信息存入数据库
+ * void ImportTag(ArrayList<String> tag) 将tag数组中内容复制给任务中的标签
+ * ArrayList<String> ExportTag() 导出任务中标签的内容
+ * void addTag(String atag) 新增一个tag
+ * void deleteTag(int id) 删除一个tag
+ * Boolean searchTag(String str) 搜索一个tag如果存在，返回true
  */
 public class TaskInfo {
-	private int pri,pre_id,next_id,usedtime,totaltime,way,interrupt,id; //浼樺厛绾э紝鍓嶉┍浠诲姟ID锛屽悗缁D锛屽凡缁忓畬鎴愮殑鐣寗鏃堕挓鏁帮紝灏氬緟瀹屾垚鐨勭暘鑼勬椂閽熸暟锛屾槸鍚︿负鍛ㄦ湡浠诲姟锛屼腑鏂釜鏁帮紝浠诲姟ID
-	//way鍙橀噺鐨勮祴鍊硷細闈炲懆鏈熶换鍔★細0  姣忓懆鐗瑰畾鏃ユ墽琛岀殑浠诲姟锛氬叾浜岃繘鍒剁22浣嶆暟鍊间负1锛屽墿涓?1浣嶈褰曠壒瀹氭棩锛屼緥濡傚懆涓?紝鍛ㄤ笁锛屽懆鍥涳紝鍛ㄦ棩瑕佹墽琛岀殑浠诲姟锛氭暟鍊间簩杩涘埗琛ㄧず涓猴細1 000 000 000 001 011 100 111  濡傛灉鏄瘡闅旂壒瀹氭棩鏈熸墽琛岀殑浠诲姟锛屽叾浜岃繘鍒惰〃绀虹殑绗?3锛?2浣嶄负10锛屽墿涓?1浣嶈〃绀虹浉闅旂殑鏃ユ湡銆?
+	private int pri,pre_id,next_id,usedtime,totaltime,way,interrupt,id; //优先级，前驱任务ID，后继ID，已经花费的时间，预计任务完成总时间，是否为周期任务，中断个数，任务ID
+	//way变量的赋值：非周期任务：0  每周特定日执行的任务：其二进制第8位数值为1，剩下7位记录特定日，例如周一，周三，周四，周日要执行的任务：数值二进制表示为：11001101  如果是每隔特定日期执行的任务，其二进制表示的第9，8位为10，剩下7位表示相隔的日期。
 	
-	private String name,addr,hint; //浠诲姟鍚嶇О锛屽湴鍧?紝娉ㄩ噴
-	private Date starttime,deadline,alarm;  //浠诲姟寮?鏃堕棿锛屾埅姝㈡椂闂?
-	private ArrayList<String> tag;  //浠诲姟鏍囩浠?
-	private int status;  //1为Finish
+	private String name,addr,hint; //任务名称，地址，注释
+	private Date starttime,deadline,alarm;  //任务开始时间，截止时间，任务提醒时间
+	private ArrayList<String> tag;  //任务标签们
+	private int status;  //任务状态：1为Finish，2为完成，3为删除，0为正常状态。
 	
 	
 

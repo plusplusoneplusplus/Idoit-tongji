@@ -22,25 +22,23 @@ import android.content.Context;
 
 
 /*
- * TaskController 鎵?湁UI璋冪敤鏁版嵁閮介?杩囪绫绘柟娉?
- * 鎴愬憳锛?
- * taskContainer: 瀛樻斁鎵?湁鐨勪换鍔?
- * tempTask: 瀛樻斁涓存椂鏌愪釜浠诲姟璇︾粏淇℃伅
+ * TaskController 所有UI调用数据都通过该类方法
+ * 成员：
+ * tempTask: 存放临时某个任务详细信息
  * 鏂规硶锛?
- * void AddTask(TaskInfo aTask) 鏂板Task
- * void RemoveTask(int id) 鏍规嵁浠诲姟id鍙峰垹闄ょ浉搴斾换鍔?
- * TaskInfo ShowTaskInfo(int id) 鏍规嵁浠诲姟id鍙锋樉绀虹浉搴斾换鍔?
- * Boolean ModifyTaskInfo(int id,TaskInfo aTask) 鏍规嵁浠诲姟id鍙蜂慨鏀圭浉搴斾换鍔?
- * ArrayList<TaskInfo> ShowTaskList() 杩斿洖鎵?湁浠诲姟
- * ArrayList<TaskInfo> GetTodayTask(Date cur) 浼犲叆浠婂ぉ鐨勬棩鏈燂紝杩斿洖浠婂ぉ浠诲姟鍒楄〃
- * ArrayList<TaskInfo> GetFutureTask(Date cur) 浼犲叆浠婂ぉ鐨勬棩鏈燂紝杩斿洖浠婂ぉ浠诲姟鍒楄〃
- * ArrayList<TaskInfo> GetPeriodicTask() 杩斿洖鍛ㄦ湡鎬т换鍔″垪琛?
- * ArrayList<TaskInfo> GetFinishedTask() 杩斿洖宸茬粡瀹屾垚鐨勪换鍔″垪琛?
- * ArrayList<TaskInfo> SearchTag(String str) 鏍规嵁鏌愪釜鏍囩锛岃繑鍥炴嫢鏈夎鏍囩鐨勪换鍔?
- * TaskInfo Suggest(Date cur) 鏍规嵁鐜板湪鐨勬椂闂寸粰鍑轰笅涓?釜浠诲姟鐨勫缓璁?
- * void FinishCycle(int id,int interrupt,double percent,Date cur) 姣忓畬鎴愪竴涓晝鑼勯挓锛屽繀椤昏皟鐢ㄨ鍑芥暟锛屼紶鍏ヤ换鍔d锛屼腑鏂鏁帮紝姝ゆ钑冭寗閽熷懆鏈熸墍瀹屾垚浠诲姟鐧惧垎姣旓紝褰撳墠鐨勬椂闂?
- * void Save() 淇濆瓨
- * void Read() 璇诲彇
+ * void AddTask(TaskInfo aTask) 新增Task
+ * void RemoveTask(int id) 根据任务id号删除相应任务
+ * TaskInfo ShowTaskInfo(int id) 根据任务id号显示相应任务
+ * Boolean ModifyTaskInfo(int id,TaskInfo aTask) 根据任务id号修改相应任务
+ * ArrayList<TaskInfo> ShowTaskList() 返回所有任务
+ * ArrayList<TaskInfo> GetTodayTask(Date cur) 传入今天的日期，返回今天任务列表
+ * ArrayList<TaskInfo> GetFutureTask(Date cur) 传入今天的日期，返回未来任务列表
+ * ArrayList<TaskInfo> GetPeriodicTask() 返回周期性任务列表
+ * ArrayList<TaskInfo> GetFinishedTask() 返回已经完成的任务列表
+ * ArrayList<TaskInfo> SearchTag(String str) 根据某个标签，返回拥有该标签的任务
+ * TaskInfo Suggest(Date cur) 根据现在的时间给出下一个任务的建议
+ * void FinishCycle(int id,int interrupt,int time) 每完成一个蕃茄钟，必须调用该函数，传入任务id，中断次数，此次蕃茄钟周期的时间
+ * void InterruptTask(int id,int time) 任务未完成而发生中断，必须调用该函数，传入任务id和已经花费的时间
  */
 
 public class TaskController {
