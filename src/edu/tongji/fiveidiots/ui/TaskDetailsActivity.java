@@ -81,7 +81,11 @@ public class TaskDetailsActivity extends GDActivity {
 		}
 
 		//=====GDActivity，及搞定action bar上的item=====
-        this.setActionBarContentView(R.layout.taskdetails_paged_view);
+		try {
+	        this.setActionBarContentView(R.layout.taskdetails_paged_view);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.addActionBarItem(ActionBarItem.Type.Compose, R.id.detail_action_bar_save);
         this.addActionBarItem(ActionBarItem.Type.Trashcan, R.id.detail_action_bar_delete);
 
