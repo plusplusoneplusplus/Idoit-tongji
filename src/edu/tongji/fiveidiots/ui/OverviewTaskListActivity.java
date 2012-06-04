@@ -63,6 +63,8 @@ public class OverviewTaskListActivity extends OverviewTagListActivity{
 
 		//=====在父类中已经调用过mySetActionBarContentView了=====
         taskListView = (ListView) findViewById(R.id.taskListView);
+        //=====设置缓存背景色======
+        taskListView.setCacheColorHint(0);
         
         Button testButton = (Button) findViewById(R.id.testButton);
         testButton.setOnClickListener(new OnClickListener() {
