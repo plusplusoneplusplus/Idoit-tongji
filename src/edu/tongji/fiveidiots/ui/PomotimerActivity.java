@@ -130,8 +130,25 @@ public class PomotimerActivity extends Activity {
 					serviceBinder.start();
 					Toast.makeText(PomotimerActivity.this, "计时开始！", Toast.LENGTH_SHORT).show();
 					break;
-				case PomotimerService.STATE_COUNTING:
-					//=====计时中，又按了一下，就不鸟它了吧=====
+				case PomotimerService.STATE_COUNTING: {
+					int section = serviceBinder.getCurrentSection();
+					switch (section) {
+					case PomotimerService.SECTION_SHORTBREAK:
+						showStopTimerDialog(R.string.PT_break_quit_title, R.string.PT_break_quit_message, 
+								R.string.PT_break_quit_confirm, R.string.PT_break_quit_cancel, new onStopTimer() {
+									
+									@Override
+									public void onStop() {
+										serviceBinder.setRemainTime(0);
+									}
+								});
+						break;
+					default:
+						//=====番茄计时中，又按了一下，就不鸟它了吧=====
+						break;
+					}
+					
+				}
 					break;
 
 				default:
@@ -169,10 +186,15 @@ public class PomotimerActivity extends Activity {
 		super.onDestroy();
 	}
 
+	interface onStopTimer {
+		public void onStop();
+	}
+	
 	/**
 	 * 当想要暂停计时器时，显示的dialog
+	 * msg 按确定暂停后，发送的消息
 	 */
-	private void showStopTimerDialog(int titleID, int msgID, int confirmId, int cancleId) {
+	private void showStopTimerDialog(int titleID, int msgID, int confirmId, int cancleId, final onStopTimer st) {
 		AlertDialog.Builder builder = new Builder(this);
 		builder.setTitle(titleID);
 		builder.setMessage(msgID);
@@ -180,9 +202,7 @@ public class PomotimerActivity extends Activity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
-				msg.arg1 = serviceBinder.getCurrentSection();
-				msg.sendToTarget();
+				st.onStop();
 			}
 		});
 		builder.setNegativeButton(cancleId, new DialogInterface.OnClickListener() {
@@ -201,14 +221,32 @@ public class PomotimerActivity extends Activity {
 			if (serviceBinder.getCurrentSection() == PomotimerService.SECTION_POMO) {
 				//=====番茄正在counting呢，哪能说退就退=====
 				showStopTimerDialog(R.string.PT_pomo_quit_title, R.string.PT_pomo_quit_message, 
-						R.string.PT_pomo_quit_confirm, R.string.PT_pomo_quit_cancel);
+						R.string.PT_pomo_quit_confirm, R.string.PT_pomo_quit_cancel, new onStopTimer() {
+
+							@Override
+							public void onStop() {
+								Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
+								msg.arg1 = serviceBinder.getCurrentSection();
+								msg.sendToTarget();
+							}
+					
+				});
 				
 				return;
 			}
 			else if (serviceBinder.getCurrentSection() == PomotimerService.SECTION_SHORTBREAK) {
 				//=====休息正在counting呢，哪能说退就退=====
 				showStopTimerDialog(R.string.PT_break_quit_title, R.string.PT_break_quit_message, 
-						R.string.PT_break_quit_confirm, R.string.PT_break_quit_cancel);
+						R.string.PT_break_quit_confirm, R.string.PT_break_quit_cancel, new onStopTimer() {
+
+							@Override
+							public void onStop() {
+								Message msg = Message.obtain(timerHandler, MSG_WILL_QUIT);
+								msg.arg1 = serviceBinder.getCurrentSection();
+								msg.sendToTarget();
+							}
+					
+				});
 				
 				return;
 			}

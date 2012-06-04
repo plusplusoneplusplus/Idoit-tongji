@@ -169,7 +169,7 @@ public class PomotimerService extends Service {
 
 		//=====TODO 仅为测试用
 		//this.remainTime = 10;
-		this.remainTime = 5;
+		this.remainTime = 20;
 		//=====END
 		
 		this.countingTimerTask = new TimerTask() {
@@ -423,6 +423,10 @@ public class PomotimerService extends Service {
 		 */
 		public int getCurrentSection() {
 			return currentSection;
+		}
+
+		public void setRemainTime(int t) {
+			remainTime = t;
 		}
 	}
 
