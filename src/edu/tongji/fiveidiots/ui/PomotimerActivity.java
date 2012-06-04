@@ -1,9 +1,8 @@
 package edu.tongji.fiveidiots.ui;
 
-import java.util.Date;
-
 import edu.tongji.fiveidiots.R;
 import edu.tongji.fiveidiots.ui.PomotimerService.PomotimerBinder;
+import edu.tongji.fiveidiots.util.ActivityUtil;
 import edu.tongji.fiveidiots.util.TimeUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,7 +22,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -160,8 +158,10 @@ public class PomotimerActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO 添加奇思妙想之处！
-				Toast.makeText(PomotimerActivity.this, "add idea clicked", Toast.LENGTH_SHORT).show();
+				//=====进入新任务建立的界面=====
+				Bundle bundle = new Bundle();
+				bundle.putLong(OverviewTaskListActivity.TASK_ID_STR, -1);
+				ActivityUtil.startActivityWithBundle(PomotimerActivity.this, TaskDetailsActivity.class, 0, false, bundle);
 			}
 		});
 	}
